@@ -12,6 +12,10 @@ body {
     background-color:#F5F5F5;
 }
 
+a {
+    text-decoration: none;
+}
+
 .large {
     font-size: 1.2rem;
     font-weight: 600;
@@ -50,18 +54,30 @@ header {
     height: 20px;
 }
 
-.nav-items {
+.nav-items , .nav-items-uniteractable {
     display: flex;
     align-items: center;
 }
 
 .nav-items > * {
     display: inline-block;
+    padding: 0px 0.7rem;
+    border-radius: 10px;
+}
+
+.nav-items-uniteractable > * {
+    display: inline-block;
     padding: 0px 0.5rem;
 }
 
-#right > * {
-    padding: 0px 0.7rem;
+.nav-items :hover {
+    background-color: #e6e6e6;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#left > * {
+    padding: 0px 0.5rem;
 }
 
 .root {
@@ -74,7 +90,7 @@ header {
     padding-top: 3.5rem;
     position: relative;
     width: 100%;
-    min-height: 100svh;
+    /* min-height: 100svh; */
 }
 
 .info-column {
@@ -125,7 +141,6 @@ header {
 
 .image .profile-img {
     height: 100%;
-    width: 100%;
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid white;
@@ -177,6 +192,9 @@ header {
     /* position: relative; */
     width: 100%;
     max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .highlight {
@@ -190,7 +208,6 @@ header {
 .section > :first-child {
     display: flex;
     justify-content: start;
-    padding-bottom: 0.7rem;
 }
 
 .section .card-content {

@@ -1,0 +1,74 @@
+@import "style.css";
+
+#course {
+    justify-content: flex-start;
+    padding-top: 1rem;
+}
+
+.assignment-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.assignment-card > :first-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgb(203, 203, 203);
+}
+
+.course-banner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 200px;
+    background: linear-gradient(180deg, #6CBED0 0%, #E6BF73 100%);
+}
+
+.course-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: white;
+    align-items: center;
+}
+
+.course-tab {
+    background-color: rgb(244, 244, 244);
+    padding:1rem;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.05);
+}
+
+.course-bar .image {
+    width: 4rem;
+    height: 4rem;
+    padding: 0px;
+}
+
+.course-bar > :first-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.course-bar > :last-child {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.course-bar > :last-child > * {
+    display: flex;
+    flex-direction: column;
+}
+
+.course-bar > :last-child > :first-child {
+    align-items: flex-end;
+}
+
+#upcoming {
+    display: none;
+}
+
+#completed {
+    display: none;
+}
