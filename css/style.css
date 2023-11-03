@@ -58,6 +58,13 @@ header {
     display: flex;
     align-items: center;
 }
+.nav-items-small {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 0px 0.7rem;
+    border-radius: 10px;
+}
 
 .nav-items > * {
     display: inline-block;
@@ -71,6 +78,12 @@ header {
 }
 
 .nav-items :hover {
+    background-color: #e6e6e6;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.nav-items-small:hover {
     background-color: #e6e6e6;
     font-weight: 500;
     cursor: pointer;
