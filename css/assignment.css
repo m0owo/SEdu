@@ -1,7 +1,7 @@
 @import "course.css";
 
 .course-bar {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     padding: 2rem;
     justify-content: space-between;
 }
@@ -23,10 +23,42 @@
     resize: none;
 }
 
-textarea .description {
+textarea .description-input {
     width: 100%;
     height: 100%;
     border-radius: 4px;
     background-color: white;
     resize: none;
 }
+
+.edit-button {
+    width: 3.0rem;
+    height: 1.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 450;
+    text-align: center;
+    border: solid;
+    border-color: gray;
+    color: gray;
+    border-width: 0.1rem;
+}
+
+.edit-button:hover {
+    background-color: lightgray;
+    color: black;
+}
+
+@media screen and (min-width: 750px){
+    .small, .small-bold {
+        font-size:16px;
+    }
+    .medium {
+        font-size:20px;
+    }
+    .logo {
+        height: 30px
+    }
+}
+
+
