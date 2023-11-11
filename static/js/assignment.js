@@ -50,20 +50,29 @@ fileInput.addEventListener('change', function() {
 })
 
 function updateFileFrame() {
-    files.forEach(function(file) {
-        let iframe = document.createElement("iframe");
-        resourceFrames.appendChild(iframe);
-        const fileURL = URL.createObjectURL(file);
-        iframe.classList.add("fileFrame");
-        iframe.style.pointerEvents = "auto";
-        iframe.setAttribute("src", fileURL);
-        iframe.addEventListener('click', function() {
-            console.log("clicked");
-            let downloadLink = document.createElement("a");
-            downloadLink.href = fileURL;
-            downloadLink.download = file.name;
-            downloadLink.click();
+    if (files.length == 0) {
+        resourceFrames.style.visibility = "hidden";
+    } else if (files.length > 0) {
+        resourceFrames.style.visibility = "visible";
+        files.forEach(function(file) {
+            let iframe = document.createElement("iframe");
+            let downloadButton = document.createElement("button");
+            resourceFrames.appendChild(document.createElement("br"));
+            downloadButton.innerText = "Download";
+            downloadButton.classList.add("edit-button");
+            resourceFrames.appendChild(iframe);
+            resourceFrames.appendChild(downloadButton);
+            const fileURL = URL.createObjectURL(file);
+            iframe.classList.add("fileFrame");
+            iframe.setAttribute("src", fileURL);
+            downloadButton.addEventListener('click', function (){
+                console.log("clicked");
+                let downloadLink = document.createElement("a");
+                downloadLink.href = fileURL;
+                downloadLink.download = file.name;
+                downloadLink.click();
+            });
         });
-    });
+    }
 }
 

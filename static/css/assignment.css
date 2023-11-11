@@ -81,13 +81,15 @@ input .edit-button:hover {
     height: fit-content;
     padding: 20px;
     border: solid;
+    border-radius: 1rem;
+    border-color: lightgray;
+    visibility: hidden;
 }
 
 .file-frame {
     width: 500px;
     height: 100px;
     display: flex;
-    border: solid;
 }
 
 hr {
