@@ -50,14 +50,20 @@ fileInput.addEventListener('change', function() {
 })
 
 function updateFileFrame() {
-    let iframe = document.createElement("iframe");
     files.forEach(function(file) {
+        let iframe = document.createElement("iframe");
         resourceFrames.appendChild(iframe);
         const fileURL = URL.createObjectURL(file);
         iframe.classList.add("fileFrame");
+        iframe.style.pointerEvents = "auto";
         iframe.setAttribute("src", fileURL);
+        iframe.addEventListener('click', function() {
+            console.log("clicked");
+            let downloadLink = document.createElement("a");
+            downloadLink.href = fileURL;
+            downloadLink.download = file.name;
+            downloadLink.click();
+        });
     });
-    const fileURL = URL.createObjectURL(selectedFile);
-    iframe.classList.add("file-frame");
-    iframe.setAttribute("src", fileURL);
 }
+

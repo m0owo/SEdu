@@ -80,12 +80,14 @@ input .edit-button:hover {
     width: fit-content;
     height: fit-content;
     padding: 20px;
+    border: solid;
 }
 
 .file-frame {
     width: 500px;
     height: 100px;
     display: flex;
+    border: solid;
 }
 
 hr {
