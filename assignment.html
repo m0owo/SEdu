@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="">
     <title>Assignment Page</title>
 </head>
+
 <body>
     <header>
         <div class="nav-items-uniteractable">
@@ -32,39 +34,46 @@
             <span class="small">Tomorrow, 11:59</span>
         </div>
     </div>
-    
-    <!-- for teachers -->
-    <!-- description -->
-    <div style="padding:1rem; width: 100%;">
-        <div class="card">
-            <div class="info-column" style="padding-bottom: 1.5%;">
-                <span class="medium-bold">Assignment Description</span>
-            </div><hr>
-            <div class="info-column" style="padding-top: 1.5%;">
-                <span class="description small" id="description"></span>
-                <textarea class="description-input" id="descriptionTextArea" style="width:0; height:0;visibility: hidden;"></textarea>
-                <span class="edit-button" id="editButton">Edit</span>
+
+    <div class="root">
+        <!-- for teachers -->
+        <!-- description -->
+        <div style="padding:1rem; width: 100%;">
+            <div class="card">
+                <div class="info-column" style="padding-bottom: 3%">
+                    <span class="medium-bold">Assignment Description</span>
+                </div>
+                <hr>
+                <div class="info-column" style="padding-top: 3%;">
+                    <span class="description small" id="description"></span>
+                    <textarea class="description-input" id="descriptionTextArea"
+                        style="width:0; height:0;visibility: hidden;"></textarea>
+                    <span class="edit-button" id="editButton">Edit</span>
+                </div>
             </div>
         </div>
-    </div>
-    
-    
-    <!-- files -->
-    <div style="padding:1rem; width: 100%;">
-        <div class="card">
-            <div class="info-column" style="padding-bottom: 1.5%;">
-                <span class="medium-bold"> Additional Resources</span>
-            </div> <hr>
-        <div class="info-column" style="padding-top: 1.5%;">
-            <span class="additional-resources" id="additionalResources"></span>
-            <span class="edit-button" id="fileInputButton">Insert File<input type="file" id="fileInput" accept=".pdf, .doc, .docx, .txt, .zip"></span></span>
+
+
+        <!-- files -->
+        <div style="padding:1rem; width: 100%;">
+            <div class="card">
+                <div class="info-column" style="padding-bottom: 3%;">
+                    <span class="medium-bold"> Additional Resources</span>
+                </div>
+                <hr>
+                <div class="info-column" style="padding-top: 3%;">
+                    <span class="additional-resources" id="additionalResources"></span>
+                    <span class="edit-button" id="fileInputButton">Insert File<input type="file" id="fileInput"
+                            accept=".pdf, .doc, .docx, .txt, .zip"></span></span>
+                </div>
+
+                <div class="info-column file-frame-div" id="resourceFrames">
+                </div>
+            </div>
         </div>
-        
-        <div class="info-column file-frame-div" id="resourceFrames">
-        </div>
-    </div>
-    
-    
+
+
 </body>
 <script src="js/assignment.js"></script>
+
 </html>
