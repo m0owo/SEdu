@@ -1,3 +1,4 @@
+// assignment ---Description--- code
 const descriptionEdit = document.getElementById("editButton");
 const descriptionTextArea = document.getElementById("descriptionTextArea");
 const descriptionText = document.getElementById("description");
@@ -27,4 +28,33 @@ function showDescriptionTextArea() {
         editing = false;
     }
 
+}
+
+// assignment ---Additional Resources--- code
+let files = [];
+const fileInput = document.getElementById("fileInput");
+const fileInputButton = document.getElementById("fileInputButton");
+const resourceFrames = document.getElementById("resourceFrames");
+fileInputButton.addEventListener('click', function () {
+    fileInput.click();
+})
+fileInput.addEventListener('change', function() {
+    const selectedFile = fileInput.files[0];
+    if (selectedFile) {
+        files.push(selectedFile);
+        updateFileFrame();
+    }
+})
+
+function updateFileFrame() {
+    let iframe = document.createElement("iframe");
+    files.forEach(function(file) {
+        resourceFrames.appendChild(iframe);
+        const fileURL = URL.createObjectURL(file);
+        iframe.classList.add("fileFrame");
+        iframe.setAttribute("src", fileURL);
+    });
+    const fileURL = URL.createObjectURL(selectedFile);
+    iframe.classList.add("file-frame");
+    iframe.setAttribute("src", fileURL);
 }

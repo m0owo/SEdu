@@ -52,6 +52,40 @@ textarea .description-input {
     color: black;
 }
 
+input[type="file"] {
+    display: none;
+}
+
+input .edit-button {
+    width: fit-content;
+    height: 1.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 450;
+    text-align: center;
+    border: solid;
+    border-color: gray;
+    color: gray;
+    border-width: 0.1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+}
+
+input .edit-button:hover {
+    background-color: lightgray;
+    color: black;
+}
+
+file-frame-div {
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+}
+file-frame {
+    width: 500px;
+    height: 100px;
+    display: flex;
+}
 
 
 
