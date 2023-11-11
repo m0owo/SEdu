@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
+
+
+* {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    header {
+        position: fixed;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-height: 2.5rem;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.05);
+        background-color: white;
+        z-index: 1000;
+    }
+
+    .logo{
+        width: 25px;
+        margin-left: 10px;
+    }
+
+    .nav-items-uniteractable{
+        display: flex;
+        align-items: center;
+
+    }
+
+    .navigation a {
+        text-decoration: none;
+        color: black;
+        font-weight: bold;
+        position: relative;
+        font-weight: 400;
+        margin-left: 45px;
+        border-radius: 6px;
+        transition: .5s;
+        
+    } 
+    .navigation a:hover{
+        background-color: #e6e6e6;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    
+    .navigation .btn_login{
+        width: 150px;
+        height: 50px;
+        font-size: 1rem;
+        background-color: transparent;
+        border: 2px solid white;
+        border-radius: 6px;
+        font-weight: 600;
+        color: black;
+    }
+
+    .navigation .btn_login:hover{
+        background-color: #e6e6e6;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+
+    .login-container {
+        width: 400px;
+        height: 350px;
+        margin: 80px auto;
+        padding: 20px;
+        background-color: #f2f2f2;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .form-group button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #FF9900;
+        color: white;
+        cursor: pointer;
+    }
+    .form-group button:hover {
+        background-color: #ff990065;
+    }
+    .form-footer {
+        text-align: center;
+    }
+    .form-footer a {
+        text-decoration: none;
+        color: #333;
+    }
+
