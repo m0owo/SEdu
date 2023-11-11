@@ -76,15 +76,40 @@ input .edit-button:hover {
     color: black;
 }
 
-file-frame-div {
+.file-frame-div {
     width: fit-content;
     height: fit-content;
     padding: 20px;
 }
-file-frame {
+
+.file-frame {
     width: 500px;
     height: 100px;
     display: flex;
+}
+
+hr {
+    margin: auto;
+    width: 250px;
+}
+
+.card {
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+@media screen and (min-width: 750px){
+    hr {
+        margin: 0 30px;
+    }
+}
+
+@media (max-width: 750px) {
+    .assignment-card-left, .assignment-card-right {
+      flex: 100%;
+    }
 }
 
 

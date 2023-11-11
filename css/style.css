@@ -337,10 +337,10 @@ header {
 
 @media screen and (min-width: 750px){
     .small, .small-bold {
-        font-size:1rem;
+        font-size: 1rem;
     }
     .medium, .medium-bold {
-        font-size:1.2rem;
+        font-size: 1.2rem;
     }
     .large, .large-bold {
         font-size: 1.4rem;
@@ -348,7 +348,6 @@ header {
     .logo {
         height: 1.5rem;
     }
-
     .header {
         height: 5rem;
     }

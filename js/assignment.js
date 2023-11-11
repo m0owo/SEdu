@@ -6,12 +6,14 @@ const descriptionText = document.getElementById("description");
 descriptionEdit.addEventListener("click", showDescriptionTextArea);
 
 let editing = false;
-descriptionText.innerText = "Enter a brief description."
+descriptionTextArea.value = "";
+descriptionText.innerText = "Enter a brief description"
 
 // add text editing features, like tab
 function showDescriptionTextArea() {
     descriptionTextArea.style.transition = "0.1s ease-in";
     if (editing == false) {
+        descriptionTextArea.style.visibility = "visible";
         descriptionTextArea.value = descriptionText.innerText;
         descriptionText.innerText = "";
         descriptionTextArea.style.width = "100%";
@@ -24,6 +26,7 @@ function showDescriptionTextArea() {
         descriptionTextArea.value = "";
         descriptionTextArea.style.width = "0px";
         descriptionTextArea.style.height = "0px";
+        descriptionTextArea.style.visibility = "hidden";
         descriptionEdit.innerText = "Edit";
         editing = false;
     }
