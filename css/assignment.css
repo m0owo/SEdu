@@ -29,6 +29,7 @@ textarea .description-input {
     border-radius: 4px;
     background-color: white;
     resize: none;
+    transition: none;
 }
 
 .edit-button {
@@ -47,18 +48,6 @@ textarea .description-input {
 .edit-button:hover {
     background-color: lightgray;
     color: black;
-}
-
-@media screen and (min-width: 750px){
-    .small, .small-bold {
-        font-size:16px;
-    }
-    .medium {
-        font-size:20px;
-    }
-    .logo {
-        height: 30px
-    }
 }
 
 
