@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/course.css">
+    <title>Course Page</title>
+</head>
+
+<body>
+    <header>
+        <div class="nav-items-uniteractable">
+            <img src="../static/resources/se.png" class="logo">
+            <span class="small-bold">SEducation</span>
+        </div>
+        <nav>
+            <ul class="nav-items">
+                <li class="small"><a href="/home/">Home</a></li>
+                <li class="small"><a href="/course/">Courses</a></li>
+                <li class="small"><a href="">Calendar</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="sidebar">
+        <ul class="nav-items">
+            <li class="small"><a href="">Probability and Statistics</a></li>
+            <li class="small"><a href="">asd</a></li>
+            <li class="small"><a href="">asd</a></li>
+        </ul>
+    </div>
+    
+    <div id="block">
+        <div class="course-banner"></div>
+        <div class="course-bar">
+            <div>
+                <span class="medium">Probability and Statistics 1</span>
+                <span class="small">Description</span>
+            </div>
+            <div>
+                <div>
+                    <span class="medium">Boonyasit Warachan</span>
+                    <span class="small">Lecturer</span>
+                </div>
+                <div class="image">
+                    <img src="../static/resources/anuc.jpg" alt="" class="profile-img">
+                </div>
+            </div>
+        </div>
+        <div class="course-tab">
+            <ul class="nav-items">
+                <li class="small" onclick="showDiscussion()">Discussion</li>
+                <li class="small" onclick="showUpcoming()">Upcoming</li>
+                <li class="small" onclick="showCompleted()">Completed</li>
+            </ul>
+        </div>
+
+        <div class="root" id="course">
+
+            <div class="info-column" id="discussion">
+                discussion
+            </div>
+
+
+            <div class="info-column" id="upcoming">
+                <div class="section">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="assignment-card">
+                                <div>
+                                    <div class="highlight">
+                                        <span class="small">Today, 11:59 PM</span>
+                                    </div>
+                                </div>
+                                <span class="medium">HW 11 Hypothesis Testing</span>
+                                <span class="nav-items-small"><a href="/assignment/">VIEW ASSIGNMENT</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div class="info-column" id="completed">
+                <div class="section">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="assignment-card">
+                                <span class="medium">HW 11 Hypothesis Testing</span>
+                                <span class="small">VIEW ASSIGNMENT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="assignment-card">
+                                <span class="medium">HW 11 Hypothesis Testing</span>
+                                <span class="small">VIEW ASSIGNMENT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="../static/js/course.js"></script>
+
+</html>

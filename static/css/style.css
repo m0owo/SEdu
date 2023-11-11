@@ -11,6 +11,7 @@
 
 body {
     background-color:#F5F5F5;
+    display: flex;
 }
 
 a {
@@ -19,20 +20,26 @@ a {
 
 .large {
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: 600;
 }
-.large-bold{
+
+.large-bold {
     font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.medium-bold {
+    font-size: 1rem;
     font-weight: 600;
 }
 
 .medium {
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
 }
 
-.medium-bold {
-    font-size: 1rem;
+.small-bold {
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
@@ -64,10 +71,34 @@ header {
     height: 20px;
 }
 
+li {
+    list-style: none;
+}
+
 .nav-items , .nav-items-uniteractable {
     display: flex;
     align-items: center;
 }
+
+.sidebar .nav-items {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+}
+
+.nav-items-small {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 0px 0.7rem;
+    border-radius: 10px;
+}
+
+.sidebar .nav-items > * {
+    width: 100%;
+}
+
 .nav-items-small {
     display: flex;
     align-items: center;
@@ -89,18 +120,29 @@ header {
 
 .nav-items :hover {
     background-color: #e6e6e6;
-    font-weight: 500;
     cursor: pointer;
 }
 
 .nav-items-small:hover {
     background-color: #e6e6e6;
-    font-weight: 500;
     cursor: pointer;
 }
 
 #left > * {
     padding: 0px 0.5rem;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.5rem;
+    padding-top: 3.5rem;
+    background-color: white;
+    width: 30%;
+    height: 100dvh;
+    z-index: 2;
+    box-shadow: 0 10px 10px rgba(0,0,0,0.1);
 }
 
 .root {

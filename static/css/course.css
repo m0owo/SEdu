@@ -5,6 +5,11 @@
     padding-top: 1rem;
 }
 
+#block {
+    display: block;
+    width: 100%;
+}
+
 .assignment-card {
     display: flex;
     flex-direction: column;
