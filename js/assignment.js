@@ -7,6 +7,7 @@ descriptionEdit.addEventListener("click", showDescriptionTextArea);
 let editing = false;
 descriptionText.innerText = "Enter a brief description."
 
+// add text editing features, like tab
 function showDescriptionTextArea() {
     descriptionTextArea.style.transition = "0.1s ease-in";
     if (editing == false) {
@@ -18,7 +19,7 @@ function showDescriptionTextArea() {
         editing = true;
     } else if (editing = true){
         // descriptionTextArea.style.transition = "none";
-        setTimeout(descriptionText.innerText = descriptionTextArea.value, 30000);
+        descriptionText.innerText = descriptionTextArea.value;
         descriptionTextArea.value = "";
         descriptionTextArea.style.width = "0px";
         descriptionTextArea.style.height = "0px";

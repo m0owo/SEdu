@@ -33,7 +33,7 @@ textarea .description-input {
 }
 
 .edit-button {
-    width: 3.0rem;
+    width: fit-content;
     height: 1.5rem;
     border-radius: 5px;
     font-size: 0.9rem;
@@ -43,11 +43,15 @@ textarea .description-input {
     border-color: gray;
     color: gray;
     border-width: 0.1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
 }
 
 .edit-button:hover {
     background-color: lightgray;
     color: black;
 }
+
+
 
 
