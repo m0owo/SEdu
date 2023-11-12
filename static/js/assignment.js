@@ -84,10 +84,12 @@ const commentButton = document.getElementById("sendComment");
 commentButton.addEventListener("click", sendComment);
 
 function sendComment() {
-    let date = new Date();
-    comments[date.getMonth() + "/" + date.getDate() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()] = (commentInput.value);
-    commentInput.value = "";
-    updateCommentContainer();
+    if (commentInput.value != "")  {
+        let date = new Date();
+        comments[date.getMonth() + "/" + date.getDate() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()] = (commentInput.value);
+        commentInput.value = "";
+        updateCommentContainer();
+    }
 }
 
 function updateCommentContainer() {
