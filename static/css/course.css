@@ -116,19 +116,21 @@
     border-radius: 0.5rem;
     font-size: 1rem;
     font-weight: 450;
-    padding: 1.5rem;
+    padding: 1.2rem;
     text-align: center;
-    border: solid;
-    border-color: orange;
     border-width: 0.1rem;
+    border-color: lightgray;
     padding-left: 0.3rem;
     padding-right: 0.3rem;
-    color: rgb(33, 33, 41)
+    color: rgb(33, 33, 41);
+    background-color: none;
+    text-align: center;
 }
 .post-button:hover {
-    border-color: black;
-    background-color: rgb(231, 172, 149);
-    color: whitesmoke;
+    border: none;
+    background-color: rgb(226, 225, 243);
+    color: rgb(101, 95, 95);
+    text-align: center;
 }
 
 .discussion-box{
@@ -142,8 +144,12 @@
     margin-top:0;
 }
 
+.light-highlight {
+    background-color: rgb(197, 208, 247);
+}
+
 .reply-container {
-    width: 100%;
+    height: fit-content;
 }
 
 .whole-discussion-box {

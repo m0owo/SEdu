@@ -26,18 +26,32 @@ function showCompleted() {
 }
 
 //discussion posts
-let discussions = {}; //user:{date:discussion}
-let replies = {}; //discussion:{user:{date:replies}}
+let discussions = {}; // user: { date: discussion }
+let replies = {}; // discussionDate: { user: { date: reply } }
+
 const discussionInput = document.getElementById("discussionInput");
 const discussionContainer = document.getElementById("discussionContainer");
-const postButton = document.getElementById("postButton")
+const postButton = document.getElementById("postButton");
 
 postButton.addEventListener("click", postDiscussion);
 
 function postDiscussion() {
-    if (discussionInput.value != "")  {
+    if (discussionInput.value !== "") {
         let date = new Date();
-        discussions[date.getMonth() + "/" + date.getDate() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()] = (discussionInput.value);
+        let discussionDate =
+            date.getMonth() +
+            "/" +
+            date.getDate() +
+            ", " +
+            date.getHours() +
+            ":" +
+            date.getMinutes() +
+            ":" +
+            date.getSeconds();
+        discussions[discussionDate] = {
+            user: "Boonyasit Warachan",
+            text: discussionInput.value,
+        };
         discussionInput.value = "";
         updateDiscussionContainer();
     }
@@ -45,18 +59,22 @@ function postDiscussion() {
 
 function updateDiscussionContainer() {
     discussionContainer.innerHTML = "";
-    for(let discussion in discussions) {
-        let wholeDiscussionBox = document.createElement("p");
+
+    for (let discussionDate in discussions) {
+        let discussion = discussions[discussionDate];
+
+        let wholeDiscussionBox = document.createElement("div");
         wholeDiscussionBox.classList.add("column");
         wholeDiscussionBox.classList.add("card");
         wholeDiscussionBox.classList.add("whole-discussion-box");
-        //box for containing the discussions with classes card and discussion
-        let discussionBox = document.createElement("p");
+
+        let discussionBox = document.createElement("div");
         discussionBox.classList.add("card");
         discussionBox.classList.add("discussion");
         discussionBox.classList.add("discussion-box");
+        discussionBox.classList.add("medium");
+        discussionBox.classList.add("light-highlight");
 
-        //create the spands for user, date, and text and set their classes accordingly
         let dateBox = document.createElement("span");
         let textBox = document.createElement("span");
         let userBox = document.createElement("span");
@@ -64,22 +82,15 @@ function updateDiscussionContainer() {
         textBox.classList.add("discussion-text-box");
         userBox.classList.add("discussion-user-box");
 
-        //set their inner text
-        dateBox.innerText = discussion; //the date
-        textBox.innerText = discussions[discussion]; //the correlating discussion
-        userBox.innerText = "Boonyasit Warachan"; //name of the user
+        dateBox.innerText = discussionDate;
+        textBox.innerText = discussion.text;
+        userBox.innerText = discussion.user;
 
-        //put each element into the discussion box
-        discussionBox.appendChild(userBox); 
+        discussionBox.appendChild(userBox);
         discussionBox.appendChild(dateBox);
         discussionBox.appendChild(textBox);
 
-        //put the discussion box into the container
-        wholeDiscussionBox.appendChild(discussionBox);
-
-        // get the replies of the discussion based on the replies dictionary and created button for creating and posting reply
-        let discussionReplies = replies[discussion];
-        let replyInputContainer = document.createElement("card");
+        let replyInputContainer = document.createElement("div");
         replyInputContainer.classList.add("root");
         replyInputContainer.classList.add("row");
         let replyInput = document.createElement("textarea");
@@ -89,43 +100,80 @@ function updateDiscussionContainer() {
         replyButton.innerText = "Reply";
         replyButton.classList.add("small");
         replyButton.classList.add("post-button");
-        replyButton.classList.add("highlight");
-        replyButton.addEventListener("click", function () {updateReplies(replyInput.value, discussion)});
+        // replyButton.classList.add("light-highlight");
+        replyButton.addEventListener("click", function () {
+            updateReplies(replyInput.value, discussionDate);
+        });
         replyInputContainer.appendChild(replyInput);
         replyInputContainer.appendChild(replyButton);
-        wholeDiscussionBox.appendChild(replyInputContainer);
-        discussionContainer.appendChild(wholeDiscussionBox);
-        
-        // for each reply for this discussion
-        for(let reply in discussionReplies) {
-            //create a reply container, box, date, user
-            let replyContainer = document.createElement("span");
-            let replyBox = document.createElement("p");
-            replyBox.classList.add("card");
-            let replyDate = document.createElement("span");
-            let replyUser = document.createElement("span");
-            let replyText = document.createElement("span");
-            // add the corresponding classes to the date, text and user
-            replyDate.classList.add("discussion-date-box");
-            replyText.classList.add("discussion-text-box");
-            replyUser.classList.add("discussion-user-box");
-            replyDate.innerText = reply;
-            replyUser.innerText = "Boonyasit Warachan";
-            replyText.innerText = discussionReplies[reply];
-            replyBox.appendChild(replyUser);
-            replyBox.appendChild(replyDate);
-            replyBox.appendChild(replyText);
-            replyContainer.appendChild(replyBox);
-            wholeDiscussionBox.appendChild(replyContainer); 
+        wholeDiscussionBox.appendChild(discussionBox);
+
+        // Display replies for the current discussion
+        if (replies[discussionDate]) {
+            for (let user in replies[discussionDate]) {
+                for (let replyDate in replies[discussionDate][user]) {
+                    let replyText = replies[discussionDate][user][replyDate];
+
+                    let replyContainer = document.createElement("div");
+                    replyContainer.classList.add("column");
+                    replyContainer.classList.add("whole-discussion-box");
+                    replyContainer.classList.add("reply-container");
+                    replyContainer.classList.add("root");
+                    let replyBox = document.createElement("div");
+
+                    // replyBox.classList.add("light-highlight");
+                    replyBox.classList.add("discussion");
+                    replyBox.classList.add("discussion-box");
+                    replyBox.classList.add("small");
+                    replyBox.classList.add("card");
+
+                    let replyDateElement = document.createElement("span");
+                    let replyUser = document.createElement("span");
+                    let replyTextBox = document.createElement("span");
+
+                    replyDateElement.classList.add("discussion-date-box");
+                    replyTextBox.classList.add("discussion-text-box");
+                    replyUser.classList.add("discussion-user-box");
+
+                    replyDateElement.innerText = replyDate;
+                    replyUser.innerText = user;
+                    replyTextBox.innerText = replyText;
+
+                    replyBox.appendChild(replyUser);
+                    replyBox.appendChild(replyDateElement);
+                    replyBox.appendChild(replyTextBox);
+                    replyContainer.appendChild(replyBox);
+                    wholeDiscussionBox.appendChild(replyContainer);
+                }
+            }
         }
+        discussionContainer.appendChild(wholeDiscussionBox);
+        wholeDiscussionBox.appendChild(replyInputContainer);
     }
 }
 
-function updateReplies(reply, discussion) {
-    if (!replies[discussion]) {
-        replies[discussion] = [];
+function updateReplies(reply, discussionDate) {
+    if (!replies[discussionDate]) {
+        replies[discussionDate] = {};
     }
-    replies[discussion].push(reply);
+
+    let user = "Boonyasit Warachan"; // Assuming the user is hardcoded for simplicity
+    let date = new Date();
+    let replyDate =
+        date.getMonth() +
+        "/" +
+        date.getDate() +
+        ", " +
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        date.getSeconds();
+
+    if (!replies[discussionDate][user]) {
+        replies[discussionDate][user] = {};
+    }
+
+    replies[discussionDate][user][replyDate] = reply;
     updateDiscussionContainer();
 }
-
