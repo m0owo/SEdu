@@ -46,16 +46,16 @@
         <div class="root">
             <!-- for teachers -->
             <!-- description -->
-            <div style="padding:1rem; width: 100%;">
+            <div class="card-div">
                 <div class="card">
-                    <div class="info-column" style="padding-bottom: 3%">
+                    <div class="info-column">
                         <span class="medium-bold">Assignment Description</span>
                     </div>
                     <hr>
-                    <div class="info-column" style="padding-top: 3%;">
+                    <div class="info-column">
                         <span class="description small" id="description"></span>
                         <textarea class="description-input" id="descriptionTextArea"
-                            style="width:0; height:0;visibility: hidden;"></textarea>
+                            style="width:0; height:0;visibility: hidden; resize:none; border-radius:0.5rem;"></textarea>
                         <span class="edit-button" id="editButton">Edit</span>
                     </div>
                 </div>
@@ -63,13 +63,13 @@
 
 
             <!-- files -->
-            <div style="padding:1rem; width: 100%;">
+            <div class="card-div">
                 <div class="card">
-                    <div class="info-column" style="padding-bottom: 3%;">
+                    <div class="info-column">
                         <span class="medium-bold"> Additional Resources</span>
                     </div>
                     <hr>
-                    <div class="info-column" style="padding-top: 3%;">
+                    <div class="info-column">
                         <span class="additional-resources" id="additionalResources"></span>
                         <span class="edit-button" id="fileInputButton">Insert File<input type="file" id="fileInput"
                                 accept=".pdf, .doc, .docx, .txt, .zip"></span></span>
@@ -80,7 +80,25 @@
                 </div>
             </div>
         </div>
+        <div class="root">
+            <div class="card-div" style="width: 60%; float:left;">
+                <div class="card">
+                    <div class="info-column">
+                        <span class="medium-bold">Comments</span>
+                    </div>
+                    <hr>
+                    <div class="info-column">
+                        <span class="comment-container small" id="description"></span>
+                        <div class="root-row">
+                            <textarea class="comment-input" id="commentInput">Enter a comment</textarea>
+                            <span class="edit-button">Send</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 
 </body>
 <script src="../static/js/assignment.js"></script>
