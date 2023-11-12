@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
     <link rel="stylesheet" href="../static/css/course.css">
     <title>Course Page</title>
 </head>
-
 <body>
     <header>
         <div class="nav-items-uniteractable">
@@ -57,12 +55,14 @@
         </div>
 
         <div class="root" id="course">
-
-            <div class="info-column" id="discussion">
-                discussion
+            <div class="info-column column" id="discussion">
+                <div class="root card row">
+                    <textarea id="discussionInput" class="textarea small">Start a Discussion . . .</textarea>
+                    <span class="post-button highlight" id="postButton">Post</span>
+                </div>
+                <div class="root column"" id="discussionContainer">
+                </div>
             </div>
-
-
             <div class="info-column" id="upcoming">
                 <div class="section">
                     <div class="card">
@@ -105,11 +105,8 @@
                     </div>
 
                 </div>
-
-
             </div>
         </div>
-
     </div>
 </body>
 <script src="../static/js/course.js"></script>

@@ -18,6 +18,16 @@ a {
     text-decoration: none;
 }
 
+textarea {
+    border: solid;
+    border-color: lightgray;
+    resize: none;
+    border-radius: 0.5rem;
+    width: 100%;
+    height: fit-content;
+    padding: 0.5rem;
+}
+
 .large {
     font-size: 1.2rem;
     font-weight: 600;

@@ -28,9 +28,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 1rem;
     background-color: white;
     align-items: center;
+    padding: 1rem;
 }
 
 .course-tab {
@@ -65,10 +65,121 @@
     align-items: flex-end;
 }
 
+.card-div{
+    padding:0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.card {
+    max-width: none !important; 
+    padding: 1rem;
+    justify-content: space-between;
+}
+
 #upcoming {
     display: none;
 }
 
 #completed {
     display: none;
+}
+
+.discussion-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem;
+    resize: none;
+}
+
+.root{
+    justify-content: center;
+    text-align: center;
+}
+
+.column {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    padding: 0.5rem;
+
+}
+.discussion {
+    width: fit-content;
+}
+
+.post-button {
+    width: fit-content;
+    height: 4rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 450;
+    padding: 1.5rem;
+    text-align: center;
+    border: solid;
+    border-color: orange;
+    border-width: 0.1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    color: rgb(33, 33, 41)
+}
+.post-button:hover {
+    border-color: black;
+    background-color: rgb(231, 172, 149);
+    color: whitesmoke;
+}
+
+.discussion-box{
+    width:100%;
+    flex-direction: row;
+    padding: 2rem;
+}
+
+.discussion-reply-container {
+    
+}
+
+.discussion-date-box{
+    color:navy;
+    width:max-content;
+    padding: 0.5rem;
+    flex-direction: row;
+    text-align: left;
+}
+
+.discussion-text-box {
+    width:100%;
+    flex-direction: row;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.discussion-user-box {
+    width:fit-content;
+    font-weight: bold;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.column {
+    flex-direction: column;
+}
+
+@media screen and (max-width: 750px){
+    .discussion-box {
+        flex-direction: column;
+        align-items: start;
+    }
+    .column {
+        flex-direction: column;
+        align-items: start;
+    }
+    .row {
+        flex-direction: row;
+        align-items: start;
+    }
 }
