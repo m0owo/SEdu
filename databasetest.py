@@ -175,9 +175,7 @@ class User(persistent.Persistent):
             for submission in enrollment.submissions:
                 assignment = getAssignmentByID(submission.assignment_id)
                 if submission.student_id == self.id:
-                    submission_details = submission.content
-                    submission_time = submission.timestamp
-                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission_details}, Submission Time: {submission_time}, Score: {submission.score}")
+                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission.content}, Submission Time: {submission.summit_date} {submission.summit_time}, Score: {submission.score}/{assignment.total_score}")
     
     def printEnrollment(self):
         print(self.__str__())
@@ -243,16 +241,17 @@ class Enrollment(persistent.Persistent):
         print(self.__str__())
 
 class Assignment(persistent.Persistent):
-    def __init__(self, id, title, assign_date, due_date, description):
+    def __init__(self, id, title, assign_date, assign_time, due_date, due_time, description):
         self.id = id
         self.title = title  # The title of the assignment
         self.assign_date = assign_date  # The date when the assignment is assigned
+        self.assign_time = assign_time
         self.due_date = due_date  # The due date for the assignment
+        self.due_time = due_time
         self.description = description  # Description of the assignment (text, instructions, etc.)
         self.student_id = 0
-        self.total_grade = 0
+        self.total_score = 0
 
-        self.grade = persistent.mapping.PersistentMapping()  
         self.submissions = persistent.list.PersistentList()
         self.individual_comments = persistent.list.PersistentList() # Dictionary with student_id as key and their individual comments as value
         self.class_comments = persistent.list.PersistentList() # List of class-wide comments
@@ -260,8 +259,8 @@ class Assignment(persistent.Persistent):
     def addSubmission(self, submission):
         self.submissions.append(submission)
     
-    def setTotalGrade(self, totalGrade):
-        self.total_grade = totalGrade
+    def setTotalScore(self, totalGrade):
+        self.total_score = totalGrade
 
     def addIndividualComment(self, commenter, comment_text=None):
         comment = {"commenter": commenter, "text": comment_text}
@@ -270,12 +269,9 @@ class Assignment(persistent.Persistent):
     def addClassComment(self, commenter, comment_text=None):
         comment = {"commenter": commenter, "text": comment_text}
         self.class_comments.append(comment)
-    
-    def getGrade(self):
-        return self.grade[self.student_id]
 
     def __str__(self):
-        return f"Homework: {self.title}, Due date: {self.due_date}, Description: {self.description}"
+        return f"Homework: {self.title}, Assign date: {self.assign_date} {self.assign_time} Due date: {self.due_date} {self.due_time}, Description: {self.description}"
     
     def printAssignmentDetail(self):
         print(self.__str__())
@@ -289,71 +285,73 @@ class Assignment(persistent.Persistent):
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}")
 
 class Submission(persistent.Persistent):
-    def __init__(self, student_id, assignment_id, content, timestamp):
+    def __init__(self, student_id, assignment_id, content, summit_date, summit_time):
         self.student_id = student_id
         self.assignment_id = assignment_id
         self.content = content
-        self.timestamp = timestamp
+        self.summit_date = summit_date
+        self.summit_time = summit_time
         self.score = None
 
 class Post(persistent.Persistent):
-    def __init__(self, content, author, date_posted):
+    def __init__(self, author, posted_date, posted_time, content):
         self.author = author  # The author of the post (teacher or student)
-        self.date_posted = date_posted  # The date when the post was created
+        self.posted_date = posted_date  # The date when the post was created
+        self.posted_time = posted_time
         self.content = content  # The content of the post (text, links, files, etc.)
         self.classroom_comments = persistent.list.PersistentList()  # List of comments on the post (textual comments)
 
-    def addComment(self, commenter, comment_text=None):
+    def addComment(self, commenter, comment_date, comment_time, comment_text=None):
         comment = {"commenter": commenter, "text": comment_text}
         self.classroom_comments.append(comment)
     
     def __str__(self):
-        return f"Author: {self.author}, Date: {self.date_posted}, Content:{self.content}"
+        return f"Author: {self.author}, Date: {self.posted_date} {self.posted_time}, Content: {self.content}"
     
     def printPost(self):
         print(self.__str__())
         for comment in self.classroom_comments:
-            print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}")
+            print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
 
-class Lab(persistent.Persistent):
-    def __init__(self, week, score=0):
-        super().__init__()
-        self.week = week
-        self.score = score
+# class Lab(persistent.Persistent):
+#     def __init__(self, week, score=0):
+#         super().__init__()
+#         self.week = week
+#         self.score = score
 
-    def setScore(self, score):
-        self.score = score
+#     def setScore(self, score):
+#         self.score = score
 
-    def getWeek(self):
-        return self.week
+#     def getWeek(self):
+#         return self.week
 
-    def getScore(self):
-        return self.score
+#     def getScore(self):
+#         return self.score
 
-    def __str__(self):
-        return f"Week {self.week}: Score {self.score}"
+#     def __str__(self):
+#         return f"Week {self.week}: Score {self.score}"
     
-class Attendance(persistent.Persistent):
-    def __init__(self, week, attended=False):
-        super().__init__()
-        self.week = week
-        self.attended = attended
+# class Attendance(persistent.Persistent):
+#     def __init__(self, week, attended=False):
+#         super().__init__()
+#         self.week = week
+#         self.attended = attended
 
-    def markAttended(self):
-        self.attended = True
+#     def markAttended(self):
+#         self.attended = True
 
-    def markAbsent(self):
-        self.attended = False
+#     def markAbsent(self):
+#         self.attended = False
 
-    def isAttended(self):
-        return self.attended
+#     def isAttended(self):
+#         return self.attended
 
-    def getWeek(self):
-        return self.week
+#     def getWeek(self):
+#         return self.week
 
-    def __str__(self):
-        attendance_status = "Present" if self.attended else "Absent"
-        return f"Week {self.week}: {attendance_status}"
+#     def __str__(self):
+#         attendance_status = "Present" if self.attended else "Absent"
+#         return f"Week {self.week}: {attendance_status}"
 
 
 root.courses = BTrees.OOBTree.BTree()
@@ -386,15 +384,15 @@ root.teachers[1101].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "2023-11-01", "2023-11-10", "Create house by using turtle")
-root.courses[101].addAssignment(root.assignments[101001])
-root.assignments[201001] = Assignment(2011001,"Project amazing", "2023-11-05", "2023-11-15", "Do your SE website")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Create house by using turtle")
+root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
+root.assignments[201001] = Assignment(2011001,"Project amazing", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
 
 
 # Student submits homework
 root.submissions = BTrees.OOBTree.BTree()
-root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11")
+root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11", "12:00PM")
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 
@@ -403,12 +401,11 @@ root.assignments[101001].addIndividualComment(root.teachers[1101].name, "Make su
 root.assignments[101001].addIndividualComment(root.students[1101].name, "I already resent my work. Can you check")
 
 #Set score to student assignment
-root.assignments[101001].setScore(s1_id, 98)
 s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[100] = Post(root.teachers[1101].name, "2023-11-11", "Are you ready to sent this prohect?")
+root.posts[100] = Post(root.teachers[1101].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
 root.posts[100].addComment(root.students[1101].name, "Yes, I'm already to sent this project")
 
 transaction.commit()
