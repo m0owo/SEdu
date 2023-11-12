@@ -343,7 +343,7 @@ s1_enroll3 = root.users[1101].enrollCourse(root.courses[202])
 s1_enroll4 = root.users[1101].enrollCourse(root.courses[301])
 
 #Initialize student info and enroll courses
-root.users[1111] = User(1101, 'Visit', "0101", "teacher")
+root.users[1111] = User(1111, 'Visit', "0101", "teacher")
 root.users[1111].enrollCourse(root.courses[101])
 root.users[1111].enrollCourse(root.courses[201])
 root.users[1111].enrollCourse(root.courses[202])
@@ -362,16 +362,16 @@ root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 #Adding comment in Assginment
-root.assignments[101001].addIndividualComment(root.teachers[1101].name, "Make sure you sent it in zip file")
-root.assignments[101001].addIndividualComment(root.students[1101].name, "I already resent my work. Can you check")
+root.assignments[101001].addIndividualComment(root.users[1111].name, "Make sure you sent it in zip file")
+root.assignments[101001].addIndividualComment(root.users[1101].name, "I already resent my work. Can you check")
 
 #Set score to student assignment
 s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[100] = Post(root.teachers[1101].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
-root.posts[100].addComment(root.students[1101].name,"2023-11-11", "13:59PM" "Yes, I'm already to sent this project")
+root.posts[100] = Post(root.users[1111].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
+root.posts[100].addComment(root.users[1101].name,"2023-11-11", "13:59PM" "Yes, I'm already to sent this project")
 
 transaction.commit()
 

@@ -43,8 +43,8 @@ async def read_user_home(request: Request, user_id: int):
 
 @app.get("/students/{user_id}")
 async def findStudent(user_id: int):
-    if user_id in root.students.keys():
-        return root.students[user_id]
+    if user_id in root.users.keys():
+        return root.users[user_id]
     else:
         return {"error": "Student not found"}
 
