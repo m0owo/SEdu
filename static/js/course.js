@@ -38,16 +38,29 @@ postButton.addEventListener("click", postDiscussion);
 function postDiscussion() {
     if (discussionInput.value !== "") {
         let date = new Date();
+        let month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month
+        let dayNumber = date.getDate(); // Using getDate() instead of getDay()
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+        
+        // Add leading zeros if necessary
+        month = month < 10 ? "0" + month : month;
+        dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
+        hour = hour < 10 ? "0" + hour : hour;
+        minute = minute < 10 ? "0" + minute : minute;
+        second = second < 10 ? "0" + second : second;
+
         let discussionDate =
-            date.getMonth() +
+            month +
             "/" +
-            date.getDate() +
+            dayNumber + // Use dayNumber instead of date
             ", " +
-            date.getHours() +
+            hour +
             ":" +
-            date.getMinutes() +
+            minute +
             ":" +
-            date.getSeconds();
+            second;
         discussions[discussionDate] = {
             user: "Boonyasit Warachan",
             text: discussionInput.value,
@@ -56,13 +69,15 @@ function postDiscussion() {
         updateDiscussionContainer();
     }
 }
-
 function updateDiscussionContainer() {
     discussionContainer.innerHTML = "";
-
-    for (let discussionDate in discussions) {
+    const sortedDiscussionDates = Object.keys(discussions).sort((a, b) => {
+        return new Date(b) - new Date(a);
+    });
+    for (let discussionDate of sortedDiscussionDates) {
+        console.log(discussionDate);
         let discussion = discussions[discussionDate];
-
+        
         let wholeDiscussionBox = document.createElement("div");
         wholeDiscussionBox.classList.add("column");
         wholeDiscussionBox.classList.add("card");
@@ -156,24 +171,34 @@ function updateReplies(reply, discussionDate) {
     if (!replies[discussionDate]) {
         replies[discussionDate] = {};
     }
-
-    let user = "Boonyasit Warachan"; // Assuming the user is hardcoded for simplicity
+    let user = "Boonyasit Warachan";
     let date = new Date();
-    let replyDate =
-        date.getMonth() +
-        "/" +
-        date.getDate() +
-        ", " +
-        date.getHours() +
-        ":" +
-        date.getMinutes() +
-        ":" +
-        date.getSeconds();
+    let month = date.getMonth() + 1;
+    let dayNumber = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
 
+    // Add leading zeros if necessary
+    month = month < 10 ? "0" + month : month;
+    dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
+    hour = hour < 10 ? "0" + hour : hour;
+    minute = minute < 10 ? "0" + minute : minute;
+    second = second < 10 ? "0" + second : second;
+    let replyDate =
+        month +
+        "/" +
+        dayNumber +
+        ", " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second;
     if (!replies[discussionDate][user]) {
         replies[discussionDate][user] = {};
     }
-
     replies[discussionDate][user][replyDate] = reply;
     updateDiscussionContainer();
 }
+
