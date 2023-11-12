@@ -406,7 +406,7 @@ s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
 root.posts[100] = Post(root.teachers[1101].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
-root.posts[100].addComment(root.students[1101].name, "Yes, I'm already to sent this project")
+root.posts[100].addComment(root.students[1101].name,"2023-11-11", "13:59PM" "Yes, I'm already to sent this project")
 
 transaction.commit()
 
