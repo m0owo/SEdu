@@ -4,7 +4,6 @@ import transaction
 import persistent
 from fastapi import Form
 
-
 storage = ZODB.FileStorage.FileStorage('mydata.fs')
 db = ZODB.DB(storage)
 connection = db.open()
@@ -53,7 +52,7 @@ class Course(persistent.Persistent):
         for key in self.gradeScheme:
             if  key["min"]<= score < key["max"]:
                 return key["Grade"]
-
+            
     def setGradeScheme(self, grade_list):
         self.gradeScheme = grade_list
 
@@ -74,17 +73,17 @@ class Course(persistent.Persistent):
         x = Post(newPost)
         self.posts.append(x)
         return x
+    
+    # def addLab(self, week, score):
+    #     self.labs.append(Lab(week, score))
 
-    def addLab(self, week, score):
-        self.labs.append(Lab(week, score))
-
-    def recordAttendance(self, week, attended):
-        self.attendances.append(Attendance(week, attended))
+    # def recordAttendance(self, week, attended):
+    #     self.attendances.append(Attendance(week, attended))
     
     def calculateLabScore(self):
         self.lab_score = sum(lab.getScore() for lab in self.labs)
         return self.lab_score
-
+    
     def calculateAttendanceScore(self):
         # Assuming each attendance counts as 1 point
         self.attendance_score = sum(1 for attendance in self.attendances if attendance.isAttended())
@@ -126,9 +125,7 @@ class Course(persistent.Persistent):
         print("Score")
         print(f"Midterm: {self.midterm_score}, Final: {self.final_score}")
         print(f"Assignmnet: {self.calculateAssignmentScore()}, Lab: {self.calculateLabScore()}, Attendence: {self.calculateAttendanceScore()}")
-    
-
-
+ 
 class User(persistent.Persistent):
     def __init__(self, id, name, password, role):
         self.enrolls = persistent.list.PersistentList()
@@ -136,21 +133,21 @@ class User(persistent.Persistent):
         self.name = name
         self.password = password
         self.role = role;
-
+    
     def enrollCourse(self, Course):
         x = Enrollment(Course)
         self.enrolls.append(x)
         return x
-
+    
     def getEnrollment(self,Course):
         if Course in self.enrolls:
             return Course
         return None
-
+    
     def __str__(self):
         return f"ID: {self.id:8} Name {self.name}"
-
     
+
     def calculateGPA(self):
         self.credit = 0
         self.totalCredit = 0
@@ -168,9 +165,19 @@ class User(persistent.Persistent):
 
             self.credit += c.getCourse().getCredit() * self.num
             self.totalCredit += c.getCourse().getCredit()
-
+            
         return (self.credit/self.totalCredit)
-    
+    def printAllAssignments(self):
+        print(f"Assignments for Student: {self.name} (ID: {self.id})")
+        for enrollment in self.enrolls:
+            course = enrollment.getCourse()
+            print(f"  Course: {course.name}")
+            for assignment in course.assignments:
+                print(f"    Assignment: {assignment.title}")
+                for submission in enrollment.submissions:
+                    if submission.assignment_id == assignment.id:
+                        print(f"      Submission: {submission.content}, Score: {submission.score}")
+
     def printSubmissions(self):
         for enrollment in self.enrolls:
             course = enrollment.getCourse()
@@ -189,14 +196,12 @@ class User(persistent.Persistent):
     def setName(self,name):
         self.name = name
     
-
     def login_sys(self, student_id, student_password):
         return str(student_id) == str(self.id) and str(student_password) == str(self.password)
     
     def getstudentID(self):
         return self.id
-
-
+    
 class Enrollment(persistent.Persistent):
     def __init__(self,course,score = 0):
         self.course = course
@@ -207,7 +212,7 @@ class Enrollment(persistent.Persistent):
 
     def getCourse(self):
         return self.course
-
+    
     def getGrade(self):
         return str( self.course.ScoreGrading(self.getScore()))
     
@@ -231,6 +236,7 @@ class Enrollment(persistent.Persistent):
 
     def submitAssignment(self, Submission):
         self.submissions.append(Submission)
+        Submission.sent = True
         # Assuming you have a way to get the assignment object
         assignment_object = getAssignmentByID(Submission.assignment_id)
         assignment_object.addSubmission(Submission)
@@ -294,6 +300,7 @@ class Submission(persistent.Persistent):
         self.summit_date = summit_date
         self.summit_time = summit_time
         self.score = None
+        self.sent = False
 
 class Post(persistent.Persistent):
     def __init__(self, author, posted_date, posted_time, content):
@@ -314,46 +321,6 @@ class Post(persistent.Persistent):
         print(self.__str__())
         for comment in self.classroom_comments:
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
-
-# class Lab(persistent.Persistent):
-#     def __init__(self, week, score=0):
-#         super().__init__()
-#         self.week = week
-#         self.score = score
-
-#     def setScore(self, score):
-#         self.score = score
-
-#     def getWeek(self):
-#         return self.week
-
-#     def getScore(self):
-#         return self.score
-
-#     def __str__(self):
-#         return f"Week {self.week}: Score {self.score}"
-    
-# class Attendance(persistent.Persistent):
-#     def __init__(self, week, attended=False):
-#         super().__init__()
-#         self.week = week
-#         self.attended = attended
-
-#     def markAttended(self):
-#         self.attended = True
-
-#     def markAbsent(self):
-#         self.attended = False
-
-#     def isAttended(self):
-#         return self.attended
-
-#     def getWeek(self):
-#         return self.week
-
-#     def __str__(self):
-#         attendance_status = "Present" if self.attended else "Absent"
-#         return f"Week {self.week}: {attendance_status}"
 
 
 root.courses = BTrees.OOBTree.BTree()
@@ -383,7 +350,6 @@ root.teachers[1101].enrollCourse(root.courses[201])
 root.teachers[1101].enrollCourse(root.courses[202])
 root.teachers[1101].enrollCourse(root.courses[301])
 
-
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
 root.assignments[101001] = Assignment(101001,"Homework1 turtle", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Create house by using turtle")
@@ -391,12 +357,10 @@ root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[201001] = Assignment(2011001,"Project amazing", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
 
-
 # Student submits homework
 root.submissions = BTrees.OOBTree.BTree()
 root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11", "12:00PM")
 s1_enroll1.submitAssignment(root.submissions[1000])
-
 
 #Adding comment in Assginment
 root.assignments[101001].addIndividualComment(root.teachers[1101].name, "Make sure you sent it in zip file")
@@ -431,12 +395,10 @@ if  __name__ == "__main__":
         student = students[s]
         student.printEnrollment()
         student.printSubmissions()
+        student.printAllAssignments()
     print()
 
     posts = root.posts
     for p in posts:
         post = posts[p]
         post.printPost()
-
-
-
