@@ -334,21 +334,20 @@ root.courses[301] = Course(301, 'Artificial Intelligent', 3)
 # root.courses[301].setGradeScheme(grading_ai)
 
 #Initialize student info and enroll courses
-root.students = BTrees.OOBTree.BTree()
-root.students[1101] = User(1101, 'moomoo', "1111", "student")
-s1_id = root.students[1101].id
-s1_enroll1 = root.students[1101].enrollCourse(root.courses[101])
-s1_enroll2 = root.students[1101].enrollCourse(root.courses[201])
-s1_enroll3 = root.students[1101].enrollCourse(root.courses[202])
-s1_enroll4 = root.students[1101].enrollCourse(root.courses[301])
+root.users = BTrees.OOBTree.BTree()
+root.users[1101] = User(1101, 'moomoo', "1111", "student")
+s1_id = root.users[1101].id
+s1_enroll1 = root.users[1101].enrollCourse(root.courses[101])
+s1_enroll2 = root.users[1101].enrollCourse(root.courses[201])
+s1_enroll3 = root.users[1101].enrollCourse(root.courses[202])
+s1_enroll4 = root.users[1101].enrollCourse(root.courses[301])
 
 #Initialize student info and enroll courses
-root.teachers = BTrees.OOBTree.BTree()
-root.teachers[1101] = User(1101, 'Visit', "0101", "teacher")
-root.teachers[1101].enrollCourse(root.courses[101])
-root.teachers[1101].enrollCourse(root.courses[201])
-root.teachers[1101].enrollCourse(root.courses[202])
-root.teachers[1101].enrollCourse(root.courses[301])
+root.users[1111] = User(1101, 'Visit', "0101", "teacher")
+root.users[1111].enrollCourse(root.courses[101])
+root.users[1111].enrollCourse(root.courses[201])
+root.users[1111].enrollCourse(root.courses[202])
+root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
@@ -392,10 +391,11 @@ if  __name__ == "__main__":
 
     students = root.students
     for s in students:
-        student = students[s]
-        student.printEnrollment()
-        student.printSubmissions()
-        student.printAllAssignments()
+        if s.role == 'student':
+            student = students[s]
+            student.printEnrollment()
+            student.printSubmissions()
+            student.printAllAssignments()
     print()
 
     posts = root.posts

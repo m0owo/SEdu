@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from databasetest import root, commit_transaction  # Import your database-related code
+from fastapi import Form
 
 
 app = FastAPI()
@@ -11,13 +12,23 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_home():
-    with open("templates/home.html", "r", encoding="utf-8") as file:
+    with open("templates/loginpage.html", "r", encoding="utf-8") as file:
         html_content = file.read()
     return HTMLResponse(content=html_content)
 
+@app.post("/home/", response_class=HTMLResponse)
+async def read_login(requests: Request, student_id:str=Form(...), student_password:str=Form(...)):
+    user = root.users[int(student_id)]
+    if user.login_sys(student_id,student_password):
+        return templates.TemplateResponse("home.html", {"request": requests, "user": user})
+    raise HTTPException(status_code=404, detail="User not found")
+    
+
 @app.get("/home/", include_in_schema=False)
 def redirect_home():
-    return RedirectResponse(url="/")
+    with open("templates/home.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content)
 
 @app.get("/{user_id}", response_class=HTMLResponse)
 async def read_user_home(request: Request, user_id: int):

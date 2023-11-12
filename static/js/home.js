@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!userData || !userData.id) {
             return;
         }
-        //console.log(userData);
+        // console.log(userData);
         let enrolls = userData.enrolls;
         //console.log(enrolls);
         let enrollments = enrolls["data"];
