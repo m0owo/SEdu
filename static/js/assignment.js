@@ -6,8 +6,8 @@ const descriptionText = document.getElementById("description");
 descriptionEdit.addEventListener("click", showDescriptionTextArea);
 
 let editing = false;
-descriptionTextArea.value = "";
-descriptionText.innerText = "Enter a brief description"
+descriptionText.innerText = "Enter a Brief Description"
+descriptionTextArea.innerText = "";
 
 // add text editing features, like tab
 function showDescriptionTextArea() {
@@ -21,7 +21,6 @@ function showDescriptionTextArea() {
         descriptionEdit.innerText = "Done"
         editing = true;
     } else if (editing = true){
-        // descriptionTextArea.style.transition = "none";
         descriptionText.innerText = descriptionTextArea.value;
         descriptionTextArea.value = "";
         descriptionTextArea.style.width = "0px";

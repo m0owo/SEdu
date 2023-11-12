@@ -94,7 +94,6 @@ input .edit-button:hover {
 }
 
 hr {
-    margin: auto;
     width: 100%;
 }
 
@@ -103,6 +102,7 @@ hr {
     width: 100%;
     height: 100%;
     max-width: none;
+    min-height: 200px;
 }
 
 .card-div{
@@ -112,11 +112,12 @@ hr {
 }
 
 .root {
-    padding: 1rem;
-    padding-bottom: 0rem;
+    padding: 0.8rem;
+    padding-bottom: 0;
 }
 
 .root > :first-child {
+    flex: 90%;
 }
 
 .root-row {
@@ -130,6 +131,10 @@ hr {
     width: 100%;
 }
 
+column {
+    flex-direction: column;
+}
+
 .comment-input {
     width: 100%;
     height:fit-content;
@@ -140,8 +145,13 @@ hr {
 }
 
 @media screen and (min-width: 750px){
-    hr {
-        margin: 0 30px;
+    .root-row {
+        flex-direction: column;
+        align-items: start;
+    }
+    .column {
+        flex-direction: column;
+        align-items: start;
     }
 }
 
