@@ -106,4 +106,3 @@ function updateCommentContainer() {
     }
     comments = {};
 }
-
