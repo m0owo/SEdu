@@ -75,3 +75,35 @@ function updateFileFrame() {
     }
 }
 
+// assignment ---Comments--- code + have to add user to the dict
+let comments = {};
+const commentInput = document.getElementById("commentInput");
+const commentContainer = document.getElementById("commentContainer");
+const commentButton = document.getElementById("sendComment");
+
+commentButton.addEventListener("click", sendComment);
+
+function sendComment() {
+    let date = new Date();
+    comments[date.getMonth() + "/" + date.getDate() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()] = (commentInput.value);
+    commentInput.value = "";
+    updateCommentContainer();
+}
+
+function updateCommentContainer() {
+    for(let comment in comments) {
+        let commentBox = document.createElement("p");
+        let dateBox = document.createElement("span");
+        let textBox = document.createElement("span");
+        commentBox.classList.add("comment-box");
+        dateBox.classList.add("comment-date-box");
+        textBox.classList.add("comment-text-box");
+        dateBox.innerText = comment;
+        textBox.innerText = comments[comment];
+        commentBox.appendChild(dateBox);
+        commentBox.appendChild(textBox);
+        commentContainer.appendChild(commentBox);
+    }
+    comments = {};
+}
+
