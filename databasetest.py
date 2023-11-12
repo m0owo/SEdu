@@ -10,6 +10,8 @@ db = ZODB.DB(storage)
 connection = db.open()
 root = connection.root
 
+def commit_transaction():
+    transaction.commit()
 
 def getAssignmentByID(assignment_id):
     return root.assignments.get(assignment_id, None)

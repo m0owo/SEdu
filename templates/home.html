@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <div id="user-data" data = "{{user.id}}"></div>
     <header>
         <div class="nav-items-uniteractable">
             <img src="../static/resources/se.png" class="logo">
@@ -37,8 +38,8 @@
                 </div>
                 <div class="card-content">
                     <div>
-                        <span class="large">Firstname Surname</span>
-                        <span class="medium">65011XXX</span>
+                        <span class="large">{{user.name}}</span>
+                        <span class="medium">6501{{user.id}}</span>
                     </div>
                     <div>
                         <span class="small">Bachelor</span>
@@ -60,7 +61,7 @@
                 <div class="section">
                     <span class="large">Upcoming Assignments</span>
                     <div class="card">
-                        <div class="card-content">
+                        <div class="card-content" id="assignments">
                             <div class="assignment-bar">
                                 <div>
                                     <span class="medium">HW 11 Hypothesis Testing</span>
