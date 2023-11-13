@@ -69,10 +69,9 @@ class Course(persistent.Persistent):
         self.assignments.append(Assignment)
         return Assignment
     
-    def addPost(self, newPost):
-        x = Post(newPost)
-        self.posts.append(x)
-        return x
+    def addPost(self, Post):
+        self.posts.append(Post)
+        return Post
     
     # def addLab(self, week, score):
     #     self.labs.append(Lab(week, score))
@@ -372,8 +371,13 @@ s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[100] = Post(root.users[1111].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
-root.posts[100].addComment(root.users[1101].name,"2023-11-11", "13:59PM" "Yes, I'm already to sent this project")
+root.posts[100] = Post(root.users[1111].name, "09/22/2023", "13:49PM", "Are you ready to sent this project?")
+root.courses[101].addPost(root.posts[100])
+root.posts[100].addComment(root.users[1101].name,"09/22/2023", "13:59PM" "Yes, I'm already to sent this project")
+
+root.posts[201] = Post(root.users[1111].name, "10/24/2023", "14:49PM", "Sent your project now")
+root.courses[201].addPost(root.posts[201])
+root.posts[201].addComment(root.users[1101].name,"10/30/2023", "15:59PM" "No, I didn't finished it")
 
 transaction.commit()
 
