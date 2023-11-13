@@ -3,8 +3,69 @@ let statusOverdue = "overdue";
 let roleStudent = "student";
 let roleTeacher = "teacher";
 
+//assignment ---Edit Name and Due Date---
+const assignmentName = document.getElementById("assignmentName");
+const assignmentDueDate = document.getElementById("assignmentDueDate");
+assignmentName.addEventListener("click", function(e) {editAssignmentName(e)});
+assignmentDueDate.addEventListener("click", function(e) {editAssignmentDueDate(e)});
 
-// assignment ---Description--- code
+function editAssignmentName(e) {
+    let newNameInput = document.createElement("input");
+    newNameInput.type = "text";
+    newNameInput.classList.add("large");
+    let curName = e.target
+    curName.parentNode.replaceChild(newNameInput, curName);
+    newNameInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            curName.innerText = newNameInput.value;
+            e.target.parentNode.replaceChild(curName, newNameInput);
+        }
+    });
+}
+
+function editAssignmentDueDate(e) {
+    let newDateInput = document.createElement("input");
+    newDateInput.type = "text";
+    newDateInput.style.width = "fit-content";
+    newDateInput.classList.add("small");
+    let curDate = e.target;
+    let container = document.createElement("div");
+    container.appendChild(newDateInput);
+    curDate.parentNode.replaceChild(container, curDate);
+    newDateInput.placeholder = "month day, year time";
+    newDateInput.addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+            const enteredDateText = newDateInput.value;
+            const enteredDateObject = new Date(enteredDateText);
+            let currentDate = new Date();
+            if (!isNaN(enteredDateObject.getTime()) && enteredDateObject > currentDate) {
+                let formatDate = { month: 'long', day: 'numeric', year: 'numeric'};
+                let formatTime = { hour: '2-digit', minute: '2-digit' };
+                let date = enteredDateObject.toLocaleDateString('en-US', formatDate);
+                let time = enteredDateObject.toLocaleTimeString('en-US', formatTime);
+                curDate.innerText = date + ", " +  time;
+            } else if (enteredDateObject < currentDate) {
+                alert("Invalid Date");
+            } else {
+                alert("Invalid Date Format (Month Day, Year, Time(optional)");
+            }
+            container.parentNode.replaceChild(curDate, container);
+        }
+    });
+    newDateInput.focus();
+}
+
+let formatDate = { month: 'long', day: 'numeric', year: 'numeric' };
+let formatTime = { hour: '2-digit', minute: '2-digit' };
+let date = comment.date.toLocaleDateString('en-US', formatDate);
+let time = comment.date.toLocaleTimeString('en-US', formatTime);
+
+
+
+
+
+
+// assignment ---Description---
 const descriptionEdit = document.getElementById("editButton");
 const descriptionTextArea = document.getElementById("descriptionTextArea");
 const descriptionText = document.getElementById("description");
