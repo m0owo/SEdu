@@ -351,14 +351,16 @@ root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Create house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/13/2023", "11:59 PM", "Create house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
-root.assignments[201001] = Assignment(2011001,"Project amazing", "2023-11-01", "12:00AM", "2023-11-10", "23:59PM", "Do your SE website")
+root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
+root.assignments[201002] = Assignment(201002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
+root.courses[201].addAssignment(root.assignments[201002])
 
 # Student submits homework
 root.submissions = BTrees.OOBTree.BTree()
-root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11", "12:00PM")
+root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11", "12:00 PM")
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 #Adding comment in Assginment
