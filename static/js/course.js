@@ -2,10 +2,37 @@
 const discussionEl = document.getElementById("discussion");
 const upcomingEl = document.getElementById("upcoming");
 const completedEl = document.getElementById("completed");
+const newButton = document.getElementById("new-assignment");
 
 discussionEl.addEventListener("click", showDiscussion);
 upcomingEl.addEventListener("click", showUpcoming);
 completedEl.addEventListener("click", showCompleted);
+newButton.addEventListener("click", addNewAssignment);
+
+function addNewAssignment() {
+    const userElement = document.getElementById("user-data");
+    var user = userElement.getAttribute("data");
+    var course_id = userElement.getAttribute("course");
+    // Make a POST request to create an empty assignment
+    fetch(`/create-new-assignment/${course_id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "course_id": course_id,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Assignment created:', data);
+        fetchDBtoUpdate();
+    })
+    .catch(error => {
+        console.error('Error creating assignment:', error);
+    });
+}
+
 
 function showDiscussion() {
     discussionEl.style.display = "flex";
@@ -26,7 +53,9 @@ function showCompleted() {
 }
 
 //pull assignments from database
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", fetchDBtoUpdate);
+
+function fetchDBtoUpdate() {
     const userElement = document.getElementById("user-data");
     var user = userElement.getAttribute("data");
     var course_id = userElement.getAttribute("course");
@@ -127,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     pullAssignmentFromDB();
-});
+}
 
 function isToday(someDate) {
     const today = new Date();
@@ -318,53 +347,3 @@ function updateDiscussionContainer() {
         wholeDiscussionBox.appendChild(replyInputContainer);
     }
 }
-
-
-// add new assignment
-function addNewAssignment() {
-    console.log("HELLO MOTHERFUCEKR");
-    const upcoming = document.getElementById("upcoming");
-
-    let card = document.createElement("div");
-    card.classList.add("card");
-
-    let cardContent = document.createElement("div");
-    cardContent.classList.add("card-content");
-
-    let assignmentCard = document.createElement("div");
-    assignmentCard.classList.add("assignment-card");
-
-    let div = document.createElement("div");
-
-    let highlight = document.createElement("div");
-    div.classList.add("highlight");
-
-    let dateSpan = document.createElement("span");
-    dateSpan.classList.add("small");
-    dateSpan.innerText = "date hehe";
-    
-    let titleSpan = document.createElement("span");
-    titleSpan.classList.add("medium");
-    titleSpan.innerText = "new Assighnment ja"
-    
-    let viewSpan = document.createElement("span");
-    viewSpan.classList.add("nav-items-small");
-
-    let viewLink = document.createElement("a");
-    viewLink.href = "/assignment/";
-    viewLink.innerText = "view da assignment";
-
-    viewSpan.appendChild(viewLink);
-
-    assignmentCard.appendChild(highlight);
-    highlight.appendChild(dateSpan);
-
-    assignmentCard.appendChild(titleSpan);
-    assignmentCard.appendChild(viewSpan);
-    
-    cardContent.appendChild(assignmentCard);
-    card.appendChild(cardContent);
-
-    upcoming.append(card);
-}
-

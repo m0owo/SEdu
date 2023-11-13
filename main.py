@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from databasetest import root, commit_transaction  # Import your database-related code
+from databasetest import root, commit_transaction, Assignment  # Import your database-related code
 from fastapi import Form
 
 
@@ -80,6 +80,26 @@ async def read_course_complete():
     with open("templates/assignmentcompleted.html", "r", encoding="utf-8") as file:
         html_content = file.read()
     return HTMLResponse(content=html_content)
+
+@app.post("/create-new-assignment/{course_id}")
+async def create_new_assignment(course_id: int):
+    course = root.courses.get(course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    assignment_id = int(str(course_id) + "001")
+
+    # Check if the assignment_id already exists
+    while assignment_id in root.assignments:
+        assignment_id += 1
+
+    new_assignment = Assignment(assignment_id, "New Assignment", "11/01/2023", "12:00 AM", "1/1/2024", "11:59 PM", "Description Here")
+    root.assignments[assignment_id] = new_assignment
+    root.courses[course_id].addAssignment(root.assignments[assignment_id])
+
+    return new_assignment
+
+
 
 @app.on_event("shutdown")
 def shutdown_event():
