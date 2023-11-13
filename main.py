@@ -60,6 +60,12 @@ async def read_course():
         html_content = file.read()
     return HTMLResponse(content=html_content)
 
+@app.get("/assignmentcompleted/", response_class=HTMLResponse)
+async def read_course_complete():
+    with open("templates/assignmentcompleted.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content)
+
 @app.on_event("shutdown")
 def shutdown_event():
     commit_transaction()  # Commit the transaction on shutdown
