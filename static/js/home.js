@@ -19,22 +19,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const assignmentsElement = document.getElementById("assignments");
 
     function updateAssignment(userData) {
-        // assignmentsElement.innerHTML = "";
+        assignmentsElement.innerHTML = "";
 
         if (!userData || !userData.id) {
             return;
         }
-        // console.log(userData);
-        let enrolls = userData.enrolls;
-        //console.log(enrolls);
-        let enrollments = enrolls["data"];
-        for (enrollment of enrollments) {
-            let course_name = enrollment["course"]["name"];
 
+        let enrolls = userData.enrolls;
+        let enrollments = enrolls["data"];
+
+        for (let enrollment of enrollments) {
+            let course_name = enrollment["course"]["name"];
             let assignments = enrollment["course"]["assignments"]["data"];
 
             if (Array.isArray(assignments)) {
                 for (let assignment of assignments) {
+                    console.log(assignment["title"]);
+                    console.log(assignment["due_date"]);
+                    console.log(assignment["due_time"]);
+                    
                     let divbar = document.createElement("div");
                     divbar.className = "assignment-bar";
                     let div1 = document.createElement("div");
@@ -53,35 +56,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     let spantime = document.createElement("span");
                     spantime.className = "small";
-                    spantime.textContent = "haha";
+
+                    let dueDate = new Date(assignment["due_date"]);
+                    let dueTime = assignment["due_time"];
+
+                    if (isToday(dueDate)) {
+                        spantime.textContent = `Today, ${dueTime}`;
+                    } else if (isUpcoming(dueDate)) {
+                        spantime.textContent = `${getDayOfWeek(dueDate)}, ${dueTime}`;
+                    } else {
+                        // If overdue, don't create anything
+                        continue;
+                    }
 
                     div1.appendChild(span1);
                     div1.appendChild(span2);
 
                     divhighlight.appendChild(spantime);
                     div2.appendChild(divhighlight);
-                    
+
                     divbar.appendChild(div1);
                     divbar.appendChild(div2);
 
                     assignmentsElement.appendChild(divbar);
-
-
-                    //console.log(assignment);
-                    console.log(assignment["title"]);
-                    console.log(assignment["assign_date"]);
-                    console.log(assignment["assign_time"]);
                 }
             }
-
         }
+    }
 
+    function isToday(someDate) {
+        const today = new Date();
+        return (
+            someDate.getDate() === today.getDate() &&
+            someDate.getMonth() === today.getMonth() &&
+            someDate.getFullYear() === today.getFullYear()
+        );
+    }
 
+    function isUpcoming(someDate) {
+        const today = new Date();
+        return someDate > today;
+    }
 
-        let divbar = document.createElement("div");
-        divbar.className = "assignment-bar";
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
+    // Function to get the day of the week
+    function getDayOfWeek(someDate) {
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return daysOfWeek[someDate.getDay()];
     }
 
     function updateDateTime() {
