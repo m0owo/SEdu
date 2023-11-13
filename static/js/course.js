@@ -37,31 +37,12 @@ postButton.addEventListener("click", postDiscussion);
 
 function postDiscussion() {
     if (discussionInput.value !== "") {
-        let date = new Date();
-        let month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month
-        let dayNumber = date.getDate(); // Using getDate() instead of getDay()
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let second = date.getSeconds();
-        
-        // Add leading zeros if necessary
-        month = month < 10 ? "0" + month : month;
-        dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
-        hour = hour < 10 ? "0" + hour : hour;
-        minute = minute < 10 ? "0" + minute : minute;
-        second = second < 10 ? "0" + second : second;
-
-        let discussionDate =
-            month +
-            "/" +
-            dayNumber + // Use dayNumber instead of date
-            ", " +
-            hour +
-            ":" +
-            minute +
-            ":" +
-            second;
-        discussions[discussionDate] = {
+        let current = new Date();
+        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric'};
+        let formatTime = { hour: '2-digit', minute: '2-digit' };
+        let date = current.toLocaleDateString('en-US', formatDate);
+        let time = current.toLocaleTimeString('en-US', formatTime);
+        discussions[date + ", " + time] = {
             user: "Boonyasit Warachan",
             text: discussionInput.value,
         };
@@ -168,33 +149,6 @@ function updateDiscussionContainer() {
 }
 
 function updateReplies(reply, discussionDate) {
-    if (!replies[discussionDate]) {
-        replies[discussionDate] = {};
-    }
-    let user = "Boonyasit Warachan";
-    let date = new Date();
-    let month = date.getMonth() + 1;
-    let dayNumber = date.getDate();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
-
-    // Add leading zeros if necessary
-    month = month < 10 ? "0" + month : month;
-    dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
-    hour = hour < 10 ? "0" + hour : hour;
-    minute = minute < 10 ? "0" + minute : minute;
-    second = second < 10 ? "0" + second : second;
-    let replyDate =
-        month +
-        "/" +
-        dayNumber +
-        ", " +
-        hour +
-        ":" +
-        minute +
-        ":" +
-        second;
     if (!replies[discussionDate][user]) {
         replies[discussionDate][user] = {};
     }

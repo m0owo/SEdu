@@ -1,3 +1,9 @@
+let statusUpcoming = "upcoming";
+let statusOverdue = "overdue";
+let roleStudent = "student";
+let roleTeacher = "teacher";
+
+
 // assignment ---Description--- code
 const descriptionEdit = document.getElementById("editButton");
 const descriptionTextArea = document.getElementById("descriptionTextArea");
@@ -76,7 +82,7 @@ function updateFileFrame() {
 }
 
 // assignment ---Comments--- code + have to add user to the dict
-let comments = {};
+let comments = [];
 const commentInput = document.getElementById("commentInput");
 const commentContainer = document.getElementById("commentContainer");
 const commentButton = document.getElementById("sendComment");
@@ -84,55 +90,52 @@ const commentButton = document.getElementById("sendComment");
 commentButton.addEventListener("click", sendComment);
 
 function sendComment() {
-    if (commentInput.value != "")  {
-        let date = new Date();
-        comments[date.getMonth() + "/" + date.getDate() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()] = (commentInput.value);
+    if (commentInput.value !== "") {
+        let current = new Date();
+        comments.push({
+            user: "Boonyasit Warachan",
+            date: current,
+            text: commentInput.value
+        });
         commentInput.value = "";
         updateCommentContainer();
     }
 }
 
 function updateCommentContainer() {
-    for(let comment in comments) {
-        let user = "Boonyasit Warachan";
-        let date = new Date();
-        let month = date.getMonth() + 1;
-        let dayNumber = date.getDate();
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let second = date.getSeconds();
+    commentContainer.innerHTML = "";
 
-        // Add leading zeros if necessary
-        month = month < 10 ? "0" + month : month;
-        dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
-        hour = hour < 10 ? "0" + hour : hour;
-        minute = minute < 10 ? "0" + minute : minute;
-        second = second < 10 ? "0" + second : second;
-        let commentDate =
-            month +
-            "/" +
-            dayNumber +
-            ", " +
-            hour +
-            ":" +
-            minute +
-            ":" +
-            second;
+    // Iterate through comments in reverse order (most recent first)
+    for (let i = 0; i < comments.length; i++) {
+        let comment = comments[i];
+
+        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
+        let formatTime = { hour: '2-digit', minute: '2-digit' };
+        let date = comment.date.toLocaleDateString('en-US', formatDate);
+        let time = comment.date.toLocaleTimeString('en-US', formatTime);
+
+        // Create HTML elements
         let commentBox = document.createElement("p");
         let dateBox = document.createElement("span");
         let textBox = document.createElement("span");
         let userBox = document.createElement("span");
+        
+        // Add classes
         commentBox.classList.add("comment-box");
         dateBox.classList.add("comment-date-box");
         textBox.classList.add("comment-text-box");
         userBox.classList.add("comment-user-box");
-        dateBox.innerText = commentDate;
-        textBox.innerText = comments[comment];
-        userBox.innerText = user;
+
+        // Set content
+        dateBox.innerText = date + ", " + time;
+        textBox.innerText = comment.text;
+        userBox.innerText = comment.user;
+
+        // Append elements to the container
         commentBox.appendChild(userBox)
         commentBox.appendChild(dateBox);
         commentBox.appendChild(textBox);
         commentContainer.appendChild(commentBox);
     }
-    comments = {};
 }
+
