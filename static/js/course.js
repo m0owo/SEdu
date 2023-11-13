@@ -126,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
-
     pullAssignmentFromDB();
 });
 
@@ -318,5 +317,54 @@ function updateDiscussionContainer() {
         discussionContainer.appendChild(wholeDiscussionBox);
         wholeDiscussionBox.appendChild(replyInputContainer);
     }
+}
+
+
+// add new assignment
+function addNewAssignment() {
+    console.log("HELLO MOTHERFUCEKR");
+    const upcoming = document.getElementById("upcoming");
+
+    let card = document.createElement("div");
+    card.classList.add("card");
+
+    let cardContent = document.createElement("div");
+    cardContent.classList.add("card-content");
+
+    let assignmentCard = document.createElement("div");
+    assignmentCard.classList.add("assignment-card");
+
+    let div = document.createElement("div");
+
+    let highlight = document.createElement("div");
+    div.classList.add("highlight");
+
+    let dateSpan = document.createElement("span");
+    dateSpan.classList.add("small");
+    dateSpan.innerText = "date hehe";
+    
+    let titleSpan = document.createElement("span");
+    titleSpan.classList.add("medium");
+    titleSpan.innerText = "new Assighnment ja"
+    
+    let viewSpan = document.createElement("span");
+    viewSpan.classList.add("nav-items-small");
+
+    let viewLink = document.createElement("a");
+    viewLink.href = "/assignment/";
+    viewLink.innerText = "view da assignment";
+
+    viewSpan.appendChild(viewLink);
+
+    assignmentCard.appendChild(highlight);
+    highlight.appendChild(dateSpan);
+
+    assignmentCard.appendChild(titleSpan);
+    assignmentCard.appendChild(viewSpan);
+    
+    cardContent.appendChild(assignmentCard);
+    card.appendChild(cardContent);
+
+    upcoming.append(card);
 }
 
