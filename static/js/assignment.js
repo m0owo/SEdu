@@ -192,6 +192,7 @@ submissions.forEach(submission => {
     let score = submissionRow.insertCell(2);
     score.classList.add("submission-score-cell");
     let rawScore = document.createElement("span");
+    rawScore.classList.add("score");
     // add the text for the score
     if (submission.score) {
         rawScore.textContent = submission.score;
@@ -233,6 +234,7 @@ function editRawScore(e) {
 
 function updateScore(rawScoreInput, newScoreValue) {
     let newScoreSpan = document.createElement("span");
+    newScoreSpan.classList.add("score")
     let parsedScore = parseFloat(newScoreValue);
     if (!isNaN(parsedScore)) {
         if (parsedScore >= 0 && parsedScore <= totalScore) {
