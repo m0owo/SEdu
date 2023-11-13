@@ -55,16 +55,6 @@ function editAssignmentDueDate(e) {
     newDateInput.focus();
 }
 
-let formatDate = { month: 'long', day: 'numeric', year: 'numeric' };
-let formatTime = { hour: '2-digit', minute: '2-digit' };
-let date = comment.date.toLocaleDateString('en-US', formatDate);
-let time = comment.date.toLocaleTimeString('en-US', formatTime);
-
-
-
-
-
-
 // assignment ---Description---
 const descriptionEdit = document.getElementById("editButton");
 const descriptionTextArea = document.getElementById("descriptionTextArea");
