@@ -136,6 +136,56 @@ hr {
     flex-direction: column;
 }
 
+.submission-table {
+    height: fit-content;
+    width: max-content;
+    width: 100%;
+    padding: 1rem;
+} 
+
+.submission-student-head {
+    width: 20%;
+}
+
+.submission-status-head {
+    width: 60%;
+}
+
+.submission-grade-head {
+    width: 20%;
+}
+
+.submission-student-cell {
+    width: 20%;
+    
+}
+
+.submission-status-cell {
+    width: 60%;
+    
+}
+
+.submission-score-cell {
+    width: 20%;
+    
+}
+
+.score-input {
+    width: 20%;
+}
+
+.submission-status-graded {
+    color: rgb(0,111,60);
+}
+
+.submission-status-missing {
+    color: rgb(191,33,47);
+}
+
+.submission-status-submitted {
+    color:rgb(249,167,62);
+}
+
 .comment-input {
     width: 100%;
     height:fit-content;

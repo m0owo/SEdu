@@ -81,7 +81,7 @@ function updateFileFrame() {
     }
 }
 
-// assignment ---Comments--- code + have to add user to the dict
+// assignment ---Comments--- code
 let comments = [];
 const commentInput = document.getElementById("commentInput");
 const commentContainer = document.getElementById("commentContainer");
@@ -139,3 +139,110 @@ function updateCommentContainer() {
     }
 }
 
+// assignment ---Submission Table--- for Teachers 
+let submissions = [
+    {
+        "student" : "65011367",
+        "status" : "Graded",
+        "score" : "10",
+    },
+    {
+        "student" : "65011365",
+        "status" : "Missing",
+        "score" : "N/A",
+    },
+    {
+        "student" : "65011528",
+        "status" : "Submitted",
+        "score": "N/A",
+    }
+];
+let totalScore = 10.00;
+let submissionBody = document.getElementById("submissionBody"); 
+
+submissions.forEach(submission => {
+    // create a row for the submission
+    let submissionRow = submissionBody.insertRow();
+    submissionRow.classList.add("submission");
+
+    // insert a cell for the student id
+    let student = submissionRow.insertCell(0);
+    student.classList.add("submission-student-cell");
+    student.innerText = submission.student;
+
+    // insert a cell for the status and format it accordingly
+    let status = submissionRow.insertCell(1);
+    status.classList.add("submission-status-cell");
+    switch (submission.status) {
+        case "Submitted":
+            status.classList.add("submission-status-submitted");
+            break;
+        case "Missing":
+            status.classList.add("submission-status-missing");
+            break;
+        case "Graded":
+            status.classList.add("submission-status-graded");
+            break;
+        default:
+            break;
+    }
+    status.innerText = submission.status;
+
+    // create a cell for the score
+    let score = submissionRow.insertCell(2);
+    score.classList.add("submission-score-cell");
+    let rawScore = document.createElement("span");
+    // add the text for the score
+    if (submission.score) {
+        rawScore.textContent = submission.score;
+    } else {
+        rawScore.textContent = "N/A";
+    }
+    let totalScoreDisplay = document.createElement("span");
+    totalScoreDisplay.classList.add("small-bold");
+    totalScoreDisplay.innerText = "/" + totalScore.toFixed(2);
+    score.appendChild(rawScore);
+    score.appendChild(totalScoreDisplay);
+    // when the score is pressed, you can edit it
+    rawScore.addEventListener('click', function(e) {
+        editRawScore(e);
+    });
+});
+
+function editRawScore(e) {
+    let rawScoreInput = document.createElement("input");
+    rawScoreInput.classList.add("score-input");
+    rawScoreInput.type = "text";
+    rawScoreInput.pattern = "\\d*";
+
+    let originalScoreSpan = e.target;
+    
+    originalScoreSpan.parentNode.replaceChild(rawScoreInput, originalScoreSpan);
+    
+    rawScoreInput.focus();
+    
+    rawScoreInput.addEventListener('keydown', function (e) {
+        if (e.key === "Enter") {
+            let newScore = parseInt(rawScoreInput.value, 10);
+            if (!isNaN(newScore) && newScore >= 0 && newScore <= totalScore) {
+                updateScore(rawScoreInput, newScore);
+            }
+        }
+    });    
+}
+
+function updateScore(rawScoreInput, newScoreValue) {
+    let newScoreSpan = document.createElement("span");
+    let parsedScore = parseFloat(newScoreValue);
+    if (!isNaN(parsedScore)) {
+        if (parsedScore >= 0 && parsedScore <= totalScore) {
+            newScoreSpan.textContent = parsedScore.toFixed(2);
+        }
+    } else {
+        newScoreSpan.textContent = newScoreValue;
+    }
+    rawScoreInput.parentNode.replaceChild(newScoreSpan, rawScoreInput);
+    newScoreSpan.addEventListener('click', function (e) {
+        editRawScore(e);
+    });
+}
