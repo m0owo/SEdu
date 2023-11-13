@@ -41,6 +41,21 @@ async def read_user_home(request: Request, user_id: int):
         {"request": request, "user": user},
     )
 
+@app.get("/{user_id}/course/{course_id}", response_class=HTMLResponse)
+async def read_user_course(request: Request, user_id: int, course_id: int):
+    user = root.students[user_id]
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    course = root.courses[course_id]
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    return templates.TemplateResponse(
+        "course.html",
+        {"request": request, "user": user, "course": course},
+    )
+
 @app.get("/students/{user_id}")
 async def findStudent(user_id: int):
     if user_id in root.users.keys():

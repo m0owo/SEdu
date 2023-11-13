@@ -29,15 +29,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let enrollments = enrolls["data"];
 
         for (let enrollment of enrollments) {
+            console.log(enrollment);
             let course_name = enrollment["course"]["name"];
             let assignments = enrollment["course"]["assignments"]["data"];
 
             if (Array.isArray(assignments)) {
                 for (let assignment of assignments) {
-                    console.log(assignment["title"]);
-                    console.log(assignment["due_date"]);
-                    console.log(assignment["due_time"]);
-                    
                     let divbar = document.createElement("div");
                     divbar.className = "assignment-bar";
                     let div1 = document.createElement("div");
@@ -98,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return someDate > today;
     }
 
-    // Function to get the day of the week
     function getDayOfWeek(someDate) {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return daysOfWeek[someDate.getDay()];

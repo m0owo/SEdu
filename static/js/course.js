@@ -25,6 +25,130 @@ function showCompleted() {
     completedEl.style.display = "flex";
 }
 
+//pull assignments from database
+document.addEventListener("DOMContentLoaded", function () {
+    const userElement = document.getElementById("user-data");
+    var user = userElement.getAttribute("data");
+    var course_id = userElement.getAttribute("course");
+
+    var userData;
+    fetch(`/students/${user}`)
+        .then(response => response.json())
+        .then(user => {
+            pullAssignmentFromDB(user, course_id);
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
+
+    const sidebarElement = document.getElementById("sidebar");
+
+    function pullAssignmentFromDB(userData, course_id_focus) {
+        const upcomingSectionEl = upcomingEl.querySelector(".section");
+        const completedSectionEl = completedEl.querySelector(".section");
+
+        upcomingSectionEl.innerHTML = "";
+        completedSectionEl.innerHTML = "";
+
+        if (!userData || !userData.id) {
+            return;
+        }
+    
+        let id = userData.id;
+        let enrolls = userData.enrolls;
+        let enrollments = enrolls["data"];
+    
+        for (let enrollment of enrollments) {
+            let course_id = enrollment["course"]["id"];
+            let assignments = enrollment["course"]["assignments"]["data"];
+
+            if (Array.isArray(assignments) && course_id == course_id_focus) {
+                for (let assignment of assignments) {
+                    console.log(assignment);
+
+                    let divcard = document.createElement("div");
+                    divcard.className = "card";
+
+                    let divcardcontent = document.createElement("div");
+                    divcardcontent.className = "card-content";
+
+                    let divassignmentcard = document.createElement("div");
+                    divassignmentcard.className = "assignment-card";
+
+                    let div = document.createElement("div");
+                    let divhighlight = document.createElement("div");
+                    divhighlight.className = "highlight";
+
+                    let spantime = document.createElement("span");
+                    spantime.className = "small";
+
+                    let spantitle = document.createElement("span");
+                    spantitle.className = "medium";
+                    spantitle.innerHTML = assignment["title"];
+
+                    let spanviewassignment = document.createElement("span");
+                    spanviewassignment.className = "nav-items-small";
+
+                    let a = document.createElement("a");
+                    a.href = "/assignment/";
+                    a.innerHTML = "VIEW ASSIGNMENT";
+
+
+                    let dueDate = new Date(assignment["due_date"]);
+                    let dueTime = assignment["due_time"];
+
+                    if (isToday(dueDate)) {
+                        spantime.textContent = `Today, ${dueTime}`;
+                    } else if (isUpcoming(dueDate)) {
+                        spantime.textContent = `${getDayOfWeek(dueDate)}, ${dueTime}`;
+                    } else {
+                        //completed
+                        divassignmentcard.appendChild(spantitle);
+                        spanviewassignment.appendChild(a);
+                        divassignmentcard.appendChild(spanviewassignment);
+                        divcardcontent.appendChild(divassignmentcard);
+                        divcard.appendChild(divcardcontent);
+                        completedSectionEl.appendChild(divcard);
+                        continue;
+                    }
+
+                    //upcoming
+                    divhighlight.appendChild(spantime);
+                    div.appendChild(divhighlight);
+                    divassignmentcard.appendChild(div);
+                    divassignmentcard.appendChild(spantitle);
+                    spanviewassignment.appendChild(a);
+                    divassignmentcard.appendChild(spanviewassignment);
+                    divcardcontent.appendChild(divassignmentcard);
+                    divcard.appendChild(divcardcontent);
+                    upcomingSectionEl.appendChild(divcard);
+                }
+            }
+        }
+    }
+
+    pullAssignmentFromDB();
+});
+
+function isToday(someDate) {
+    const today = new Date();
+    return (
+        someDate.getDate() === today.getDate() &&
+        someDate.getMonth() === today.getMonth() &&
+        someDate.getFullYear() === today.getFullYear()
+    );
+}
+
+function isUpcoming(someDate) {
+    const today = new Date();
+    return someDate > today;
+}
+
+function getDayOfWeek(someDate) {
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return daysOfWeek[someDate.getDay()];
+}
+
 //discussion posts
 let discussions = {}; // user: { date: discussion }
 let replies = {}; // discussionDate: { user: { date: reply } }

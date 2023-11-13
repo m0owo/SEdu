@@ -16,10 +16,12 @@ def getAssignmentByID(assignment_id):
     return root.assignments.get(assignment_id, None)
 
 class Course(persistent.Persistent):
-    def __init__(self, id, name = "", credit = 0):
+    def __init__(self, id, name = "", description = "", teacherName = "", credit = 0):
         super().__init__()
         self.id = id
         self.name = name
+        self.description = description
+        self.teacherName = teacherName
         self.credit = credit
         self.gradeScheme = persistent.list.PersistentList()
         self.labs = persistent.list.PersistentList()
@@ -324,13 +326,13 @@ class Post(persistent.Persistent):
 
 
 root.courses = BTrees.OOBTree.BTree()
-root.courses[101] = Course(101, 'Computer programming', 4, )
+root.courses[101] = Course(101, 'Computer programming', 'Learn C++', 'John Morris', 4)
 # root.courses[101].setGradeScheme(grading)
-root.courses[201] = Course(201, 'Web programming', 4)
+root.courses[201] = Course(201, 'Web programming', 'HTML, CSS, JS & more', 'Visit Hirankitti', 4)
 # root.courses[201].setGradeScheme(grading)
-root.courses[202] = Course(202, 'Software Engineering Principle', 5)
+root.courses[202] = Course(202, 'Software Engineering Principle', 'lets learn principles', 'Visit Hirankitti', 5)
 # root.courses[202].setGradeScheme(grading_se)
-root.courses[301] = Course(301, 'Artificial Intelligent', 3)
+root.courses[301] = Course(301, 'Artificial Intelligent', 'lets learn ai', 'Visit Hirankitti', 3)
 # root.courses[301].setGradeScheme(grading_ai)
 
 #Initialize student info and enroll courses
