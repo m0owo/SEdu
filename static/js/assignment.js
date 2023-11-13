@@ -6,7 +6,7 @@ const descriptionText = document.getElementById("description");
 descriptionEdit.addEventListener("click", showDescriptionTextArea);
 
 let editing = false;
-descriptionText.innerText = "Enter a Brief Description"
+descriptionText.innerText = "Enter a Brief Description . . ."
 descriptionTextArea.innerText = "";
 
 // add text editing features, like tab
@@ -94,14 +94,42 @@ function sendComment() {
 
 function updateCommentContainer() {
     for(let comment in comments) {
+        let user = "Boonyasit Warachan";
+        let date = new Date();
+        let month = date.getMonth() + 1;
+        let dayNumber = date.getDate();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+
+        // Add leading zeros if necessary
+        month = month < 10 ? "0" + month : month;
+        dayNumber = dayNumber < 10 ? "0" + dayNumber : dayNumber;
+        hour = hour < 10 ? "0" + hour : hour;
+        minute = minute < 10 ? "0" + minute : minute;
+        second = second < 10 ? "0" + second : second;
+        let commentDate =
+            month +
+            "/" +
+            dayNumber +
+            ", " +
+            hour +
+            ":" +
+            minute +
+            ":" +
+            second;
         let commentBox = document.createElement("p");
         let dateBox = document.createElement("span");
         let textBox = document.createElement("span");
+        let userBox = document.createElement("span");
         commentBox.classList.add("comment-box");
         dateBox.classList.add("comment-date-box");
         textBox.classList.add("comment-text-box");
-        dateBox.innerText = comment;
+        userBox.classList.add("comment-user-box");
+        dateBox.innerText = commentDate;
         textBox.innerText = comments[comment];
+        userBox.innerText = user;
+        commentBox.appendChild(userBox)
         commentBox.appendChild(dateBox);
         commentBox.appendChild(textBox);
         commentContainer.appendChild(commentBox);

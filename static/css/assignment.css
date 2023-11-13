@@ -22,6 +22,7 @@
     width: 100%;
     border-radius: 4px;
     resize: none;
+    text-align: left !important;
 }
 
 textarea .description-input {
@@ -147,24 +148,27 @@ hr {
 .comment-box {
     width:100%;
     padding: 0.5rem;
+    text-align: left;
 }
 
 .comment-text-box {
+    text-align: left;
     width:100%;
     padding: 0.5rem;
 }
 
 .comment-date-box {
+    text-align: left;
     width:100%;
     padding: 0.5rem;
+    color:navy;
 }
 
-.comment-user {
-
-}
-
-.comment-pic{
-
+.comment-user-box {
+    font-weight: bold;
+    text-align: left;
+    width:100%;
+    padding: 0.5rem;
 }
 
 @media screen and (min-width: 750px){
