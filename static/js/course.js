@@ -62,7 +62,7 @@ function fetchDBtoUpdate() {
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
-            pullAssignmentFromDB(user, course_id);
+            pullAssignmentsFromDB(user, course_id);
             pullDiscussionsFromDB(user, course_id)
         })
         .catch(error => {
@@ -195,7 +195,7 @@ function fetchDBtoUpdate() {
             }
         }
     }
-    function pullAssignmentFromDB(userData, course_id_focus) {
+    function pullAssignmentsFromDB(userData, course_id_focus) {
         const upcomingSectionEl = upcomingEl.querySelector(".section");
         const completedSectionEl = completedEl.querySelector(".section");
 
@@ -254,8 +254,21 @@ function fetchDBtoUpdate() {
 
                     if (isToday(dueDate)) {
                         spantime.textContent = `Today, ${dueTime}`;
-                    } else if (isUpcoming(dueDate)) {
-                        spantime.textContent = `${getDayOfWeek(dueDate)}, ${dueTime}`;
+                    } else if (isUpcoming(dueDate) > 0) {
+                        if (isUpcoming(dueDate) <= 7) {
+                            spantime.textContent = `${getDayOfWeek(dueDate)}, ${dueTime}`;
+                        } else if (isUpcoming(dueDate) > 7) {
+                            let formatOptions = {
+                                month: 'numeric',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            };
+                            let formattedDateTime = dueDate.toLocaleString('en-US', formatOptions);
+                            spantime.textContent = formattedDateTime;
+                        }
+
                     } else {
                         //completed
                         divassignmentcard.appendChild(spantitle);
@@ -293,7 +306,7 @@ function isToday(someDate) {
 
 function isUpcoming(someDate) {
     const today = new Date();
-    return someDate > today;
+    return someDate - today;
 }
 
 function getDayOfWeek(someDate) {
