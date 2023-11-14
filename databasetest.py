@@ -272,13 +272,13 @@ class Assignment(persistent.Persistent):
     def setTotalScore(self, totalGrade):
         self.total_score = totalGrade
 
-    def addIndividualComment(self, commenter, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+    def addIndividualComment(self, commenter, comment_date, comment_time, comment_text=None):
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.individual_comments.append(comment)
         return self.individual_comments
 
-    def addClassComment(self, commenter, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+    def addclassComment(self, commenter, comment_date, comment_time, comment_text=None):
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.class_comments.append(comment)
         return self.class_comments
 
@@ -379,9 +379,10 @@ root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 #Adding comment in Assginment
-root.assignments[101001].addIndividualComment(root.users[1111].name, "Make sure you sent it in zip file")
-root.assignments[101001].addIndividualComment(root.users[1101].name, "I already resent my work. Can you check")
-root.assignments[101001].printIndividualComment()
+root.assignments[101001].addIndividualComment(root.users[1111].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")
+root.assignments[101001].addIndividualComment(root.users[1101].name, "11/01/2023", "1:11 AM", "I already resent my work. Can you check")
+
+# root.assignments[101001].printIndividualComment()
 #Set score to student assignment
 s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 

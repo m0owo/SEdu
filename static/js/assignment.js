@@ -216,52 +216,84 @@ commentButton.addEventListener("click", sendComment);
 function sendComment() {
     if (commentInput.value !== "") {
         let current = new Date();
-        comments.push({
-            user: "Boonyasit Warachan",
-            date: current,
-            text: commentInput.value
-        });
-        commentInput.value = "";
-        updateCommentContainer();
-    }
-}
-
-function updateCommentContainer() {
-    commentContainer.innerHTML = "";
-
-    // Iterate through comments in reverse order (most recent first)
-    for (let i = 0; i < comments.length; i++) {
-        let comment = comments[i];
-
-        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
+        let text = commentInput.value
+        let formatDate = { month: 'long', day: 'numeric', year: 'numeric' };
         let formatTime = { hour: '2-digit', minute: '2-digit' };
-        let date = comment.date.toLocaleDateString('en-US', formatDate);
-        let time = comment.date.toLocaleTimeString('en-US', formatTime);
+        let date = current.toLocaleDateString('en-US', formatDate);
+        let time = current.toLocaleTimeString('en-US', formatTime);
+        assignmentDueDate.innerText = date + ", " + time;
+        //fetch to get user name
+        fetch(`/students/${user}`)
+        .then(response => response.json())
+        .then(user => {
+            //fetch to post comments in assignment
+            fetch(`/post-new-assignment-comment/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "course_id": course_id,
+                    "assignment_id": assignment_id,
+                    "commenter": user["name"],
+                    "comment_date": date,
+                    "comment_time": time,
+                    "comment_text": text,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    fetchDBtoUpdate();
+                    console.log('Assignment comment posted:', data);
+                })
+                .catch(error => {
+                    console.error('Error posting comment:', error);
+                });
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
 
-        // Create HTML elements
-        let commentBox = document.createElement("p");
-        let dateBox = document.createElement("span");
-        let textBox = document.createElement("span");
-        let userBox = document.createElement("span");
-
-        // Add classes
-        commentBox.classList.add("comment-box");
-        dateBox.classList.add("comment-date-box");
-        textBox.classList.add("comment-text-box");
-        userBox.classList.add("comment-user-box");
-
-        // Set content
-        dateBox.innerText = date + ", " + time;
-        textBox.innerText = comment.text;
-        userBox.innerText = comment.user;
-
-        // Append elements to the container
-        commentBox.appendChild(userBox)
-        commentBox.appendChild(dateBox);
-        commentBox.appendChild(textBox);
-        commentContainer.appendChild(commentBox);
+        commentInput.value = "";
     }
 }
+
+// function updateCommentContainer() {
+//     commentContainer.innerHTML = "";
+
+//     // Iterate through comments in reverse order (most recent first)
+//     for (let i = 0; i < comments.length; i++) {
+//         let comment = comments[i];
+
+//         let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
+//         let formatTime = { hour: '2-digit', minute: '2-digit' };
+//         let date = comment.date.toLocaleDateString('en-US', formatDate);
+//         let time = comment.date.toLocaleTimeString('en-US', formatTime);
+
+//         // Create HTML elements
+//         let commentBox = document.createElement("p");
+//         let dateBox = document.createElement("span");
+//         let textBox = document.createElement("span");
+//         let userBox = document.createElement("span");
+
+//         // Add classes
+//         commentBox.classList.add("comment-box");
+//         dateBox.classList.add("comment-date-box");
+//         textBox.classList.add("comment-text-box");
+//         userBox.classList.add("comment-user-box");
+
+//         // Set content
+//         dateBox.innerText = date + ", " + time;
+//         textBox.innerText = comment.text;
+//         userBox.innerText = comment.user;
+
+//         // Append elements to the container
+//         commentBox.appendChild(userBox)
+//         commentBox.appendChild(dateBox);
+//         commentBox.appendChild(textBox);
+//         commentContainer.appendChild(commentBox);
+//     }
+// }
 
 // assignment ---Submission Table--- for Teachers 
 let submissions = [
@@ -382,7 +414,6 @@ function fetchDBtoUpdate() {
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
-            console.log(user);
             pullInfoFromDB(user, course_id, assignment_id);
         })
         .catch(error => {
@@ -409,16 +440,7 @@ function fetchDBtoUpdate() {
                     if (assignment["id"] == assignment_id_focus) {
                         console.log(assignment);
 
-                        let comments = assignment.individual_comments.data;
-                        console.log(comments);
-                        
-                        if (comments && comments.length > 0){
-                            for (let comment of comments){
-                                console.log(comment);
-                            }
-                        }
-                            
-
+                        //update time
                         descriptionText.innerText = assignment["description"];
 
                         const enteredDateText = assignment["due_date"] + " " + assignment["due_time"];
@@ -429,6 +451,32 @@ function fetchDBtoUpdate() {
                         let date = enteredDateObject.toLocaleDateString('en-US', formatDate);
                         let time = enteredDateObject.toLocaleTimeString('en-US', formatTime);
                         assignmentDueDate.innerText = date + ", " + time;
+
+                        let comments = assignment["individual_comments"]["data"];
+
+                        //update comments
+                        commentContainer.innerHTML = "";
+                        for (let comment of comments) {
+                            let commentBox = document.createElement("p");
+                            let dateBox = document.createElement("span");
+                            let textBox = document.createElement("span");
+                            let userBox = document.createElement("span");
+
+                            commentBox.classList.add("comment-box");
+                            dateBox.classList.add("comment-date-box");
+                            textBox.classList.add("comment-text-box");
+                            userBox.classList.add("comment-user-box");
+
+                            dateBox.innerText = comment["comment_date"] + ", " + comment["comment_time"];
+                            textBox.innerText = comment["text"];
+                            userBox.innerText = comment["commenter"];
+
+                            // Append elements to the container
+                            commentBox.appendChild(userBox)
+                            commentBox.appendChild(dateBox);
+                            commentBox.appendChild(textBox);
+                            commentContainer.appendChild(commentBox);
+                        }
                     }
                 }
             }

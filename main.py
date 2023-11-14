@@ -16,11 +16,13 @@ class DiscussionCreate(BaseModel):
     content: str
 
 class CommentCreate(BaseModel):
-    commenter: str
-    comment_date: str
-    comment_time:str
-    comment_text: str
-    comment_post:int
+    course_id: int
+    commenter: str = None
+    assignment_id: int
+    comment_date: str = None
+    comment_time: str = None
+    comment_text: str = None
+    comment_post: int = None
 
 class AssignmentUpdate(BaseModel):
     course_id: int
@@ -174,6 +176,27 @@ async def post_new_comment(course_id: int, comment_data: CommentCreate):
     discussion_id = int(str(course_id) + str(100 + comment_data.comment_post))
     root.posts[discussion_id].addComment(comment_data.commenter, comment_data.comment_date, comment_data.comment_time, comment_data.comment_text)
     return JSONResponse(content={"message": "Comment Posted Successfully"})
+
+@app.post("/post-new-assignment-comment/")
+async def post_new_comment(comment_data: CommentCreate):
+    course = root.courses.get(comment_data.course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    assignment_db = root.assignments.get(comment_data.assignment_id)
+    if assignment_db is None:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    
+
+    if (comment_data.commenter and comment_data.comment_date and comment_data.comment_time and comment_data.comment_text):
+        comment = {"commenter": comment_data.commenter,
+                   "comment_date": comment_data.comment_date,
+                   "comment_time":comment_data.comment_time,
+                   "text": comment_data.comment_text,
+                   }
+    
+    assignment_db.individual_comments.append(comment)
+    return comment
 
 @app.post("/edit-assignment/")
 async def edit_assignment(assignment: AssignmentUpdate):
