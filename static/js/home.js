@@ -31,18 +31,23 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!userData || !userData.id) {
             return;
         }
+        let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
 
         for (let enrollment of enrollments) {
             console.log(enrollment);
             let course_name = enrollment["course"]["name"];
+            let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
 
             if (Array.isArray(assignments)) {
                 for (let assignment of assignments) {
-                    let divbar = document.createElement("div");
-                    divbar.className = "assignment-bar";
+                    let assignment_id = assignment["id"];
+                    let a = document.createElement("a");
+                    a.href = `/${user_id}/course/${course_id}/assignment/${assignment_id}`;
+                    a.className = "assignment-bar";
+                    a.id = course_name;
                     let div1 = document.createElement("div");
                     let div2 = document.createElement("div");
 
@@ -78,10 +83,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     divhighlight.appendChild(spantime);
                     div2.appendChild(divhighlight);
 
-                    divbar.appendChild(div1);
-                    divbar.appendChild(div2);
+                    a.appendChild(div1);
+                    a.appendChild(div2);
 
-                    assignmentsElement.appendChild(divbar);
+                    assignmentsElement.appendChild(a);
                 }
             }
         }
