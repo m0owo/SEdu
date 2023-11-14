@@ -217,7 +217,7 @@ function sendComment() {
     if (commentInput.value !== "") {
         let current = new Date();
         let text = commentInput.value
-        let formatDate = { month: 'long', day: 'numeric', year: 'numeric' };
+        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
         let formatTime = { hour: '2-digit', minute: '2-digit' };
         let date = current.toLocaleDateString('en-US', formatDate);
         let time = current.toLocaleTimeString('en-US', formatTime);

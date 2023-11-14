@@ -15,10 +15,19 @@ class DiscussionCreate(BaseModel):
     posted_time: str
     content: str
 
+class PostCommentCreate(BaseModel):
+    course_id: int
+    commenter: str = None
+    assignment_id: int = None
+    comment_date: str = None
+    comment_time: str = None
+    comment_text: str = None
+    comment_post: int = None
+
 class CommentCreate(BaseModel):
     course_id: int
     commenter: str = None
-    assignment_id: int
+    assignment_id: int = None
     comment_date: str = None
     comment_time: str = None
     comment_text: str = None
@@ -168,7 +177,7 @@ async def post_new_discussion(course_id: int, discussion_data: DiscussionCreate)
         return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
     
 @app.post("/post-new-reply/{course_id}")
-async def post_new_comment(course_id: int, comment_data: CommentCreate):
+async def post_new_comment(course_id: int, comment_data: PostCommentCreate):
     course = root.courses.get(course_id)
     if course is None:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -178,7 +187,7 @@ async def post_new_comment(course_id: int, comment_data: CommentCreate):
     return JSONResponse(content={"message": "Comment Posted Successfully"})
 
 @app.post("/post-new-assignment-comment/")
-async def post_new_comment(comment_data: CommentCreate):
+async def post_new_comment(comment_data: PostCommentCreate):
     course = root.courses.get(comment_data.course_id)
     if course is None:
         raise HTTPException(status_code=404, detail="Course not found")

@@ -331,6 +331,7 @@ function addNewReply(reply_input, course_id, post_id) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                "course_id": course_id,
                 "commenter": user,
                 "comment_date": posted_date,
                 "comment_time": posted_time,
