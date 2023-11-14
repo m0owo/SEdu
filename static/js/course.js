@@ -1,6 +1,7 @@
 const userElement = document.getElementById("user-data");
 const user = userElement.getAttribute("data");
 const course_id = userElement.getAttribute("course");
+const role = userElement.getAttribute("role");
 
 // alternating between discussion, upcoming, and completed
 const discussionEl = document.getElementById("discussion");

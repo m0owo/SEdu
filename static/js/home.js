@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
-    var user = userElement.getAttribute("data");
-
-    var userData;
+    let user = userElement.getAttribute("data");
+    let userData;
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
