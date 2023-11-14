@@ -1,18 +1,23 @@
-let statusUpcoming = "upcoming";
-let statusOverdue = "overdue";
-let roleStudent = "student";
-let roleTeacher = "teacher";
-
 //assignment ---Edit Name and Due Date---
 const assignmentName = document.getElementById("assignmentName");
 const assignmentDueDate = document.getElementById("assignmentDueDate");
-assignmentName.addEventListener("click", function (e) { editAssignmentName(e) });
-assignmentDueDate.addEventListener("click", function (e) { editAssignmentDueDate(e) });
+assignmentName.addEventListener("click", function (e) {
+    if (role == "teacher") {
+        editAssignmentName(e)
+    }
+});
+assignmentDueDate.addEventListener("click", function (e) { 
+    if (role == "teacher") {
+        editAssignmentDueDate(e) 
+    }
+});
 
 const userElement = document.getElementById("user-data");
-var user = userElement.getAttribute("data");
-var course_id = userElement.getAttribute("course");
-var assignment_id = userElement.getAttribute("assignment");
+const user = userElement.getAttribute("data");
+const course_id = userElement.getAttribute("course");
+const assignment_id = userElement.getAttribute("assignment");
+const role = userElement.getAttribute("role");
+const roleSpan = document.getElementById("userRole");
 
 
 function editAssignmentName(e) {
@@ -314,6 +319,7 @@ let submissions = [
     }
 ];
 let totalScore = 10.00;
+let submissionTable = document.getElementById("submissionsTable");
 let submissionBody = document.getElementById("submissionBody");
 
 submissions.forEach(submission => {
@@ -405,8 +411,14 @@ function updateScore(rawScoreInput, newScoreValue) {
     });
 }
 
-
-
+if (role == "student") {
+    roleSpan.innerText = "Student";
+    descriptionEdit.style.display = "none";
+    submissionTable.style.display = "none";
+    fileInputButton.style.display = "none";
+} else if (role == "teacher") {
+    roleSpan.innerText = "Lecturer";
+}
 
 document.addEventListener("DOMContentLoaded", fetchDBtoUpdate);
 function fetchDBtoUpdate() {
@@ -456,26 +468,28 @@ function fetchDBtoUpdate() {
 
                         //update comments
                         commentContainer.innerHTML = "";
-                        for (let comment of comments) {
-                            let commentBox = document.createElement("p");
-                            let dateBox = document.createElement("span");
-                            let textBox = document.createElement("span");
-                            let userBox = document.createElement("span");
+                        if (comments && comments.length > 0) {
+                            for (let comment of comments) {
+                                let commentBox = document.createElement("p");
+                                let dateBox = document.createElement("span");
+                                let textBox = document.createElement("span");
+                                let userBox = document.createElement("span");
 
-                            commentBox.classList.add("comment-box");
-                            dateBox.classList.add("comment-date-box");
-                            textBox.classList.add("comment-text-box");
-                            userBox.classList.add("comment-user-box");
+                                commentBox.classList.add("comment-box");
+                                dateBox.classList.add("comment-date-box");
+                                textBox.classList.add("comment-text-box");
+                                userBox.classList.add("comment-user-box");
 
-                            dateBox.innerText = comment["comment_date"] + ", " + comment["comment_time"];
-                            textBox.innerText = comment["text"];
-                            userBox.innerText = comment["commenter"];
+                                dateBox.innerText = comment["comment_date"] + ", " + comment["comment_time"];
+                                textBox.innerText = comment["text"];
+                                userBox.innerText = comment["commenter"];
 
-                            // Append elements to the container
-                            commentBox.appendChild(userBox)
-                            commentBox.appendChild(dateBox);
-                            commentBox.appendChild(textBox);
-                            commentContainer.appendChild(commentBox);
+                                // Append elements to the container
+                                commentBox.appendChild(userBox)
+                                commentBox.appendChild(dateBox);
+                                commentBox.appendChild(textBox);
+                                commentContainer.appendChild(commentBox);
+                            }
                         }
                     }
                 }

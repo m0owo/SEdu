@@ -9,12 +9,12 @@
     <title>Course Page</title>
 </head>
 <body>
-    <div id="user-data" data="{{user.id}}" course="{{course.id}}"></div>
+    <div id="user-data" data="{{user.id}}" course="{{course.id}}" role="{{user.role}}"></div>
     <header>
         <div class="nav-items-uniteractable">
             <img src="/../static/resources/se.png" class="logo">
             <span class="small-bold">SEducation</span>
-            <span class="small">{{user.role}}</span>
+            <span class="small" id="userRole">{{user.role}}</span>
         </div>
         <nav>
             <ul class="nav-items">

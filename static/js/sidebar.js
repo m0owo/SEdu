@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             list.className = "small";
     
             let a = document.createElement("a");
+            a.classList.add("nav-items");
             a.href = `/${id}/course/${course_id}`;
             a.textContent = `${course_name}`;
     

@@ -11,12 +11,12 @@
 </head>
 
 <body>
-    <div id="user-data" data="{{user.id}}" course="{{course.id}}" assignment="{{assignment.id}}"></div>
+    <div id="user-data" data="{{user.id}}" course="{{course.id}}" assignment="{{assignment.id}}" role="{{user.role}}"></div>
     <header>
         <div class="nav-items-uniteractable">
             <img src="/../static/resources/se.png" class="logo">
             <span class="small-bold">SEducation</span>
-            <span class="small">{{user.role}}</span>
+            <span class="small" id="userRole"></span>
         </div>
         <nav>
             <ul class="nav-items">
@@ -100,7 +100,7 @@
                         <div class="info-column">
                             <span class="medium-bold hightlight">Submissions</span>
                             <hr>
-                            <table class="submission-table">
+                            <table class="submission-table" id="submissionsTable">
                                 <thead class="small-bold">
                                     <td class="submission-student-head">Student ID</td>
                                     <td class="submission-status-head">Status</td>

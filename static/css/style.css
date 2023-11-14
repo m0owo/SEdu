@@ -167,6 +167,20 @@ li {
     cursor: pointer;
 }
 
+.sidebar .nav-items-small {
+    margin-bottom: 1rem;
+}
+
+.sidebar .nav-items {
+    margin-bottom: 1rem;
+}
+
+.sidebar .nav-items:hover {
+    background-color: #e6e6e6;
+    cursor: pointer;
+    border-radius: 0.8rem;
+}
+
 #left > * {
     padding: 0px 0.5rem;
 }

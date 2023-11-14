@@ -339,18 +339,18 @@ class Post(persistent.Persistent):
 
 
 root.courses = BTrees.OOBTree.BTree()
-root.courses[101] = Course(101, 'Computer programming', 'Learn C++', 'John Morris', 4)
+root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'John Morris', 4)
 # root.courses[101].setGradeScheme(grading)
-root.courses[201] = Course(201, 'Web programming', 'HTML, CSS, JS & more', 'Visit Hirankitti', 4)
+root.courses[201] = Course(201, 'Web Programming', 'HTML, CSS, JS & more', 'Visit Hirankitti', 4)
 # root.courses[201].setGradeScheme(grading)
-root.courses[202] = Course(202, 'Software Engineering Principle', 'lets learn principles', 'Visit Hirankitti', 5)
+root.courses[202] = Course(202, 'Software Engineering Principles', 'Lets Learn Principles', 'Visit Hirankitti', 5)
 # root.courses[202].setGradeScheme(grading_se)
-root.courses[301] = Course(301, 'Artificial Intelligent', 'lets learn ai', 'Visit Hirankitti', 3)
+root.courses[301] = Course(301, 'Artificial Intelligence', 'Lets Learn AI', 'Visit Hirankitti', 3)
 # root.courses[301].setGradeScheme(grading_ai)
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
-root.users[1101] = User(1101, 'moomoo', "1111", "student")
+root.users[1101] = User(1101, 'MooMoo', "1111", "student")
 s1_id = root.users[1101].id
 s1_enroll1 = root.users[1101].enrollCourse(root.courses[101])
 s1_enroll2 = root.users[1101].enrollCourse(root.courses[201])
@@ -366,7 +366,7 @@ root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
@@ -388,10 +388,10 @@ s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[201100] = Post("Jeff", "11/01/2023", "12:00 AM", "Do you guys want to build a snowman?") 
-root.posts[201100].addComment("Jeff", "11/01/2023", "1:00 AM", "Yea Sure WHy NOt")
+root.posts[201100] = Post(root.users[1111].name, "11/01/2023", "12:00 AM", "Sorry for the slight delay on the lecture, our lab will be on next Tuesday") 
+root.posts[201100].addComment(root.users[1101].name, "11/01/2023", "1:00 AM", "Alright, thank you.")
 root.courses[201].addPost(root.posts[201100])
-root.posts[201101] = Post("Jeff", "24/01/2023", "12:00 AM", "Im so sad?") 
+root.posts[201101] = Post(root.users[1101].name, "24/01/2023", "12:00 AM", "Can you repost the lecture slides?") 
 root.courses[201].addPost(root.posts[201101])
 
 

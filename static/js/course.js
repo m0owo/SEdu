@@ -3,6 +3,13 @@ const user = userElement.getAttribute("data");
 const course_id = userElement.getAttribute("course");
 const role = userElement.getAttribute("role");
 
+const roleSpan = document.getElementById("userRole");
+if (role == "student") {
+    roleSpan.innerText = "Student";
+} else if (role == "teacher") {
+    roleSpan.innerText = "Lecturer";
+}
+
 // alternating between discussion, upcoming, and completed
 const discussionEl = document.getElementById("discussion");
 const upcomingEl = document.getElementById("upcoming");
@@ -13,6 +20,11 @@ discussionEl.addEventListener("click", showDiscussion);
 upcomingEl.addEventListener("click", showUpcoming);
 completedEl.addEventListener("click", showCompleted);
 newButton.addEventListener("click", addNewAssignment);
+
+
+if (role == "student") {
+    newButton.style.display = "none";
+}
 
 // for adding new assignment in upcoming
 function addNewAssignment() {
@@ -28,7 +40,7 @@ function addNewAssignment() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Assignment created:', data);
+        // console.log('Assignment created:', data);
         fetchDBtoUpdate();
     })
     .catch(error => {
@@ -90,7 +102,7 @@ function fetchDBtoUpdate() {
             if (Array.isArray(posts) && course_id == course_id_focus) {
                 for (let i = (posts.length - 1); i >= 0; i--) {
                     let post = posts[i];
-                    console.log(post)
+                    // console.log(post);
                     let date = post.posted_date;
                     let time = post.posted_time;
                     let comments = post.classroom_comments.data;
@@ -153,7 +165,7 @@ function fetchDBtoUpdate() {
 
                     if (comments && comments.length > 0) { // if there are replies
                         for (let comment of comments) {
-                            console.log(comment);
+                            // console.log(comment);
                             // create a container for all replies
                             let replyContainer = document.createElement("div");
                             replyContainer.classList.add("column");
@@ -211,10 +223,10 @@ function fetchDBtoUpdate() {
         let enrollments = enrolls["data"];
     
         for (let enrollment of enrollments) {
-            console.log(enrollment["course"]);
+            // console.log(enrollment["course"]);
             let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
-            console.log(enrollment["course"]["assignments"]);
+            // console.log(enrollment["course"]["assignments"]);
 
             if (Array.isArray(assignments) && course_id == course_id_focus) {
                 for (let assignment of assignments) {
@@ -341,7 +353,7 @@ function addNewReply(reply_input, course_id, post_id) {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Comment Posted:', data);
+            // console.log('Comment Posted:', data);
         })
         .catch(error => {
             console.error('Error Posting Comment:', error);
@@ -376,7 +388,7 @@ function addNewDiscussion() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Discussion Posted:', data);
+            // console.log('Discussion Posted:', data);
         })
         .catch(error => {
             console.error('Error Posting Discussion:', error);
