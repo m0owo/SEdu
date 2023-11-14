@@ -388,19 +388,22 @@ li {
 .grade-table-container {
     width: 500px;
     overflow: auto;
-    box-sizing: border-box;
     max-width: none;
-    max-height: 500px;
+    max-height: 100px;
+    display: flex;
 }
 
 .grade-table {
-    box-sizing: border-box;
-    margin-left: 90%;
     text-wrap: nowrap;
+    margin-left: auto;
+}
+
+.grade-course-title {
+    color: navy;
 }
 
 .scheme-table {
-    margin-left: 40%;
+    margin-left: auto;
 }
 
 .grade-table-student,
@@ -442,13 +445,7 @@ li {
 
 @media screen and (max-width:750px) {
     .grade-table-container {
-        max-width: 300px;
-    }
-    .grade-table {
-        margin-left: 190%;
-    }
-    .scheme-table {
-        margin-left: 110%;
+        max-width: 400px;
     }
 }
 
