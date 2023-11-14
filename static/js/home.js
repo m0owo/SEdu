@@ -1,12 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
     let user = userElement.getAttribute("data");
-    let userData;
+    let role;
+    
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
-            userData = user;
+            console.log(user);
+            role = user.role;
+            if (user.role === "student") {
+                initForStudent(user);
+            } else if (user.role === "teacher"){
+                initForTeacher(user);
+            }
             updateAssignment(user);
+            // updateClasses(user);
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
@@ -23,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!userData || !userData.id) {
             return;
         }
-
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
 
@@ -79,6 +86,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
+    function initForStudent(user) {
+        console.log("initing for student");
+        console.log(user.id + " " + user.name + " " + user.role);
+        let profileCard = document.getElementById("profile-card");
+        profileCard.style.display = "flex";
+    }
+
+    function initForTeacher(user) {
+        console.log("initing for tacher");
+        console.log(user.id + " " + user.name + " " + user.role);
+        let gradeCard = document.getElementById("grading");
+        gradeCard.style.display = "flex";
+    }
+
 
     function isToday(someDate) {
         const today = new Date();

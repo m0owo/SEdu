@@ -94,7 +94,6 @@ function fetchDBtoUpdate() {
                     let date = post.posted_date;
                     let time = post.posted_time;
                     let comments = post.classroom_comments.data;
-                    console.log(comments);
                     
                     // create a discussion box for discussion and replies
                     let wholeDiscussionBox = document.createElement("div");
