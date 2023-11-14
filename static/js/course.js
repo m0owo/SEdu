@@ -83,17 +83,20 @@ function fetchDBtoUpdate() {
             return;
         }
     
-        let id = userData.id;
+        let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
     
         for (let enrollment of enrollments) {
+            console.log(enrollment["course"]);
             let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
+            console.log(enrollment["course"]["assignments"]);
 
             if (Array.isArray(assignments) && course_id == course_id_focus) {
                 for (let assignment of assignments) {
-                    console.log(assignment);
+                    //console.log(assignment);
+                    let assignment_id = assignment["id"];
 
                     let divcard = document.createElement("div");
                     divcard.className = "card";
@@ -119,7 +122,7 @@ function fetchDBtoUpdate() {
                     spanviewassignment.className = "nav-items-small";
 
                     let a = document.createElement("a");
-                    a.href = "/assignment/";
+                    a.href = `${course_id}/assignment/${assignment_id}`;
                     a.innerHTML = "VIEW ASSIGNMENT";
 
 
@@ -155,7 +158,6 @@ function fetchDBtoUpdate() {
             }
         }
     }
-    pullAssignmentFromDB();
 }
 
 function isToday(someDate) {
