@@ -22,6 +22,14 @@ class CommentCreate(BaseModel):
     comment_text: str
     comment_post:int
 
+class AssignmentUpdate(BaseModel):
+    course_id: int
+    assignment_id: int
+    title: str = None
+    description: str = None
+    date: str = None
+    time: str = None
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -70,6 +78,25 @@ async def read_user_course(request: Request, user_id: int, course_id: int):
     return templates.TemplateResponse(
         "course.html",
         {"request": request, "user": user, "course": course},
+    )
+
+@app.get("/{user_id}/course/{course_id}/assignment/{assignment_id}", response_class=HTMLResponse)
+async def read_user_assignment(request: Request, user_id: int, course_id: int, assignment_id: int):
+    user = root.users[user_id]
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    course = root.courses[course_id]
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    assignment = root.assignments[assignment_id]
+    if assignment is None:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+
+    return templates.TemplateResponse(
+        "assignment.html",
+        {"request": request, "user": user, "course": course, "assignment": assignment},
     )
 
 @app.get("/students/{user_id}")
@@ -148,7 +175,31 @@ async def post_new_comment(course_id: int, comment_data: CommentCreate):
     root.posts[discussion_id].addComment(comment_data.commenter, comment_data.comment_date, comment_data.comment_time, comment_data.comment_text)
     return JSONResponse(content={"message": "Comment Posted Successfully"})
 
+@app.post("/edit-assignment/")
+async def edit_assignment(assignment: AssignmentUpdate):
+    course = root.courses.get(assignment.course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
 
+    assignment_db = root.assignments.get(assignment.assignment_id)
+    if assignment_db is None:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    
+    if assignment.title:
+        assignment_db.title = assignment.title
+
+    if assignment.description:
+        assignment_db.description = assignment.description
+
+    if assignment.date:
+        assignment_db.due_date = assignment.date
+
+    if assignment.time:
+        assignment_db.due_time = assignment.time
+
+    root.assignments[assignment.assignment_id] = assignment_db
+
+    return root.assignments[assignment.assignment_id]
 
 @app.on_event("shutdown")
 def shutdown_event():

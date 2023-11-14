@@ -133,7 +133,7 @@ class User(persistent.Persistent):
         self.id = id
         self.name = name
         self.password = password
-        self.role = role;
+        self.role = role
     
     def enrollCourse(self, Course):
         x = Enrollment(Course)
@@ -267,6 +267,7 @@ class Assignment(persistent.Persistent):
 
     def addSubmission(self, submission):
         self.submissions.append(submission)
+        return self.submissions
     
     def setTotalScore(self, totalGrade):
         self.total_score = totalGrade
@@ -274,10 +275,12 @@ class Assignment(persistent.Persistent):
     def addIndividualComment(self, commenter, comment_text=None):
         comment = {"commenter": commenter, "text": comment_text}
         self.individual_comments.append(comment)
+        return self.individual_comments
 
     def addClassComment(self, commenter, comment_text=None):
         comment = {"commenter": commenter, "text": comment_text}
         self.class_comments.append(comment)
+        return self.class_comments
 
     def __str__(self):
         return f"Homework: {self.title}, Assign date: {self.assign_date} {self.assign_time} Due date: {self.due_date} {self.due_time}, Description: {self.description}"
@@ -363,7 +366,7 @@ root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/13/2023", "11:59 PM", "Create house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
@@ -378,7 +381,7 @@ s1_enroll1.submitAssignment(root.submissions[1000])
 #Adding comment in Assginment
 root.assignments[101001].addIndividualComment(root.users[1111].name, "Make sure you sent it in zip file")
 root.assignments[101001].addIndividualComment(root.users[1101].name, "I already resent my work. Can you check")
-
+root.assignments[101001].printIndividualComment()
 #Set score to student assignment
 s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 

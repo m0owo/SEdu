@@ -4,15 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/assignment.css">
+    <link rel="stylesheet" href="/../static/css/assignment.css">
     <link rel="stylesheet" href="">
+    <script src="/../static/js/sidebar.js"></script>
     <title>Assignment Page</title>
 </head>
 
 <body>
+    <div id="user-data" data="{{user.id}}" course="{{course.id}}" assignment="{{assignment.id}}"></div>
     <header>
         <div class="nav-items-uniteractable">
-            <img src="../static/resources/se.png" class="logo">
+            <img src="/../static/resources/se.png" class="logo">
             <span class="small-bold">SEducation</span>
         </div>
         <nav>
@@ -23,7 +25,7 @@
             </ul>
         </nav>
     </header>
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <ul class="nav-items">
             <li class="small"><a href="">Probability and Statistics</a></li>
             <li class="small"><a href="">asd</a></li>
@@ -34,12 +36,12 @@
     <div class="block">
         <div class="course-bar">
             <div>
-                <span class="large" id="assignmentName">HW11 Hypothesis Testing</span>
+                <span class="large" id="assignmentName">{{assignment.title}}</span>
                 <span class="small">Assignment</span>
             </div>
-            <div class="highlight" id="assignmentDueDate">
+            <div class="highlight">
                 <span class="circle"></span>
-                <span class="small">Tomorrow, 11:59</span>
+                <span class="small" id="assignmentDueDate">Tomorrow, 11:59</span>
             </div>
         </div>
 
@@ -113,6 +115,6 @@
         </div>
     </div>
 </body>
-<script src="../static/js/assignment.js"></script>
+<script src="/../static/js/assignment.js"></script>
 
 </html>
