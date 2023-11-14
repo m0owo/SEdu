@@ -71,10 +71,9 @@ class Course(persistent.Persistent):
         self.assignments.append(Assignment)
         return Assignment
     
-    def addPost(self, newPost):
-        x = Post(newPost)
-        self.posts.append(x)
-        return x
+    def addPost(self, Post):
+        self.posts.append(Post)
+        return Post
     
     # def addLab(self, week, score):
     #     self.labs.append(Lab(week, score))
@@ -300,7 +299,7 @@ class Submission(persistent.Persistent):
         self.assignment_id = assignment_id
         self.content = content
         self.summit_date = summit_date
-        self.summit_time = summit_time
+        self.summit_time = summit_time 
         self.score = None
         self.sent = False
 
@@ -313,16 +312,27 @@ class Post(persistent.Persistent):
         self.classroom_comments = persistent.list.PersistentList()  # List of comments on the post (textual comments)
 
     def addComment(self, commenter, comment_date, comment_time, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.classroom_comments.append(comment)
+        return self.classroom_comments
     
     def __str__(self):
         return f"Author: {self.author}, Date: {self.posted_date} {self.posted_time}, Content: {self.content}"
+    
+    def to_dict(self):
+        return {
+            "author": self.author,
+            "posted_date": self.posted_date,
+            "posted_time": self.posted_time,
+            "content": self.content,
+            "classroom_comments": list(self.classroom_comments),
+        }
     
     def printPost(self):
         print(self.__str__())
         for comment in self.classroom_comments:
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
+
 
 
 root.courses = BTrees.OOBTree.BTree()
@@ -374,8 +384,12 @@ s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[100] = Post(root.users[1111].name, "2023-11-11", "13:49PM", "Are you ready to sent this project?")
-root.posts[100].addComment(root.users[1101].name,"2023-11-11", "13:59PM" "Yes, I'm already to sent this project")
+root.posts[201100] = Post("Jeff", "11/01/2023", "12:00 AM", "Do you guys want to build a snowman?") 
+root.posts[201100].addComment("Jeff", "11/01/2023", "1:00 AM", "Yea Sure WHy NOt")
+root.courses[201].addPost(root.posts[201100])
+root.posts[201101] = Post("Jeff", "24/01/2023", "12:00 AM", "Im so sad?") 
+root.courses[201].addPost(root.posts[201101])
+
 
 transaction.commit()
 
@@ -393,14 +407,14 @@ if  __name__ == "__main__":
         assignment.printIndividualComment()
     print()
 
-    students = root.students
-    for s in students:
-        if s.role == 'student':
-            student = students[s]
-            student.printEnrollment()
-            student.printSubmissions()
-            student.printAllAssignments()
-    print()
+    # students = root.users
+    # for s in students:
+    #     if s.role == 'student':
+    #         student = students[s]
+    #         student.printEnrollment()
+    #         student.printSubmissions()
+    #         student.printAllAssignments()
+    # print()
 
     posts = root.posts
     for p in posts:

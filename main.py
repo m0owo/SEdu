@@ -1,10 +1,26 @@
 from fastapi import FastAPI, Request, Depends, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from databasetest import root, commit_transaction, Assignment  # Import your database-related code
+from databasetest import root, commit_transaction, Assignment, Post  # Import your database-related code
 from fastapi import Form
+from typing import List, Dict
+from pydantic import BaseModel
+import json
 
+class DiscussionCreate(BaseModel):
+    course_id: int
+    author: str
+    posted_date: str
+    posted_time: str
+    content: str
+
+class CommentCreate(BaseModel):
+    commenter: str
+    comment_date: str
+    comment_time:str
+    comment_text: str
+    comment_post:int
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -32,7 +48,7 @@ def redirect_home():
 
 @app.get("/{user_id}", response_class=HTMLResponse)
 async def read_user_home(request: Request, user_id: int):
-    user = root.students[user_id]
+    user = root.users[user_id]
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -43,7 +59,7 @@ async def read_user_home(request: Request, user_id: int):
 
 @app.get("/{user_id}/course/{course_id}", response_class=HTMLResponse)
 async def read_user_course(request: Request, user_id: int, course_id: int):
-    user = root.students[user_id]
+    user = root.users[user_id]
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -75,12 +91,6 @@ async def read_course():
         html_content = file.read()
     return HTMLResponse(content=html_content)
 
-@app.get("/assignmentcompleted/", response_class=HTMLResponse)
-async def read_course_complete():
-    with open("templates/assignmentcompleted.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
-
 @app.post("/create-new-assignment/{course_id}")
 async def create_new_assignment(course_id: int):
     course = root.courses.get(course_id)
@@ -98,6 +108,45 @@ async def create_new_assignment(course_id: int):
     root.courses[course_id].addAssignment(root.assignments[assignment_id])
 
     return new_assignment
+
+@app.post("/post-new-discussion/{course_id}")
+async def post_new_discussion(course_id: int, discussion_data: DiscussionCreate):
+    try:
+        print(discussion_data.__dict__)
+        print(discussion_data.author)
+        print(discussion_data.posted_time)
+        print(discussion_data.posted_date)
+        course = root.courses.get(course_id)
+        if course is None:
+            raise HTTPException(status_code=404, detail="Course not found")
+        
+        discussion_id = int(str(course_id) + "100")
+        # check if the post_id already exists
+        while discussion_id in root.posts:
+            discussion_id += 1
+        new_discussion = Post(
+            author = discussion_data.author,
+            posted_date = discussion_data.posted_date,
+            posted_time = discussion_data.posted_time,
+            content = discussion_data.content
+        )
+        root.posts[discussion_id] = new_discussion
+        root.courses[course_id].addPost(root.posts[discussion_id])
+        return JSONResponse(content={"message": "Discussion created successfully"})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # or use logger.error(traceback.format_exc())
+        return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
+    
+@app.post("/post-new-reply/{course_id}")
+async def post_new_comment(course_id: int, comment_data: CommentCreate):
+    course = root.courses.get(course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    discussion_id = int(str(course_id) + str(100 + comment_data.comment_post))
+    root.posts[discussion_id].addComment(comment_data.commenter, comment_data.comment_date, comment_data.comment_time, comment_data.comment_text)
+    return JSONResponse(content={"message": "Comment Posted Successfully"})
 
 
 
