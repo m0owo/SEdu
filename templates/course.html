@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/course.css">
+    <link rel="stylesheet" href="/../static/css/style.css">
+    <link rel="stylesheet" href="/../static/css/course.css">
+    <script src="/../static/js/sidebar.js"></script>
     <title>Course Page</title>
 </head>
 <body>
+    <div id="user-data" data="{{user.id}}" course="{{course.id}}" role="{{user.role}}"></div>
     <header>
         <div class="nav-items-uniteractable">
-            <img src="../static/resources/se.png" class="logo">
+            <img src="/../static/resources/se.png" class="logo">
             <span class="small-bold">SEducation</span>
+            <span class="small" id="userRole">{{user.role}}</span>
         </div>
         <nav>
             <ul class="nav-items">
@@ -21,7 +24,7 @@
             </ul>
         </nav>
     </header>
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <ul class="nav-items">
             <li class="small"><a href="">Probability and Statistics</a></li>
             <li class="small"><a href="">asd</a></li>
@@ -33,16 +36,16 @@
         <div class="course-banner"></div>
         <div class="course-bar">
             <div>
-                <span class="medium">Probability and Statistics 1</span>
-                <span class="small">Description</span>
+                <span class="medium">{{course.name}}</span>
+                <span class="small">{{course.description}}</span>
             </div>
             <div>
                 <div>
-                    <span class="medium">Boonyasit Warachan</span>
+                    <span class="medium">{{course.teacherName}}</span>
                     <span class="small">Lecturer</span>
                 </div>
                 <div class="image">
-                    <img src="../static/resources/anuc.jpg" alt="" class="profile-img">
+                    <img src="/../static/resources/anuc.jpg" alt="" class="profile-img">
                 </div>
             </div>
         </div>
@@ -60,11 +63,13 @@
                     <textarea id="discussionInput" class="textarea small" placeholder="Start a Discussion . . ."></textarea>
                     <span class="post-button" id="postButton">Post</span>
                 </div>
-                <div class="root column"" id="discussionContainer">
+                <div class="root column" id="discussionContainer">
                 </div>
             </div>
+
+            
             <div class="info-column" id="upcoming">
-                <div class="section">
+                <div class="section" id="assignmentSection">
                     <div class="card">
                         <div class="card-content">
                             <div class="assignment-card">
@@ -77,6 +82,11 @@
                                 <span class="nav-items-small"><a href="/assignment/">VIEW ASSIGNMENT</a></span>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card-content">
+                        <li class="new-assignment-button medium-bold" id="new-assignment">+</li>
                     </div>
                 </div>
             </div>
@@ -107,6 +117,6 @@
         </div>
     </div>
 </body>
-<script src="../static/js/course.js"></script>
+<script src="/../static/js/course.js"></script>
 
 </html>

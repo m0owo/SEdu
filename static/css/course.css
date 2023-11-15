@@ -185,6 +185,24 @@
     flex-direction: column;
 }
 
+.new-assignment-button {
+    bottom: -2rem;
+    left: 3rem;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.05);
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.2rem;
+    border-radius: 1rem;
+    text-align: center;
+    justify-content: center;
+    background-color: white;
+}
+
+.new-assignment-button:hover {
+    background-color: pink;
+}
+
 @media screen and (max-width: 750px){
     .discussion-box {
         flex-direction: column;

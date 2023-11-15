@@ -16,10 +16,12 @@ def getAssignmentByID(assignment_id):
     return root.assignments.get(assignment_id, None)
 
 class Course(persistent.Persistent):
-    def __init__(self, id, name = "", credit = 0):
+    def __init__(self, id, name = "", description = "", teacherName = "", credit = 0):
         super().__init__()
         self.id = id
         self.name = name
+        self.description = description
+        self.teacherName = teacherName
         self.credit = credit
         self.gradeScheme = persistent.list.PersistentList()
         self.labs = persistent.list.PersistentList()
@@ -131,7 +133,7 @@ class User(persistent.Persistent):
         self.id = id
         self.name = name
         self.password = password
-        self.role = role;
+        self.role = role
     
     def enrollCourse(self, Course):
         x = Enrollment(Course)
@@ -265,17 +267,20 @@ class Assignment(persistent.Persistent):
 
     def addSubmission(self, submission):
         self.submissions.append(submission)
+        return self.submissions
     
     def setTotalScore(self, totalGrade):
         self.total_score = totalGrade
 
-    def addIndividualComment(self, commenter, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+    def addIndividualComment(self, commenter, comment_date, comment_time, comment_text=None):
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.individual_comments.append(comment)
+        return self.individual_comments
 
-    def addClassComment(self, commenter, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+    def addclassComment(self, commenter, comment_date, comment_time, comment_text=None):
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.class_comments.append(comment)
+        return self.class_comments
 
     def __str__(self):
         return f"Homework: {self.title}, Assign date: {self.assign_date} {self.assign_time} Due date: {self.due_date} {self.due_time}, Description: {self.description}"
@@ -297,7 +302,7 @@ class Submission(persistent.Persistent):
         self.assignment_id = assignment_id
         self.content = content
         self.summit_date = summit_date
-        self.summit_time = summit_time
+        self.summit_time = summit_time 
         self.score = None
         self.sent = False
 
@@ -310,11 +315,21 @@ class Post(persistent.Persistent):
         self.classroom_comments = persistent.list.PersistentList()  # List of comments on the post (textual comments)
 
     def addComment(self, commenter, comment_date, comment_time, comment_text=None):
-        comment = {"commenter": commenter, "text": comment_text}
+        comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.classroom_comments.append(comment)
+        return self.classroom_comments
     
     def __str__(self):
         return f"Author: {self.author}, Date: {self.posted_date} {self.posted_time}, Content: {self.content}"
+    
+    def to_dict(self):
+        return {
+            "author": self.author,
+            "posted_date": self.posted_date,
+            "posted_time": self.posted_time,
+            "content": self.content,
+            "classroom_comments": list(self.classroom_comments),
+        }
     
     def printPost(self):
         print(self.__str__())
@@ -322,19 +337,20 @@ class Post(persistent.Persistent):
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
 
 
+
 root.courses = BTrees.OOBTree.BTree()
-root.courses[101] = Course(101, 'Computer programming', 4, )
+root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'John Morris', 4)
 # root.courses[101].setGradeScheme(grading)
-root.courses[201] = Course(201, 'Web programming', 4)
+root.courses[201] = Course(201, 'Web Programming', 'HTML, CSS, JS & more', 'Visit Hirankitti', 4)
 # root.courses[201].setGradeScheme(grading)
-root.courses[202] = Course(202, 'Software Engineering Principle', 5)
+root.courses[202] = Course(202, 'Software Engineering Principles', 'Lets Learn Principles', 'Visit Hirankitti', 5)
 # root.courses[202].setGradeScheme(grading_se)
-root.courses[301] = Course(301, 'Artificial Intelligent', 3)
+root.courses[301] = Course(301, 'Artificial Intelligence', 'Lets Learn AI', 'Visit Hirankitti', 3)
 # root.courses[301].setGradeScheme(grading_ai)
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
-root.users[1101] = User(1101, 'moomoo', "1111", "student")
+root.users[1101] = User(1101, 'MooMoo', "1111", "student")
 s1_id = root.users[1101].id
 s1_enroll1 = root.users[1101].enrollCourse(root.courses[101])
 s1_enroll2 = root.users[1101].enrollCourse(root.courses[201])
@@ -350,7 +366,7 @@ root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/13/2023", "11:59 PM", "Create house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
@@ -363,21 +379,21 @@ root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 #Adding comment in Assginment
-root.assignments[101001].addIndividualComment(root.users[1111].name, "Make sure you sent it in zip file")
-root.assignments[101001].addIndividualComment(root.users[1101].name, "I already resent my work. Can you check")
+root.assignments[101001].addIndividualComment(root.users[1111].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")
+root.assignments[101001].addIndividualComment(root.users[1101].name, "11/01/2023", "1:11 AM", "I already resent my work. Can you check")
 
+# root.assignments[101001].printIndividualComment()
 #Set score to student assignment
 s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[100] = Post(root.users[1111].name, "09/22/2023", "13:49PM", "Are you ready to sent this project?")
-root.courses[101].addPost(root.posts[100])
-root.posts[100].addComment(root.users[1101].name,"09/22/2023", "13:59PM" "Yes, I'm already to sent this project")
+root.posts[201100] = Post(root.users[1111].name, "11/01/2023", "12:00 AM", "Sorry for the slight delay on the lecture, our lab will be on next Tuesday") 
+root.posts[201100].addComment(root.users[1101].name, "11/01/2023", "1:00 AM", "Alright, thank you.")
+root.courses[201].addPost(root.posts[201100])
+root.posts[201101] = Post(root.users[1101].name, "24/01/2023", "12:00 AM", "Can you repost the lecture slides?") 
+root.courses[201].addPost(root.posts[201101])
 
-root.posts[201] = Post(root.users[1111].name, "10/24/2023", "14:49PM", "Sent your project now")
-root.courses[201].addPost(root.posts[201])
-root.posts[201].addComment(root.users[1101].name,"10/30/2023", "15:59PM" "No, I didn't finished it")
 
 transaction.commit()
 
@@ -395,14 +411,14 @@ if  __name__ == "__main__":
         assignment.printIndividualComment()
     print()
 
-    students = root.students
-    for s in students:
-        if s.role == 'student':
-            student = students[s]
-            student.printEnrollment()
-            student.printSubmissions()
-            student.printAllAssignments()
-    print()
+    # students = root.users
+    # for s in students:
+    #     if s.role == 'student':
+    #         student = students[s]
+    #         student.printEnrollment()
+    #         student.printSubmissions()
+    #         student.printAllAssignments()
+    # print()
 
     posts = root.posts
     for p in posts:

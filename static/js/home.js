@@ -1,13 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
-    var user = userElement.getAttribute("data");
-
-    var userData;
+    let user = userElement.getAttribute("data");
+    let role;
+    
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
-            userData = user;
+            console.log(user);
+            role = user.role;
+            if (user.role === "student") {
+                initForStudent(user);
+            } else if (user.role === "teacher"){
+                initForTeacher(user);
+            }
             updateAssignment(user);
+            // updateClasses(user);
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
@@ -24,22 +31,23 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!userData || !userData.id) {
             return;
         }
-
+        let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
 
         for (let enrollment of enrollments) {
+            console.log(enrollment);
             let course_name = enrollment["course"]["name"];
+            let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
 
             if (Array.isArray(assignments)) {
                 for (let assignment of assignments) {
-                    console.log(assignment["title"]);
-                    console.log(assignment["due_date"]);
-                    console.log(assignment["due_time"]);
-                    
-                    let divbar = document.createElement("div");
-                    divbar.className = "assignment-bar";
+                    let assignment_id = assignment["id"];
+                    let a = document.createElement("a");
+                    a.href = `/${user_id}/course/${course_id}/assignment/${assignment_id}`;
+                    a.className = "assignment-bar";
+                    a.id = course_name;
                     let div1 = document.createElement("div");
                     let div2 = document.createElement("div");
 
@@ -75,14 +83,29 @@ document.addEventListener("DOMContentLoaded", function () {
                     divhighlight.appendChild(spantime);
                     div2.appendChild(divhighlight);
 
-                    divbar.appendChild(div1);
-                    divbar.appendChild(div2);
+                    a.appendChild(div1);
+                    a.appendChild(div2);
 
-                    assignmentsElement.appendChild(divbar);
+                    assignmentsElement.appendChild(a);
                 }
             }
         }
     }
+
+    function initForStudent(user) {
+        console.log("initing for student");
+        console.log(user.id + " " + user.name + " " + user.role);
+        let profileCard = document.getElementById("profile-card");
+        profileCard.style.display = "flex";
+    }
+
+    function initForTeacher(user) {
+        console.log("initing for tacher");
+        console.log(user.id + " " + user.name + " " + user.role);
+        let gradeCard = document.getElementById("grading");
+        gradeCard.style.display = "flex";
+    }
+
 
     function isToday(someDate) {
         const today = new Date();
@@ -98,7 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return someDate > today;
     }
 
-    // Function to get the day of the week
     function getDayOfWeek(someDate) {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return daysOfWeek[someDate.getDay()];
