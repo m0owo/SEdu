@@ -33,7 +33,7 @@
         <li class="small"><a href="">asd</a></li>
     </div>
     <div class="block">
-        <div class="root" id="home_root">
+        <div class="root" id="home_root" style="justify-content:unset;">
             <div class="card" id="profile-card" style="display:none;">
                 <div class="image">
                     <img src="../static/resources/anuc.jpg" alt="" class="profile-img">
@@ -124,17 +124,18 @@
                 </div>
             </div>
             <div class="info-column" id="grading" style="display:none;"> 
-                <div class="section">
+                <div class="section" style="max-width: 600px;">
                     <span class="grade-course-title medium-bold" id="gradeCourseTitle">
                         <span class="large">Grading:</span>
                         <select class="grade-course-title medium-bold" id="courseSelection" style="margin-left: 10px "></select>
                     </span>
-                    <div class="card">
+                    <div class="card" style="max-width: none;">
                         <div class="card-content grade-table-container no-top">
                             <table class="grade-table">
                                 <thead class="small-bold grade-table-head" id="gradingTableHead">
                                     <tr>
                                         <td class="grade-table-student">Student ID</td>
+                                        <td class="grade-table-score">Attendance</td>
                                         <td class="grade-table-score">Assignment</td>
                                         <td class="grade-table-score">Lab</td>
                                         <td class="grade-table-score">Project</td>
@@ -145,104 +146,32 @@
                                     </tr>
                                 </thead>
                                 <tbody class="grade-table-body" id="gradeTableBody">
-                                    <tr class="small">
-                                        <td class="grade-table-body-cell">
-                                            <span>65011367</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>3</span>
-                                            <span> / </span>
-                                            <span class="small-bold">10</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>7</span>
-                                            <span> / </span>
-                                            <span class="small-bold">15</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>6</span>
-                                            <span> / </span>
-                                            <span class="small-bold">15</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>6</span>
-                                            <span> / </span>
-                                            <span class="small-bold">30</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>15</span>
-                                            <span> / </span>
-                                            <span class="small-bold">30</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>37</span>
-                                            <span> / </span>
-                                            <span class="small-bold">100</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>F</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="small">
-                                        <td class="grade-table-body-cell">
-                                            <span>65011365</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>10</span>
-                                            <span> / </span>
-                                            <span class="small-bold">10</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>15</span>
-                                            <span> / </span>
-                                            <span class="small-bold">15</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>15</span>
-                                            <span> / </span>
-                                            <span class="small-bold">15</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>30</span>
-                                            <span> / </span>
-                                            <span class="small-bold">30</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>30</span>
-                                            <span> / </span>
-                                            <span class="small-bold">30</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>37</span>
-                                            <span> / </span>
-                                            <span class="small-bold">100</span>
-                                        </td>
-                                        <td class="grade-table-body-cell grade-cell-score">
-                                            <span>A</span>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="section">
-                    <span class="large">Weight Scheme</span>
-                    <div class="card">
+                <div class="section" style="max-width: 600px;">
+                    <span class="medium-bold">Weight Scheme</span>
+                    <div class="card" style="max-width:none;">
                         <div class="card-content grade-table-container">
                             <table class="scheme-table">
                                 <thead class="small-bold grade-table-head" id="schemeTableHead">
                                     <tr>
+                                        <td class="grade-table-student">Attendance</td>
                                         <td class="grade-table-student">Assignment</td>
                                         <td class="grade-table-student">Lab</td>
                                         <td class="grade-table-student">Project</td>
                                         <td class="grade-table-student">Midterm</td>
                                         <td class="grade-table-student">Final</td>
                                         <td class="grade-table-student">Total</td>
-                                    </tr>
+                                    </tr> 
                                 </thead>
                                 <tbody class="grade-table-body">
                                     <tr class="small-bold">
+                                        <td class="grade-table-body-cell">
+                                            <span id="attendanceWeight">%</span>
+                                        </td>
                                         <td class="grade-table-body-cell">
                                             <span id="assignmentWeight">%</span>
                                         </td>
@@ -259,6 +188,55 @@
                                             <span id="finalWeight">%</span>
                                         </td>
                                         <td class="grade-table-body-cell">100%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="section" style="max-width: fit-content;">
+                    <span class="medium-bold">Grading Scheme</span>
+                    <div class="card" style="max-width: none">
+                        <div class="card-content grade-table-container">
+                            <table class="scheme-table">
+                                <thead class="small-bold grade-table-head" id="schemeTableHead">
+                                    <tr>
+                                        <td class="grade-table-student">A</td>
+                                        <td class="grade-table-student">B+</td>
+                                        <td class="grade-table-student">B</td>
+                                        <td class="grade-table-student">C+</td>
+                                        <td class="grade-table-student">C</td>
+                                        <td class="grade-table-student">D+</td>
+                                        <td class="grade-table-student">D</td>
+                                        <td class="grade-table-student">F</td>
+                                    </tr> 
+                                </thead>
+                                <tbody class="grade-table-body">
+                                    <tr class="small-bold">
+                                        <td class="grade-table-body-cell">
+                                            <span>90</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>85</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>80</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>75</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>70</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>65</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>60</span>
+                                        </td>
+                                        <td class="grade-table-body-cell">
+                                            <span>55</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

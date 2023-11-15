@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let labWeight = document.getElementById("labWeight");
         let projectWeight = document.getElementById("projectWeight");
         let midtermWeight = document.getElementById("midtermWeight");
-        let finalWeight = document.getElementById("finalWeight");
+        let finalWeight = document.getElementById("finalWeight"); 
 
         assignmentWeight.addEventListener("click", function(e) {
             editGradeWeight(e);
@@ -134,9 +134,83 @@ document.addEventListener("DOMContentLoaded", function () {
             let courseSelectedIndex = courseSelection.selectedIndex;
             let courseSelected = courseSelection.options[courseSelectedIndex];
             let gradeTableBody = document.getElementById("gradeTableBody");
+
+            let attendanceCell;
+            let attendanceWeight = document.getElementById("attendanceWeight");
+            let attendanceWeightValue = 10;
+
+            let assignmentCell;
+            let assignmentWeight = document.getElementById("assignmentWeight");
+            let assignmentWeightValue = 10;
+
+            let labCell;
+            let labWeight = document.getElementById("labWeight");
+            let labWeightValue = 10;
+
+            let projectCell;
+            let projectWeight = document.getElementById("projectWeight");
+            let projectWeightValue = 10
+
+            let midtermCell; 
+            let midtermWeight = document.getElementById("midtermWeight");
+            let midtermWeightValue = 30
+
+            let finalCell;
+            let finalWeight = document.getElementById("finalWeight");
+            let finalWeightValue = 30
+
+            let gradeCell;
+            
+            let rawScore;
+            let totalScore;
+            let scores = {
+                    "attendance" : {
+                        "rawScore" : 10,
+                        "totalScore" : 10
+                    },
+                    "assignment" : {
+                        "rawScore" : 10,
+                        "totalScore" : 10
+                    },
+                    "lab" : {
+                        "rawScore" : 10,
+                        "totalScore" : 10
+                    },
+                    "project" : {
+                        "rawScore" : 10,
+                        "totalScore" : 10
+                    },
+                    "midterm" : {
+                        "rawScore" : 30,
+                        "totalScore" : 30
+                    },
+                    "final" : {
+                        "rawScore" : 30,
+                        "totalScore" : 30
+                    },
+                }
             gradeTableBody.innerHTML = "";
             console.log(courseSelected.value);
             console.log(courseSelected.text);
+
+            function makeCell(rawScore, totalScore, weight, parent, index) {
+                let newCell = parent.insertCell(index);
+                newCell.classList.add("grade-table-body-cell");
+                newCell.classList.add("grade-cell-score");
+            
+                let scoreSpan = document.createElement("span");
+                scoreSpan.innerText = eval((rawScore / totalScore) * (weight / 100) * 100);
+                scoreSpan.addEventListener("click", function(e) {
+                    editScore(e, weight);
+                });
+            
+                let weightSpan = document.createElement("span");
+                weightSpan.classList.add("small-bold");
+                weightSpan.innerText = " / " + weight;
+            
+                newCell.appendChild(scoreSpan);
+                newCell.appendChild(weightSpan);
+            }
             if (courses && courses.length > 0) {
                 for (let course of courses) {
                     if(course.course.id == courseSelected.value) {
@@ -155,23 +229,49 @@ document.addEventListener("DOMContentLoaded", function () {
                                 let infoSpan = document.createElement("span");
                                 infoCell.appendChild(infoSpan);
                                 infoSpan.innerText = student.id;
+                                
+                                rawScore = scores.attendance.rawScore;
+                                totalScore = scores.attendance.totalScore;
+                                makeCell(rawScore, totalScore, attendanceWeightValue, infoRow, 1);
 
-                                for (let i = 1; i < 8; i++) {
-                                    infoCell = infoRow.insertCell(i);
-                                    infoCell.classList.add("grade-table-body-cell");
-                                    infoCell.classList.add("grade-cell-score")
-                                    let scoreSpan = document.createElement("span");
-                                    scoreSpan.addEventListener("click", editGrade);
-                                    let separatorSpan = document.createElement("span");
-                                    let totalScoreSpan = document.createElement("span");
-                                    totalScoreSpan.classList.add("small-bold");
-                                    scoreSpan.innerText = 0;
-                                    separatorSpan.innerText = " / ";
-                                    totalScoreSpan.innerText = 30
-                                    infoCell.appendChild(scoreSpan);
-                                    infoCell.appendChild(separatorSpan);
-                                    infoCell.appendChild(totalScoreSpan);
+                                rawScore = scores.assignment.rawScore;
+                                totalScore = scores.assignment.totalScore;
+                                makeCell(rawScore, totalScore, assignmentWeightValue, infoRow, 2);
+
+                                rawScore = scores.lab.rawScore;
+                                totalScore = scores.lab.totalScore;
+                                makeCell(rawScore, totalScore, labWeightValue, infoRow, 3);
+                                
+                                rawScore = scores.project.rawScore;
+                                totalScore = scores.project.totalScore;
+                                makeCell(rawScore, totalScore, projectWeightValue, infoRow, 4);
+
+                                rawScore = scores.midterm.rawScore;
+                                totalScore = scores.midterm.totalScore;
+                                makeCell(rawScore, totalScore, midtermWeightValue, infoRow, 5);
+
+                                rawScore = scores.final.rawScore;
+                                totalScore = scores.final.totalScore;
+                                makeCell(rawScore, totalScore, finalWeightValue, infoRow, 6);
+
+                                let rawScoreSum = 0;
+                                let totalScoreSum = 0;
+                            
+                                for (let scoreKey in scores) {
+                                    let score = scores[scoreKey];
+                                    rawScoreSum += score.rawScore;
+                                    totalScoreSum += score.totalScore;
                                 }
+                                makeCell(rawScoreSum, totalScoreSum, 100, infoRow, 7);
+
+                                gradeCell = infoRow.insertCell(8);
+                                gradeCell.classList.add("grade-table-body-cell");
+                                gradeCell.classList.add("grade-cell-score");
+                                gradeSpan = document.createElement("span");
+                                gradeSpan.id = "gradeSpan";
+                                gradeSpan.addEventListener("click", editGrade);
+                                gradeSpan.innerText = "A";
+                                gradeCell.appendChild(gradeSpan);
                             }
                         }
                     }
@@ -196,6 +296,39 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
+        function editScore(e, weight) {
+            let toEdit = e.target;
+            let weightInput = document.createElement("input");
+            toEdit.parentNode.replaceChild(weightInput, toEdit);
+            weightInput.focus();
+            weightInput.style.height = "1rem";
+            weightInput.style.width = "2rem";
+            weightInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    let pattern = /^[0-9]+(\.[0-9]+)?$/;
+                    let expressionPattern = /^(\d+(\.\d+)?\/\d+(\.\d+)?|\d+(\.\d+)?)$/;
+                    if (pattern.test(weightInput.value)) {
+                        let weightOutput = document.createElement("span");
+                        weightOutput.innerText = weightInput.value;
+                        weightOutput.addEventListener("click", function(event) {
+                            editScore(event, weight);
+                        });
+                        weightInput.parentNode.replaceChild(weightOutput, weightInput);
+                    } else if(expressionPattern.test(weightInput.value)) {
+                        let weightOutput = document.createElement("span");
+                        let result = eval(weightInput.value) * weight;
+                        weightOutput.innerText = result <= weight ? result.toFixed(2) : "Invalid";
+                        weightOutput.addEventListener("click", function (event) {
+                            editScore(event, weight);
+                        });
+                        weightInput.parentNode.replaceChild(weightOutput, weightInput);
+                    } else {
+                        alert("Invalid input! Please enter a valid float value.");
+                    }
+                }
+            });
+        }
+
         function editGrade(e) {
             let toEdit = e.target;
             let weightInput = document.createElement("input");
@@ -205,10 +338,15 @@ document.addEventListener("DOMContentLoaded", function () {
             weightInput.style.width = "2rem";
             weightInput.addEventListener("keydown", function(e) {
                 if (e.key === "Enter") {
-                    let weightOutput = document.createElement("span");
-                    weightOutput.innerText = weightInput.value;
-                    weightOutput.addEventListener("click", editGrade);
-                    e.target.parentNode.replaceChild(weightOutput, e.target);
+                    inputValue = weightInput.value.toUpperCase();
+                    if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
+                        let weightOutput = document.createElement("span");
+                        weightOutput.innerText = inputValue;
+                        weightOutput.addEventListener("click", editGrade);
+                        e.target.parentNode.replaceChild(weightOutput, e.target);
+                    } else {
+                        alert("Invalid input! Please enter a valid grade.")
+                    }
                 }
             });
         }
