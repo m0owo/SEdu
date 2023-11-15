@@ -388,46 +388,61 @@ class Token(persistent.Persistent):
     def __repr__(self):
         return f"<Token {self.token} for {self.user.name}>"
 
-
+# Initialize Example Courses
 root.courses = BTrees.OOBTree.BTree()
-root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'John Morris', 4)
+root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'Lecturer 1 Name', 4)
 # root.courses[101].setGradeScheme(grading)
-root.courses[201] = Course(201, 'Web Programming', 'HTML, CSS, JS & more', 'Visit Hirankitti', 4)
+root.courses[102] = Course(102, 'Web Programming', 'HTML, CSS, JS & more', 'Lecturer 1 Name', 4)
 # root.courses[201].setGradeScheme(grading)
-root.courses[202] = Course(202, 'Software Engineering Principles', 'Lets Learn Principles', 'Visit Hirankitti', 5)
+root.courses[103] = Course(103, 'Software Engineering Principles', 'Lets Learn Principles', 'Lecturer 2 Name', 5)
 # root.courses[202].setGradeScheme(grading_se)
-root.courses[301] = Course(301, 'Artificial Intelligence', 'Lets Learn AI', 'Visit Hirankitti', 3)
+root.courses[104] = Course(104, 'Artificial Intelligence', 'Lets Learn AI', 'Lecturer 2 Name', 3)
 # root.courses[301].setGradeScheme(grading_ai)
+root.courses[105] = Course(105, 'Professional Communication', 'Professional Communication', 'Lecturer 3 Name', 3)
+root.courses[106] = Course(106, 'Charm School', 'Have Fun At Charm School!', 'Lecturer 3 Name', 3)
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
-root.users[1101] = User(1101, 'Moomoo', "1111", "student")
+root.users[1101] = User(1101, 'Miki Ajiki', "1111", "student")
 s1_id = root.users[1101].id
-s1_enroll1 = root.users[1101].enrollCourse(root.courses[101])
-s1_enroll2 = root.users[1101].enrollCourse(root.courses[201])
-s1_enroll3 = root.users[1101].enrollCourse(root.courses[202])
-s1_enroll4 = root.users[1101].enrollCourse(root.courses[301])
+s1_enroll1 = root.users[1101].enrollCourse(root.courses[103])
+s1_enroll2 = root.users[1101].enrollCourse(root.courses[104])
+s1_enroll3 = root.users[1101].enrollCourse(root.courses[105])
+s1_enroll4 = root.users[1101].enrollCourse(root.courses[106])
+
+root.users[1102] = User(1102, 'Putter Something', "1111", "student")
+root.users[1102].enrollCourse(root.courses[101])
+root.users[1102].enrollCourse(root.courses[102])
+root.users[1102].enrollCourse(root.courses[103])
+root.users[1102].enrollCourse(root.courses[104])
+
+root.users[1103] = User(1103, 'Music Auyeung', "1111", "student")
+root.users[1103].enrollCourse(root.courses[102])
+root.users[1103].enrollCourse(root.courses[103])
+root.users[1103].enrollCourse(root.courses[104])
+root.users[1103].enrollCourse(root.courses[105])
 
 #Initialize teacher info and enroll courses
-root.users[1111] = User(1111, 'Visit Hirankitti', "0101", "teacher")
-t1_enroll1 = root.users[1111].enrollCourse(root.courses[201])
-t2_enroll2 = root.users[1111].enrollCourse(root.courses[202])
-t3_enroll3 = root.users[1111].enrollCourse(root.courses[301])
+root.users[1104] = User(1104, 'Lecturer 1 Name', "1111", "teacher")
+t1_enroll1 = root.users[1104].enrollCourse(root.courses[101])
+t2_enroll2 = root.users[1104].enrollCourse(root.courses[102])
 
-# root.courses[201].addStudent(root.users[1101])
-# print("All students")
-# root.courses[201].printStudents()
-# root.courses[202].addStudent(root.users[1101])
-# root.courses[301].addStudent(root.users[1101])
+root.users[1105] = User(1105, 'Lecturer 2 Name', "1111", "teacher")
+root.users[1105].enrollCourse(root.courses[103])
+root.users[1105].enrollCourse(root.courses[104])
+
+root.users[1106] = User(1106, 'Lecturer 3 Name', "1111", "teacher")
+root.users[1106].enrollCourse(root.courses[105])
+root.users[1106].enrollCourse(root.courses[106])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
 root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
-root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
-root.courses[201].addAssignment(root.assignments[201001])
-root.assignments[201002] = Assignment(201002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
-root.courses[201].addAssignment(root.assignments[201002])
+root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
+root.courses[102].addAssignment(root.assignments[102001])
+root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
+root.courses[102].addAssignment(root.assignments[102002])
 
 # Student submits homework
 root.submissions = BTrees.OOBTree.BTree()
@@ -435,7 +450,7 @@ root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py
 s1_enroll1.submitAssignment(root.submissions[1000])
 
 #Adding comment in Assginment
-root.assignments[101001].addIndividualComment(root.users[1111].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")
+root.assignments[101001].addIndividualComment(root.users[1104].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")
 root.assignments[101001].addIndividualComment(root.users[1101].name, "11/01/2023", "1:11 AM", "I already resent my work. Can you check")
 
 # root.assignments[101001].printIndividualComment()
@@ -444,11 +459,11 @@ root.assignments[101001].addIndividualComment(root.users[1101].name, "11/01/2023
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()
-root.posts[201100] = Post(root.users[1111].name, "11/01/2023", "12:00 AM", "Sorry for the slight delay on the lecture, our lab will be on next Tuesday") 
-root.posts[201100].addComment(root.users[1101].name, "11/01/2023", "1:00 AM", "Alright, thank you.")
-root.courses[201].addPost(root.posts[201100])
-root.posts[201101] = Post(root.users[1101].name, "24/01/2023", "12:00 AM", "Can you repost the lecture slides?") 
-root.courses[201].addPost(root.posts[201101])
+root.posts[102100] = Post(root.users[1104].name, "11/01/2023", "12:00 AM", "Sorry for the slight delay on the lecture, our lab will be on next Tuesday") 
+root.posts[102100].addComment(root.users[1101].name, "11/01/2023", "1:00 AM", "Alright, thank you.")
+root.courses[102].addPost(root.posts[102100])
+root.posts[102101] = Post(root.users[1101].name, "24/01/2023", "12:00 AM", "Can you repost the lecture slides?") 
+root.courses[102].addPost(root.posts[102101])
 
 
 transaction.commit()
