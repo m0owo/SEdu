@@ -2,8 +2,8 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from databasetest import root, commit_transaction, Assignment, Post, Token, User  # Import your database-related code
-from fastapi import Form, Header
+from databasetest import root, commit_transaction, Assignment, Post  # Import your database-related code
+from fastapi import Form
 from typing import List, Dict
 from pydantic import BaseModel
 import json
@@ -45,29 +45,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-async def getHeader(request: Request):
-    headers = request.headers
-    print("Incoming Headers:", headers)
-
-    authorization_header = request.headers.get('Authorization')
-    if authorization_header != None :
-        print(authorization_header)
-        parts = authorization_header.split(' ')
-    
-        if len(parts) == 2 and parts[0].lower() == 'bearer':
-            # Use strip() to remove any leading/trailing whitespace
-            extract_token = parts[1]
-            return extract_token
-    else:
-         raise HTTPException(status_code=401, detail="Authorization header missing")
-
-async def getCurrentUser(request: Request):
-    extract_token = await getHeader(request)
-    if extract_token is None:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    token = root.tokens[extract_token]
-    return token.getUser()
-
 @app.get("/", response_class=HTMLResponse)
 async def read_home():
     with open("templates/loginpage.html", "r", encoding="utf-8") as file:
@@ -78,22 +55,15 @@ async def read_home():
 async def read_login(requests: Request, student_id:str=Form(...), student_password:str=Form(...)):
     user = root.users[int(student_id)]
     if user.login_sys(student_id,student_password):
-        token =  Token(user)
-        root.tokens[token.getToken()] = token
-        commit_tranction()
-        return {"token": token.getToken(), "message" : "login Successful", "user" : user}
+        return templates.TemplateResponse("home.html", {"request": requests, "user": user})
     raise HTTPException(status_code=404, detail="User not found")
     
 
-@app.get("/home/", response_class=HTMLResponse)
-async def read_home(request: Request):
-    user = await getCurrentUser(request)
-    return templates.TemplateResponse("home.html", {"request": request, "user": user})
-    
-@app.get("/getUser/")
-async def getUser(request: Request):
-    user = await getCurrentUser(request)
-    return {"data": user}
+@app.get("/home/", include_in_schema=False)
+def redirect_home():
+    with open("templates/home.html", "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content)
 
 @app.get("/{user_id}", response_class=HTMLResponse)
 async def read_user_home(request: Request, user_id: int):
