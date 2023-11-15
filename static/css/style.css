@@ -405,7 +405,7 @@ li {
     width: 500px;
     overflow: auto;
     max-width: none;
-    max-height: 100px;
+    max-height: 500px;
     display: flex;
 }
 

@@ -5,6 +5,7 @@ import persistent
 from fastapi import Form
 import uuid
 import time
+from typing import Union
 
 storage = ZODB.FileStorage.FileStorage('mydata.fs')
 db = ZODB.DB(storage)
@@ -33,6 +34,7 @@ class Course(persistent.Persistent):
         self.attendances = persistent.list.PersistentList()
         self.assignments = persistent.list.PersistentList()
         self.posts = persistent.list.PersistentList()
+        self.students = persistent.list.PersistentList()
 
         self.assignment_score = 0
         self.lab_score = 0
@@ -79,6 +81,14 @@ class Course(persistent.Persistent):
     def addPost(self, Post):
         self.posts.append(Post)
         return Post
+    
+    def addStudent(self, User):
+        self.students.append(User)
+        return User
+    
+    def printStudents(self):
+        for student in self.students:
+            print(student.__str__())
     
     # def addLab(self, week, score):
     #     self.labs.append(Lab(week, score))
@@ -141,9 +151,15 @@ class User(persistent.Persistent):
         self.role = role
     
     def enrollCourse(self, Course):
+        student = User(self.id, self.name, self.password, self.role)
         x = Enrollment(Course)
+        if (self.getRole() == "student"):
+            Course.addStudent(student)
         self.enrolls.append(x)
         return x
+    
+    def getRole(self):
+        return self.role
     
     def getEnrollment(self,Course):
         if Course in self.enrolls:
@@ -361,7 +377,7 @@ class Token(persistent.Persistent):
                 return True
         return False
     
-    def validateToken(self, token) -> User | None:  
+    def validateToken(self, token) -> Union[User, None]:  
         if self.checkToken(token):
             return self.user
         return None
@@ -394,9 +410,15 @@ s1_enroll4 = root.users[1101].enrollCourse(root.courses[301])
 
 #Initialize teacher info and enroll courses
 root.users[1111] = User(1111, 'Visit Hirankitti', "0101", "teacher")
-s1_enroll2 = root.users[1111].enrollCourse(root.courses[201])
-s1_enroll3 = root.users[1111].enrollCourse(root.courses[202])
-s1_enroll4 = root.users[1111].enrollCourse(root.courses[301])
+t1_enroll1 = root.users[1111].enrollCourse(root.courses[201])
+t2_enroll2 = root.users[1111].enrollCourse(root.courses[202])
+t3_enroll3 = root.users[1111].enrollCourse(root.courses[301])
+
+# root.courses[201].addStudent(root.users[1101])
+# print("All students")
+# root.courses[201].printStudents()
+# root.courses[202].addStudent(root.users[1101])
+# root.courses[301].addStudent(root.users[1101])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
@@ -418,7 +440,7 @@ root.assignments[101001].addIndividualComment(root.users[1101].name, "11/01/2023
 
 # root.assignments[101001].printIndividualComment()
 #Set score to student assignment
-s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
+# s1_enroll1.setAssignmentScore(root.assignments[101001].id, 95)
 
 #Crete Post
 root.posts = BTrees.OOBTree.BTree()

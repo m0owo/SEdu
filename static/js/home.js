@@ -101,12 +101,119 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initForTeacher(user) {
-        // console.log("initing for tacher");
-        // console.log(user.id + " " + user.name + " " + user.role);
-        // console.log(user);
         let courses = user.enrolls.data;
         console.log(courses);
+        
         let courseSelection = document.getElementById("courseSelection");
+        let userRoleElement = document.getElementById("userRole");
+        let gradeCard = document.getElementById("grading");
+
+        let assignmentWeight = document.getElementById("assignmentWeight");
+        let labWeight = document.getElementById("labWeight");
+        let projectWeight = document.getElementById("projectWeight");
+        let midtermWeight = document.getElementById("midtermWeight");
+        let finalWeight = document.getElementById("finalWeight");
+
+        assignmentWeight.addEventListener("click", function(e) {
+            editGradeWeight(e);
+        })
+        labWeight.addEventListener("click", function(e) {
+            editGradeWeight(e);
+        })
+        projectWeight.addEventListener("click", function(e) {
+            editGradeWeight(e);
+        })
+        midtermWeight.addEventListener("click", function(e) {
+            editGradeWeight(e);
+        })
+        finalWeight.addEventListener("click", function(e) {
+            editGradeWeight(e);
+        })
+
+        function populateGradeTable() {
+            let courseSelectedIndex = courseSelection.selectedIndex;
+            let courseSelected = courseSelection.options[courseSelectedIndex];
+            let gradeTableBody = document.getElementById("gradeTableBody");
+            gradeTableBody.innerHTML = "";
+            console.log(courseSelected.value);
+            console.log(courseSelected.text);
+            if (courses && courses.length > 0) {
+                for (let course of courses) {
+                    if(course.course.id == courseSelected.value) {
+                        console.log("course found");
+                        let students = course.course.students.data;
+                        console.log(students);
+                        if (students && students.length > 0) {
+                            for (let student of students) {
+                                console.log(student);
+                                let infoRow = gradeTableBody.insertRow(-1);
+                                infoRow.classList.add("small");
+                                
+                                let infoCell = infoRow.insertCell(-1);
+                                infoCell.classList.add("grade-table-body-cell");
+
+                                let infoSpan = document.createElement("span");
+                                infoCell.appendChild(infoSpan);
+                                infoSpan.innerText = student.id;
+
+                                for (let i = 1; i < 8; i++) {
+                                    infoCell = infoRow.insertCell(i);
+                                    infoCell.classList.add("grade-table-body-cell");
+                                    infoCell.classList.add("grade-cell-score")
+                                    let scoreSpan = document.createElement("span");
+                                    scoreSpan.addEventListener("click", editGrade);
+                                    let separatorSpan = document.createElement("span");
+                                    let totalScoreSpan = document.createElement("span");
+                                    totalScoreSpan.classList.add("small-bold");
+                                    scoreSpan.innerText = 0;
+                                    separatorSpan.innerText = " / ";
+                                    totalScoreSpan.innerText = 30
+                                    infoCell.appendChild(scoreSpan);
+                                    infoCell.appendChild(separatorSpan);
+                                    infoCell.appendChild(totalScoreSpan);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function editGradeWeight(e) {
+            let toEdit = e.target;
+            let weightInput = document.createElement("input");
+            toEdit.parentNode.replaceChild(weightInput, toEdit);
+            weightInput.focus();
+            weightInput.style.height = "1rem";
+            weightInput.style.width = "3rem";
+            weightInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    let weightOutput = document.createElement("span");
+                    weightOutput.innerText = weightInput.value + "%";
+                    weightOutput.addEventListener("click", editGradeWeight);
+                    e.target.parentNode.replaceChild(weightOutput, e.target);
+                }
+            });
+        }
+
+        function editGrade(e) {
+            let toEdit = e.target;
+            let weightInput = document.createElement("input");
+            toEdit.parentNode.replaceChild(weightInput, toEdit);
+            weightInput.focus();
+            weightInput.style.height = "1rem";
+            weightInput.style.width = "2rem";
+            weightInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    let weightOutput = document.createElement("span");
+                    weightOutput.innerText = weightInput.value;
+                    weightOutput.addEventListener("click", editGrade);
+                    e.target.parentNode.replaceChild(weightOutput, e.target);
+                }
+            });
+        }
+
+        // populate options to choose to populate grade table
         if (courses && courses.length > 0) {
             for (let course of courses) {
                 let courseOption = document.createElement("option");
@@ -114,14 +221,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 courseOption.innerText = course.course.name;
                 courseSelection.appendChild(courseOption);
             }
+    
+            // Event listener for dropdown change
+            courseSelection.addEventListener("change", populateGradeTable);
+    
+            // Initial call to populate grade table with the default selected option
+            populateGradeTable();
         }
-        
-        let userRoleElement = document.getElementById("userRole")
+        // Set user role and display the grade card
         userRoleElement.innerText = "Teacher";
-        let gradeCard = document.getElementById("grading");
         gradeCard.style.display = "flex";
     }
-
 
     function isToday(someDate) {
         const today = new Date();
