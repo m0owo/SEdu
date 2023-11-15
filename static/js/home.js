@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
     let user = userElement.getAttribute("data");
-    let role;
     
     fetch(`/students/${user}`)
         .then(response => response.json())
