@@ -5,6 +5,8 @@
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
+    /* font-family: 'Comic Sans MS', cursive; */
+    /* font-family: 'Brush Script MT', cursive; */
     color: rgb(34, 34, 34);
     transition: all .17s ease-in-out;
 }
@@ -402,7 +404,6 @@ li {
 }
 
 .grade-table-container {
-    width: 500px;
     overflow: auto;
     max-width: none;
     max-height: 500px;
@@ -416,6 +417,7 @@ li {
 
 .grade-course-title {
     color: navy;
+    display: inline-block;
 }
 
 select {
