@@ -385,19 +385,18 @@ root.courses[301] = Course(301, 'Artificial Intelligence', 'Lets Learn AI', 'Vis
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
-root.users[1101] = User(1101, 'MooMoo', "1111", "student")
+root.users[1101] = User(1101, 'Moomoo', "1111", "student")
 s1_id = root.users[1101].id
 s1_enroll1 = root.users[1101].enrollCourse(root.courses[101])
 s1_enroll2 = root.users[1101].enrollCourse(root.courses[201])
 s1_enroll3 = root.users[1101].enrollCourse(root.courses[202])
 s1_enroll4 = root.users[1101].enrollCourse(root.courses[301])
 
-#Initialize student info and enroll courses
-root.users[1111] = User(1111, 'Visit', "0101", "teacher")
-root.users[1111].enrollCourse(root.courses[101])
-root.users[1111].enrollCourse(root.courses[201])
-root.users[1111].enrollCourse(root.courses[202])
-root.users[1111].enrollCourse(root.courses[301])
+#Initialize teacher info and enroll courses
+root.users[1111] = User(1111, 'Visit Hirankitti', "0101", "teacher")
+s1_enroll2 = root.users[1111].enrollCourse(root.courses[201])
+s1_enroll3 = root.users[1111].enrollCourse(root.courses[202])
+s1_enroll4 = root.users[1111].enrollCourse(root.courses[301])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()

@@ -418,6 +418,11 @@ li {
     color: navy;
 }
 
+select {
+    background-color: whitesmoke;
+    border: none;
+}
+
 .scheme-table {
     margin-left: auto;
 }

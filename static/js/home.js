@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
     let user = userElement.getAttribute("data");
-    
+
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
@@ -101,8 +101,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function initForTeacher(user) {
-        console.log("initing for tacher");
-        console.log(user.id + " " + user.name + " " + user.role);
+        // console.log("initing for tacher");
+        // console.log(user.id + " " + user.name + " " + user.role);
+        // console.log(user);
+        let courses = user.enrolls.data;
+        console.log(courses);
+        let courseSelection = document.getElementById("courseSelection");
+        if (courses && courses.length > 0) {
+            for (let course of courses) {
+                let courseOption = document.createElement("option");
+                courseOption.value = course.course.id;
+                courseOption.innerText = course.course.name;
+                courseSelection.appendChild(courseOption);
+            }
+        }
+        
         let userRoleElement = document.getElementById("userRole")
         userRoleElement.innerText = "Teacher";
         let gradeCard = document.getElementById("grading");
@@ -160,4 +173,9 @@ document.addEventListener("DOMContentLoaded", function () {
     updateAssignment();
     updateDateTime();
     setInterval(updateDateTime, 60000);
+
+    const gradeCourseTitle = document.getElementById("gradeCourseTitle");
+
+
+
 });
