@@ -8,7 +8,7 @@
     </head>
 
     <body>
-        <form action="/home/" method="POST">
+        <form id="loginform">
             <header>
                 <div class="nav-items-uniteractable">
                     <img src="../static/resources/se.png" class="logo">
@@ -37,6 +37,36 @@
                 </div>
             </div>
         </form>
+        <script>
+            document.getElementById('loginform').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                var formData = new FormData();
+                formData.append('student_id', document.getElementById('student_id').value);
+                formData.append('student_password', document.getElementById('student_password').value);
+            
+                // AJAX request to the server
+                fetch('/home/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        // console.log(data.token)
+                        localStorage.setItem('userToken', data.token); // Store the token
+                        window.location.href = '/home/'; // Redirect to home page
+                    } else {
+                        // Handle login failure
+                        alert('Login failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+            
+        </script>
     </body>
 
 </html>
