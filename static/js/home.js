@@ -95,6 +95,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function initForStudent(user) {
         console.log("initing for student");
         console.log(user.id + " " + user.name + " " + user.role);
+        let userRoleElement = document.getElementById("userRole")
+        userRoleElement.innerText = "Student";
         let profileCard = document.getElementById("profile-card");
         profileCard.style.display = "flex";
     }
@@ -102,6 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function initForTeacher(user) {
         console.log("initing for tacher");
         console.log(user.id + " " + user.name + " " + user.role);
+        let userRoleElement = document.getElementById("userRole")
+        userRoleElement.innerText = "Teacher";
         let gradeCard = document.getElementById("grading");
         gradeCard.style.display = "flex";
     }
