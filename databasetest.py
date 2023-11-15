@@ -3,11 +3,16 @@ import BTrees._OOBTree
 import transaction
 import persistent
 from fastapi import Form
+import uuid
+import time
 
 storage = ZODB.FileStorage.FileStorage('mydata.fs')
 db = ZODB.DB(storage)
 connection = db.open()
 root = connection.root
+
+if not hasattr(root, "tokens"):
+    root.tokens = {}
 
 def commit_transaction():
     transaction.commit()
@@ -336,6 +341,36 @@ class Post(persistent.Persistent):
         for comment in self.classroom_comments:
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
 
+class Token(persistent.Persistent):
+    def __init__(self, user:User):
+        self.user = user
+        self.token = uuid.uuid4().hex
+        self.expire = time.time() + 3600 #Expires in 1 hour
+
+    def getUser(self):
+        return self.user
+    
+    def getToken(self):
+        return self.token
+    
+    
+    def checkToken(self, token):
+        if self.token == token:
+            if (time.time() < self.expire):
+                self.expire = time.time() + 3600
+                return True
+        return False
+    
+    def validateToken(self, token) -> User | None:  
+        if self.checkToken(token):
+            return self.user
+        return None
+    
+    def str(self):
+        return self.token
+
+    def __repr__(self):
+        return f"<Token {self.token} for {self.user.name}>"
 
 
 root.courses = BTrees.OOBTree.BTree()
