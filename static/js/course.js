@@ -1,3 +1,26 @@
+document.addEventListener("DOMContentLoaded", function () {
+    function getToken() {
+        return localStorage.getItem('authToken');
+    }
+    const userElement = document.getElementById("user-data");
+    var user = userElement.getAttribute("data");
+    var userData;
+    const token = getToken();
+    fetch(`/students/${userId}`, {
+        headers: {
+            'Authorization': token
+        }
+    })
+    .then(response => response.json())
+    .then(user => {
+        userData = user;
+        updateAssignment(user);
+    })
+    .catch(error => {
+        console.error('Error fetching user data:', error);
+    });
+});
+
 // alternating between discussion, upcoming, and completed
 const discussionEl = document.getElementById("discussion");
 const upcomingEl = document.getElementById("upcoming");

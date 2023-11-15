@@ -1,24 +1,61 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const userElement = document.getElementById("user-data");
-    var user = userElement.getAttribute("data");
 
     var userData;
-    fetch(`/students/${user}`)
-        .then(response => response.json())
-        .then(user => {
-            userData = user;
-            updateAssignment(user);
+    const userElement = document.getElementById("user-data");
+    var user = userElement.getAttribute("data");
+    const token = localStorage.getItem('userToken');
+
+
+    
+    if (token) {
+        fetch('/home/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })  
+        .then(response => {
+            response.text().then(text => {
+                //set page html  
+                console.log(text);
+                document.write(text);
+                
+                
+                fetch('/getUser/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                }).then(response => {
+                    response.json().then(data =>{
+                        console.log(data)
+                        userData = data
+                        test(userData)
+                        updateAssignment(userData)
+                    });
+                });
+            });
         })
         .catch(error => {
-            console.error('Error fetching user data:', error);
+            console.error('Error:', error);
         });
+    } else {
+        console.error('Token not found in local storage');
+    }
 
-    const dateElement = document.getElementById("date");
-    const timeElement = document.getElementById("time");
-    const timetableElement = document.getElementById("timetable");
-    const assignmentsElement = document.getElementById("assignments");
-
+    
+    
+    
+    
+    function test(data){
+        const time = document.getElementById("date");
+        userData = data["data"]
+        console.log("This: ", userData.id)
+        document.getElementById("date").textContent = userData.id
+    }
     function updateAssignment(userData) {
+        const assignmentsElement = document.getElementById("assignments");
+        console.log("Update assignment function", userData.id)
         assignmentsElement.innerHTML = "";
 
         if (!userData || !userData.id) {
@@ -50,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     let span2 = document.createElement("span");
                     span2.textContent = course_name;
                     span2.className = "small";
+
 
                     let divhighlight = document.createElement("div");
                     divhighlight.className = "highlight";
@@ -105,6 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateDateTime() {
+        const dateElement = document.getElementById("date");
+        const timeElement = document.getElementById("time");
+        const timetableElement = document.getElementById("timetable");
         let current = new Date();
         let formatDate = { weekday: 'long', day: 'numeric', month: 'long' };
         let formatTime = { hour: '2-digit', minute: '2-digit' };
@@ -132,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
     }
+    
     updateAssignment();
     updateDateTime();
     setInterval(updateDateTime, 60000);

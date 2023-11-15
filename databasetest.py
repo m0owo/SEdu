@@ -3,11 +3,16 @@ import BTrees._OOBTree
 import transaction
 import persistent
 from fastapi import Form
+import uuid
+import time
 
 storage = ZODB.FileStorage.FileStorage('mydata.fs')
 db = ZODB.DB(storage)
 connection = db.open()
 root = connection.root
+
+if not hasattr(root, "tokens"):
+    root.tokens = {}
 
 def commit_transaction():
     transaction.commit()
@@ -321,6 +326,37 @@ class Post(persistent.Persistent):
         for comment in self.classroom_comments:
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
 
+class Token(persistent.Persistent):
+    def __init__(self, user:User):
+        self.user = user
+        self.token = uuid.uuid4().hex
+        self.expire = time.time() + 3600 #Expires in 1 hour
+
+    def getUser(self):
+        return self.user
+    
+    def getToken(self):
+        return self.token
+    
+    
+    def checkToken(self, token):
+        if self.token == token:
+            if (time.time() < self.expire):
+                self.expire = time.time() + 3600
+                return True
+        return False
+    
+    def validateToken(self, token) -> User | None:  
+        if self.checkToken(token):
+            return self.user
+        return None
+    
+    def str(self):
+        return self.token
+
+    def __repr__(self):
+        return f"<Token {self.token} for {self.user.name}>"
+    
 
 root.courses = BTrees.OOBTree.BTree()
 root.courses[101] = Course(101, 'Computer programming', 4, )
@@ -354,6 +390,8 @@ root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[201001] = Assignment(201001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
 root.courses[201].addAssignment(root.assignments[201001])
+root.assignments[201001] = Assignment(201001,"Plululululululu", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
+root.courses[201].addAssignment(root.assignments[201001])
 root.assignments[201002] = Assignment(201002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
 root.courses[201].addAssignment(root.assignments[201002])
 
@@ -378,6 +416,7 @@ root.posts[100].addComment(root.users[1101].name,"09/22/2023", "13:59PM" "Yes, I
 root.posts[201] = Post(root.users[1111].name, "10/24/2023", "14:49PM", "Sent your project now")
 root.courses[201].addPost(root.posts[201])
 root.posts[201].addComment(root.users[1101].name,"10/30/2023", "15:59PM" "No, I didn't finished it")
+
 
 transaction.commit()
 
