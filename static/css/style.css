@@ -417,6 +417,12 @@ li {
     display: flex;
 }
 
+.scheme-table-status {
+    color: green;
+    margin-left: 1rem;
+    margin-top: 0.2rem;
+}
+
 .grade-table td {
     width: max-content;
 }
