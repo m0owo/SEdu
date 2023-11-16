@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from databasetest import root, commit_transaction, Assignment, Post  # Import your database-related code
+from databasetest import root, commit_transaction, Assignment, Post, Submission  # Import your database-related code
 from fastapi import Form
 from typing import List, Dict
 from pydantic import BaseModel
@@ -40,6 +40,16 @@ class AssignmentUpdate(BaseModel):
     description: str = None
     date: str = None
     time: str = None
+
+class SubmissionCreate(BaseModel):
+    user_id: int
+    course_id: int
+    assignment_id: int
+    content: str = None
+    submit_date: str = None
+    submit_time: str = None
+    score: str = None
+    sent: str = True
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -232,6 +242,36 @@ async def edit_assignment(assignment: AssignmentUpdate):
     root.assignments[assignment.assignment_id] = assignment_db
 
     return root.assignments[assignment.assignment_id]
+
+@app.post("/post-submission/")
+async def post_new_comment(submission: SubmissionCreate):
+    user = root.users.get(submission.user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    course = root.courses.get(submission.course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    assignment = root.assignments.get(submission.assignment_id)
+    if assignment is None:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    if (submission.content and submission.submit_date and submission.submit_time):
+        new_submission = Submission(submission.user_id, submission.course_id, submission.assignment_id, submission.content, submission.submit_date, submission.submit_time)
+
+    #if user already submitted before, resubmit
+    submissions = root.assignments[submission.assignment_id].submissions
+    submitted = True
+    for i in range(len(submissions)):
+        print(submissions[i].content)
+        if submissions[i].user_id == submission.user_id:
+            submissions[i] = new_submission #replace old submission
+            break
+        else:
+            submitted = False
+    if not submitted or len(submissions) == 0: #not submitted or if submissions are empty
+        root.assignments[submission.assignment_id].addSubmission(new_submission)
+    return new_submission
+
 
 @app.on_event("shutdown")
 def shutdown_event():

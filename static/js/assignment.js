@@ -411,18 +411,68 @@ function updateScore(rawScoreInput, newScoreValue) {
     });
 }
 
-if (role == "student") {
-    roleSpan.innerText = "Student";
-    descriptionEdit.style.display = "none";
-    submissionTable.style.display = "none";
-    fileInputButton.style.display = "none";
-} else if (role == "teacher") {
-    roleSpan.innerText = "Lecturer";
+//submit submission
+const submitButton = document.getElementById("submitButton");
+submitButton.addEventListener("click", addSubmission);
+function addSubmission() {
+    let current = new Date();
+        let text = commentInput.value
+        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
+        let formatTime = { hour: '2-digit', minute: '2-digit' };
+        let date = current.toLocaleDateString('en-US', formatDate);
+        let time = current.toLocaleTimeString('en-US', formatTime);
+        assignmentDueDate.innerText = date + ", " + time;
+        //fetch to get user name
+        fetch(`/students/${user}`)
+        .then(response => response.json())
+        .then(user => {
+            //fetch to post comments in assignment
+            fetch(`/post-submission/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "user_id": user["id"],
+                    "course_id": course_id,
+                    "assignment_id": assignment_id,
+                    "content": "test",
+                    "submit_date": date,
+                    "submit_time": time,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    fetchDBtoUpdate();
+                    console.log('Assignment submission posted:', data);
+                })
+                .catch(error => {
+                    console.error('Error posting submission:', error);
+                });
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
 }
 
 document.addEventListener("DOMContentLoaded", fetchDBtoUpdate);
 function fetchDBtoUpdate() {
     var userData;
+    if (role == "student"){
+        const submission_additional = document.getElementById("submission-additional");
+        const submissionsBox = document.getElementById("submissionsBox");
+        submission_additional.textContent = "Submission Box";
+        submissionsBox.style.display = "none";
+        roleSpan.innerText = "Student";
+        descriptionEdit.style.display = "none";
+        submissionTable.style.display = "none";
+    } else if (role == "teacher") {
+        const submission_state = document.getElementById("submission-state");
+        roleSpan.innerText = "Lecturer";
+        submitButton.style.display = "none";
+        submission_state.style.display = "none";
+    }
+    
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
@@ -442,10 +492,13 @@ function fetchDBtoUpdate() {
         let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
+        let first_course_id = enrollments[0]["course"]["id"];
 
         for (let enrollment of enrollments) {
             let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
+            const courseElement = document.getElementById("course");
+            courseElement.href = `/${user_id}/course/${first_course_id}`;
 
             if (Array.isArray(assignments) && course_id == course_id_focus) {
                 for (let assignment of assignments) {
@@ -465,7 +518,6 @@ function fetchDBtoUpdate() {
                         assignmentDueDate.innerText = date + ", " + time;
 
                         let comments = assignment["individual_comments"]["data"];
-
                         //update comments
                         commentContainer.innerHTML = "";
                         if (comments && comments.length > 0) {
@@ -474,21 +526,36 @@ function fetchDBtoUpdate() {
                                 let dateBox = document.createElement("span");
                                 let textBox = document.createElement("span");
                                 let userBox = document.createElement("span");
-
                                 commentBox.classList.add("comment-box");
                                 dateBox.classList.add("comment-date-box");
                                 textBox.classList.add("comment-text-box");
                                 userBox.classList.add("comment-user-box");
-
                                 dateBox.innerText = comment["comment_date"] + ", " + comment["comment_time"];
                                 textBox.innerText = comment["text"];
                                 userBox.innerText = comment["commenter"];
-
                                 // Append elements to the container
                                 commentBox.appendChild(userBox)
                                 commentBox.appendChild(dateBox);
                                 commentBox.appendChild(textBox);
                                 commentContainer.appendChild(commentBox);
+                            }
+                        }
+
+                        //update submissions
+                        let submissions = assignment["submissions"]["data"];
+                        if (submissions){
+                            for (let submission of submissions){
+                                console.log(submission);
+                                const submission_state = document.getElementById("submission-state");
+                                if (submission["user_id"] == user_id){
+                                    if (submission["score"]){
+                                        submission_state.textContent = "Graded";
+                                        submission_state.style.color = "Green";
+                                    } else {
+                                        submission_state.textContent = "Turned In";
+                                        submission_state.style.color = "Green";
+                                    }
+                                }
                             }
                         }
                     }

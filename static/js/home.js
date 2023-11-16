@@ -33,12 +33,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
+        let first_course_id = enrollments[0]["course"]["id"];
 
         for (let enrollment of enrollments) {
             console.log(enrollment);
             let course_name = enrollment["course"]["name"];
             let course_id = enrollment["course"]["id"];
             let assignments = enrollment["course"]["assignments"]["data"];
+
+            const courseElement = document.getElementById("course");
+            courseElement.href = `/${user_id}/course/${first_course_id}`;
 
             if (Array.isArray(assignments)) {
                 for (let assignment of assignments) {

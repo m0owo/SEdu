@@ -206,7 +206,7 @@ class User(persistent.Persistent):
             for submission in enrollment.submissions:
                 assignment = getAssignmentByID(submission.assignment_id)
                 if submission.student_id == self.id:
-                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission.content}, Submission Time: {submission.summit_date} {submission.summit_time}, Score: {submission.score}/{assignment.total_score}")
+                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission.content}, Submission Time: {submission.submit_date} {submission.submit_time}, Score: {submission.score}/{assignment.total_score}")
     
     def printEnrollment(self):
         print(self.__str__())
@@ -318,14 +318,15 @@ class Assignment(persistent.Persistent):
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}")
 
 class Submission(persistent.Persistent):
-    def __init__(self, student_id, assignment_id, content, summit_date, summit_time):
-        self.student_id = student_id
+    def __init__(self, user_id, course_id, assignment_id, content, submit_date, submit_time):
+        self.user_id = user_id
+        self.course_id = course_id
         self.assignment_id = assignment_id
         self.content = content
-        self.summit_date = summit_date
-        self.summit_time = summit_time 
+        self.submit_date = submit_date
+        self.submit_time = submit_time 
         self.score = None
-        self.sent = False
+        self.sent = True
 
 class Post(persistent.Persistent):
     def __init__(self, author, posted_date, posted_time, content):
@@ -437,17 +438,17 @@ root.users[1106].enrollCourse(root.courses[106])
 
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/15/2023", "11:59 PM", "Create a house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
-root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Do your SE website")
+root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Do your SE website")
 root.courses[102].addAssignment(root.assignments[102001])
 root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
 root.courses[102].addAssignment(root.assignments[102002])
 
-# Student submits homework
+# Testing Student 1102 submits homework at course 101, assignment 101001
 root.submissions = BTrees.OOBTree.BTree()
-root.submissions[1000] = Submission(s1_id, root.assignments[101001].id, "main.py", "2023-11-11", "12:00 PM")
-s1_enroll1.submitAssignment(root.submissions[1000])
+root.submissions[1001] = Submission(1102, 101, root.assignments[101001].id, "main.py", "2023-11-11", "12:00 PM")
+root.assignments[101001].addSubmission(root.submissions[1001])
 
 #Adding comment in Assginment
 root.assignments[101001].addIndividualComment(root.users[1104].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")

@@ -20,8 +20,8 @@
         </div>
         <nav>
             <ul class="nav-items">
-                <li class="small"><a href="/home/">Home</a></li>
-                <li class="small"><a href="/course/">Courses</a></li>
+                <li class="small"><a href="/{{user.id}}/" id="home">Home</a></li>
+                <li class="small"><a href="" id="course">Courses</a></li>
                 <li class="small"><a href="">Calendar</a></li>
             </ul>
         </nav>
@@ -68,12 +68,16 @@
                 <div class="card-div">
                     <div class="card">
                         <div class="info-column">
-                            <span class="medium-bold"> Additional Resources</span>
+                            <div class="nav-items-uniteractable" style="width: 100%; justify-content: space-between;">
+                                <span class="medium-bold" id="submission-additional"> Additional Resources</span>
+                                <span class="medium-bold" id="submission-state" style="color:orange;"> Not Turned In</span>
+                            </div>
                             <hr>
                             <span class="additional-resources" id="additionalResources"></span>
                             <span class="edit-button" id="fileInputButton">Insert File<input type="file" id="fileInput"
                                     accept=".pdf, .doc, .docx, .txt, .zip"></span></span>
                             <div class="info-column file-frame-div" id="resourceFrames"></div>
+                            <span class="edit-button" id="submitButton">Submit</span>
                         </div>
                     </div>
                 </div>
@@ -96,7 +100,7 @@
             </div>
             <div class="root">
                 <div class="card-div">
-                    <div class="card">
+                    <div class="card" id="submissionsBox">
                         <div class="info-column">
                             <span class="medium-bold hightlight">Submissions</span>
                             <hr>
