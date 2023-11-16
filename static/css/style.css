@@ -442,8 +442,10 @@ li {
 }
 
 select {
-    background-color: whitesmoke;
-    border: none;
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.2rem;
+    margin-bottom: 0.1rem;
 }
 
 .scheme-table {

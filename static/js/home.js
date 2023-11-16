@@ -266,7 +266,47 @@ document.addEventListener("DOMContentLoaded", function () {
             "C" : 70,
             "D+" : 65,
             "D" : 60,
-            "F" : 50
+            "F" : 0
+        }
+
+        function calculateGrade(score) {
+            if (score <= courseGrades["A"] && score > courseGrades["B+"]) {
+                return "A";
+            } else if (score <= courseGrades["B+"] && score > courseGrades["B"]) {
+                return "B+";
+            } else if (score <= courseGrades["B"] && score > courseGrades["C+"]) {
+                return "B";
+            } else if (score <= courseGrades["C+"] && score > courseGrades["C"]) {
+                return "C+";
+            } else if (score <= courseGrades["C"] && score > courseGrades["D+"]) {
+                return "C";
+            } else if (score <= courseGrades["D+"] && score > courseGrades["D"]) {
+                return "D+";
+            } else if (score <= courseGrades["D"] && score > courseGrades["F"]) {
+                return "D";
+            } else {
+                return "F";
+            }
+        }
+
+        function calculateTotalWeight(parent) {
+            let total = 0;
+            for (let i = 0; i < 6; i++) {
+                let cur = parent.cells[i];
+                let score = cur.querySelectorAll("span")[0].innerText;
+                total += parseFloat(score);
+            }
+            return total;
+        }
+    
+        function calculateTotalScore(parent) {
+            let total = 0;
+            for (let i = 1; i < 7; i++) {
+                let cur = parent.cells[i];
+                let score = cur.querySelectorAll("span")[0].innerText;
+                total += parseFloat(score);
+            }
+            return total;
         }
 
         function populateGradeSchemeTable(courseSelection) {
@@ -478,8 +518,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 editGradeWeight(e, name, courseWeights);
                             });
                             e.target.parentNode.replaceChild(newWeightOutput, e.target);
-                            let totalWeight = calculateTotalScore(newWeightOutput.parentNode.parentNode);
+                            let totalWeight = calculateTotalWeight(newWeightOutput.parentNode.parentNode);
+                            
                             console.log("total weight" + totalWeight);
+                            
                             if (totalWeight <= 100) {
                                 populateGradeTable(courseSelection);
                             } else {
@@ -610,8 +652,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                                     parentCell.innerHTML = "";
                                                     parentCell.appendChild(newScoreSpan);
+                                                    
                                                     let newWeightSpan = document.createElement("span");
                                                     newWeightSpan.innerText = " / " + weight;
+                                                    newWeightSpan.classList.add("small-bold");
 
                                                     parentCell.appendChild(newScoreSpan);
                                                     parentCell.appendChild(newWeightSpan);
@@ -627,15 +671,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
 
                                                     // Update the grade cell
-                                                    // let gradeCell = parentCell.parentNode.cells[8];
-                                                    // let grade = calculateGrade(totalScore);
-                                                    // gradeCell.innerHTML = `<span>${grade}</span>`;
+                                                    let gradeCell = parentCell.parentNode.cells[8];
+                                                    let grade = calculateGrade(totalScore);
+                                                    gradeCell.innerHTML = `<span>${grade}</span>`;
                                 
                                                 } else { // if result is more than the max
                                                     alert("Invalid! Score cannot exceed weight ");
                                                 }
                                             } else if (patternExpression.test(scoreInput.value)) {
-                                                let result = parseFloat(eval(scoreInput.value));
+                                                console.log(weight);
+                                                let result = parseFloat(eval(scoreInput.value) * weight);
+                                                console.log("result:" + result);
                                                 if (result <= weight) {
                                                     let score = result.toFixed(2);
                                                     scores[name] = score; 
@@ -667,9 +713,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
 
                                                     // Update the grade cell
-                                                    // let gradeCell = parentCell.parentNode.cells[8];
-                                                    // let grade = calculateGrade(totalScore);
-                                                    // gradeCell.innerHTML = `<span>${grade}</span>`;
+                                                    let gradeCell = parentCell.parentNode.cells[8];
+                                                    let grade = calculateGrade(totalScore);
+                                                    gradeCell.innerHTML = `<span>${grade}</span>`;
                                                 }
                                             } else {
                                                 alert("Invalid input! Please enter a valid float value.");
@@ -678,27 +724,27 @@ document.addEventListener("DOMContentLoaded", function () {
                                     });
                                 }
 
-                                function editGrade(e) {
-                                    let toEdit = e.target;
-                                    let weightInput = document.createElement("input");
-                                    toEdit.parentNode.replaceChild(weightInput, toEdit);
-                                    weightInput.focus();
-                                    weightInput.style.height = "1rem";
-                                    weightInput.style.width = "2rem";
-                                    weightInput.addEventListener("keydown", function(e) {
-                                        if (e.key === "Enter") {
-                                            inputValue = weightInput.value.toUpperCase();
-                                            if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
-                                                let weightOutput = document.createElement("span");
-                                                weightOutput.innerText = inputValue;
-                                                weightOutput.addEventListener("click", editGrade);
-                                                e.target.parentNode.replaceChild(weightOutput, e.target);
-                                            } else {
-                                                alert("Invalid input! Please enter a valid grade.")
-                                            }
-                                        }
-                                    });
-                                }
+                                // function editGrade(e) {
+                                //     let toEdit = e.target;
+                                //     let weightInput = document.createElement("input");
+                                //     toEdit.parentNode.replaceChild(weightInput, toEdit);
+                                //     weightInput.focus();
+                                //     weightInput.style.height = "1rem";
+                                //     weightInput.style.width = "2rem";
+                                //     weightInput.addEventListener("keydown", function(e) {
+                                //         if (e.key === "Enter") {
+                                //             inputValue = weightInput.value.toUpperCase();
+                                //             if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
+                                //                 let weightOutput = document.createElement("span");
+                                //                 weightOutput.innerText = inputValue;
+                                //                 weightOutput.addEventListener("click", editGrade);
+                                //                 e.target.parentNode.replaceChild(weightOutput, e.target);
+                                //             } else {
+                                //                 alert("Invalid input! Please enter a valid grade.")
+                                //             }
+                                //         }
+                                //     });
+                                // }
                                 
                                 // make an info row at the end of the table
                                 let infoRow = gradeTableBody.insertRow(-1);
@@ -739,10 +785,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 // the grade cell
                                 gradeCell = infoRow.insertCell(8);
                                 gradeCell.classList.add("grade-table-body-cell");
-                                gradeCell.classList.add("grade-cell-score");
+                                // gradeCell.classList.add("grade-cell-score");
                                 gradeSpan = document.createElement("span");
-                                gradeSpan.addEventListener("click", editGrade);
-                                gradeSpan.innerText = "A";
+                                // gradeSpan.addEventListener("click", editGrade);
+                                gradeSpan.innerText = calculateGrade(scoreSum);
                                 gradeCell.appendChild(gradeSpan);
                             }
                         }
@@ -775,16 +821,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Set user role and display the grade card
         userRoleElement.innerText = "Teacher";
         gradeCard.style.display = "flex";
-    }
-
-    function calculateTotalScore(parent) {
-        let total = 0;
-        for (let i = 1; i < 7; i++) {
-            let cur = parent.cells[i];
-            let score = cur.querySelectorAll("span")[0].innerText;
-            total += parseFloat(score);
-        }
-        return total;
     }
 
     function isToday(someDate) {
