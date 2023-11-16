@@ -144,39 +144,47 @@ hr {
 } 
 
 .submission-student-head {
-    width: 20%;
+    width: 10%;
+}
+
+.submission-content-head {
+    width: 35%;
+}
+
+.submission-time-head {
+    width: 25%;
 }
 
 .submission-status-head {
-    width: 60%;
+    width: 15%;
 }
 
 .submission-grade-head {
-    width: 20%;
+    width: 15%;
 }
-
+/* 
 .submission-student-cell {
-    width: 20%;
+    width: 10%;
     
 }
 
 .submission-status-cell {
-    width: 60%;
+    width: 20%;
     
 }
 
 .submission-score-cell {
-    width: 20%;
+    width: 10%;
     
 }
 
 .score-input {
-    width: 20%;
+    width: 15%;
 }
 
 .score {
 
-}
+} */
 
 .score:hover {
     font-weight: bold;

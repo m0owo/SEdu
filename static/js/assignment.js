@@ -6,9 +6,9 @@ assignmentName.addEventListener("click", function (e) {
         editAssignmentName(e)
     }
 });
-assignmentDueDate.addEventListener("click", function (e) { 
+assignmentDueDate.addEventListener("click", function (e) {
     if (role == "teacher") {
-        editAssignmentDueDate(e) 
+        editAssignmentDueDate(e)
     }
 });
 
@@ -229,76 +229,39 @@ function sendComment() {
         assignmentDueDate.innerText = date + ", " + time;
         //fetch to get user name
         fetch(`/students/${user}`)
-        .then(response => response.json())
-        .then(user => {
-            //fetch to post comments in assignment
-            fetch(`/post-new-assignment-comment/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "course_id": course_id,
-                    "assignment_id": assignment_id,
-                    "commenter": user["name"],
-                    "comment_date": date,
-                    "comment_time": time,
-                    "comment_text": text,
-                }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    fetchDBtoUpdate();
-                    console.log('Assignment comment posted:', data);
+            .then(response => response.json())
+            .then(user => {
+                //fetch to post comments in assignment
+                fetch(`/post-new-assignment-comment/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "course_id": course_id,
+                        "assignment_id": assignment_id,
+                        "commenter": user["name"],
+                        "comment_date": date,
+                        "comment_time": time,
+                        "comment_text": text,
+                    }),
                 })
-                .catch(error => {
-                    console.error('Error posting comment:', error);
-                });
-        })
-        .catch(error => {
-            console.error('Error fetching user data:', error);
-        });
+                    .then(response => response.json())
+                    .then(data => {
+                        fetchDBtoUpdate();
+                        console.log('Assignment comment posted:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error posting comment:', error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
 
         commentInput.value = "";
     }
 }
-
-// function updateCommentContainer() {
-//     commentContainer.innerHTML = "";
-
-//     // Iterate through comments in reverse order (most recent first)
-//     for (let i = 0; i < comments.length; i++) {
-//         let comment = comments[i];
-
-//         let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
-//         let formatTime = { hour: '2-digit', minute: '2-digit' };
-//         let date = comment.date.toLocaleDateString('en-US', formatDate);
-//         let time = comment.date.toLocaleTimeString('en-US', formatTime);
-
-//         // Create HTML elements
-//         let commentBox = document.createElement("p");
-//         let dateBox = document.createElement("span");
-//         let textBox = document.createElement("span");
-//         let userBox = document.createElement("span");
-
-//         // Add classes
-//         commentBox.classList.add("comment-box");
-//         dateBox.classList.add("comment-date-box");
-//         textBox.classList.add("comment-text-box");
-//         userBox.classList.add("comment-user-box");
-
-//         // Set content
-//         dateBox.innerText = date + ", " + time;
-//         textBox.innerText = comment.text;
-//         userBox.innerText = comment.user;
-
-//         // Append elements to the container
-//         commentBox.appendChild(userBox)
-//         commentBox.appendChild(dateBox);
-//         commentBox.appendChild(textBox);
-//         commentContainer.appendChild(commentBox);
-//     }
-// }
 
 // assignment ---Submission Table--- for Teachers 
 let submissions = [
@@ -332,8 +295,12 @@ submissions.forEach(submission => {
     student.classList.add("submission-student-cell");
     student.innerText = submission.student;
 
+    let content = submissionRow.insertCell(1);
+
+    let time = submissionRow.insertCell(2);
+
     // insert a cell for the status and format it accordingly
-    let status = submissionRow.insertCell(1);
+    let status = submissionRow.insertCell(3);
     status.classList.add("submission-status-cell");
     switch (submission.status) {
         case "Submitted":
@@ -351,7 +318,7 @@ submissions.forEach(submission => {
     status.innerText = submission.status;
 
     // create a cell for the score
-    let score = submissionRow.insertCell(2);
+    let score = submissionRow.insertCell(4);
     score.classList.add("submission-score-cell");
     let rawScore = document.createElement("span");
     rawScore.classList.add("score");
@@ -411,19 +378,22 @@ function updateScore(rawScoreInput, newScoreValue) {
     });
 }
 
+
+
+//====================================
 //submit submission
 const submitButton = document.getElementById("submitButton");
 submitButton.addEventListener("click", addSubmission);
 function addSubmission() {
     let current = new Date();
-        let text = commentInput.value
-        let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
-        let formatTime = { hour: '2-digit', minute: '2-digit' };
-        let date = current.toLocaleDateString('en-US', formatDate);
-        let time = current.toLocaleTimeString('en-US', formatTime);
-        assignmentDueDate.innerText = date + ", " + time;
-        //fetch to get user name
-        fetch(`/students/${user}`)
+    let text = commentInput.value
+    let formatDate = { month: 'numeric', day: 'numeric', year: 'numeric' };
+    let formatTime = { hour: '2-digit', minute: '2-digit' };
+    let date = current.toLocaleDateString('en-US', formatDate);
+    let time = current.toLocaleTimeString('en-US', formatTime);
+    assignmentDueDate.innerText = date + ", " + time;
+    //fetch to get user name
+    fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
             //fetch to post comments in assignment
@@ -436,7 +406,9 @@ function addSubmission() {
                     "user_id": user["id"],
                     "course_id": course_id,
                     "assignment_id": assignment_id,
+                    //========================= file is "test" right now
                     "content": "test",
+                    //=========================
                     "submit_date": date,
                     "submit_time": time,
                 }),
@@ -455,24 +427,31 @@ function addSubmission() {
         });
 }
 
+//==============================================
+//update all content on page
 document.addEventListener("DOMContentLoaded", fetchDBtoUpdate);
 function fetchDBtoUpdate() {
     var userData;
-    if (role == "student"){
-        const submission_additional = document.getElementById("submission-additional");
+
+    //ui change depending on roles
+    if (role == "student") {
+        const submission_title = document.getElementById("submission-title");
         const submissionsBox = document.getElementById("submissionsBox");
-        submission_additional.textContent = "Submission Box";
-        submissionsBox.style.display = "none";
+        const turnedIn = document.getElementById("turned-in");
+        const notTurnedIn = document.getElementById("not-turned-in");
+        submission_title.textContent = "Submission Box";
         roleSpan.innerText = "Student";
         descriptionEdit.style.display = "none";
         submissionTable.style.display = "none";
+        turnedIn.style.display = "none";
+        notTurnedIn.style.display = "none";
     } else if (role == "teacher") {
         const submission_state = document.getElementById("submission-state");
         roleSpan.innerText = "Lecturer";
         submitButton.style.display = "none";
         submission_state.style.display = "none";
     }
-    
+
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
@@ -542,20 +521,98 @@ function fetchDBtoUpdate() {
                         }
 
                         //update submissions
+                        //1) NOT DONE!! - Teacher Additional Files Update and Post
+
+                        //2) Student submission Update and Post
+                            //2.1) NOT DONE!! - Submission content having actual files instead of {content: "test"}
+                            //2.2) DONE - Submission can post and update (with content of "test" right now)
+                            //2.3) DONE - status for students (Graded, Turned In, Not Turned In)
+
+                        //3) Teacher submissions Update and Post
+                        //3.1) almost done - Submissions Updating
+                        // only students not turned in is not updated yet
+
+
+                        //3.2) NOT DONE!! - Submissions Score Posting
+                        // problem is students that didnt submit does not have submission in the database
+                        // so i have to check from both the students in course list and the submissions list
+                        // which will probably affect how gpa works since teacher can't grade who didnt submit
+
+                        //3.3) NOT DONE!! - Table can display submitted files at content column
+
+                        //submissions related update
                         let submissions = assignment["submissions"]["data"];
-                        if (submissions){
-                            for (let submission of submissions){
-                                console.log(submission);
+                        const submissionBody = document.getElementById("submissionBody");
+                        submissionBody.innerHTML = "";
+                        if (submissions) {
+                            for (let submission of submissions) { //get submission here
+                                //change status for students ==========================================
                                 const submission_state = document.getElementById("submission-state");
-                                if (submission["user_id"] == user_id){
-                                    if (submission["score"]){
+                                if (submission["user_id"] == user_id) {
+                                    if (submission["score"]) {
                                         submission_state.textContent = "Graded";
                                         submission_state.style.color = "Green";
                                     } else {
                                         submission_state.textContent = "Turned In";
                                         submission_state.style.color = "Green";
                                     }
+                                    break
                                 }
+
+                            //display all submissions for teacher =================================
+                                let submissionTable = document.getElementById("submissionsTable");
+                                let submissionBody = document.getElementById("submissionBody");
+
+                                // create a row for the submission
+                                let submissionRow = submissionBody.insertRow();
+                                submissionRow.classList.add("submission");
+
+                                // insert a cell for the student id
+                                let student = submissionRow.insertCell(0);
+                                student.classList.add("submission-student-cell");
+                                student.innerText = "6501" + submission["user_id"].toString();
+
+                            // !!!!!!! insert a cell for files !!!!!!!!
+                                let content = submissionRow.insertCell(1);
+                                content.innerText = submission["content"];
+                                let button = document.createElement("span");
+                                button.className = "edit-button";
+                                button.id = "view-submission-file";
+                                button.textContent = "View";
+                                content.appendChild(button);
+                                
+                                // insert a cell for submission time
+                                let time = submissionRow.insertCell(2);
+                                time.innerText = submission["submit_date"] + ", " + submission["submit_time"];
+                                
+                                // insert a cell for the status and format it accordingly
+                                let status = submissionRow.insertCell(3);
+                                const submittedDateText = submission["submit_date"] + " " + submission["submit_time"];
+                                const submittedDateObject = new Date(submittedDateText);
+                                if (submittedDateObject > enteredDateObject){
+                                    status.innerText = "Submitted Late";
+                                    status.className = "submission-status-submitted";
+                                } else {
+                                    status.innerText = "Submitted";
+                                    status.className = "submission-status-graded";
+                                }
+
+                                // create a cell for the score
+                                let score = submissionRow.insertCell(4);
+                                score.classList.add("submission-score-cell");
+                                let rawScore = document.createElement("span");
+                                rawScore.classList.add("score");
+                                // add the text for the score
+                                if (submission["score"]) {
+                                    rawScore.textContent = submission["score"];
+                                } else {
+                                    rawScore.textContent = "N/A";
+                                }
+                                score.appendChild(rawScore);
+                                // when the score is pressed, you can edit it
+                                rawScore.addEventListener('click', function (e) {
+                                    editRawScore(e);
+                                });
                             }
                         }
                     }

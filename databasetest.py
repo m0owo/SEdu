@@ -406,6 +406,7 @@ root.courses[106] = Course(106, 'Charm School', 'Have Fun At Charm School!', 'Le
 root.users = BTrees.OOBTree.BTree()
 root.users[1101] = User(1101, 'Miki Ajiki', "1111", "student")
 s1_id = root.users[1101].id
+root.users[1101].enrollCourse(root.courses[102])
 s1_enroll1 = root.users[1101].enrollCourse(root.courses[103])
 s1_enroll2 = root.users[1101].enrollCourse(root.courses[104])
 s1_enroll3 = root.users[1101].enrollCourse(root.courses[105])
