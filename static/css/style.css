@@ -406,7 +406,14 @@ li {
 .grade-table-container {
     overflow: auto;
     max-width: none;
+    min-height: 100px;
     max-height: 500px;
+    display: flex;
+}
+
+.scheme-table-container {
+    overflow: auto;
+    max-width: none;
     display: flex;
 }
 
@@ -435,6 +442,10 @@ select {
 
 .scheme-table {
     margin-left: auto;
+}
+
+.scheme-table .small-bold, .scheme-table .small {
+    font-size: 0.8rem;
 }
 
 .grade-table-student,
