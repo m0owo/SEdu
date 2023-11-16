@@ -4,9 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from databasetest import root, commit_transaction, Assignment, Post, Submission  # Import your database-related code
 from fastapi import Form
-from typing import List, Dict
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 import json
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class DiscussionCreate(BaseModel):
     course_id: int
@@ -54,6 +56,11 @@ class SubmissionCreate(BaseModel):
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+@app.get("/logout")
+def logout(request: Request):
+    response = templates.TemplateResponse("loginpage.html", {"request": request})
+    return response
 
 @app.get("/", response_class=HTMLResponse)
 async def read_home():

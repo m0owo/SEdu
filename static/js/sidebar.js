@@ -38,9 +38,19 @@ document.addEventListener("DOMContentLoaded", function () {
             a.href = `/${id}/course/${course_id}`;
             a.textContent = `${course_name}`;
     
-            list.appendChild(a);
+            list.appendChild(a);  
             sidebarElement.appendChild(list);
         }
+        let logout = document.createElement("a");
+        logout.classList.add("nav-items");
+        logout.classList.add("small-bold");
+        logout.classList.add("btn_logout");
+        logout.style.marginTop = "auto";
+        logout.style.marginLeft = "0.5rem";
+        logout.innerText = "Log Out";
+        logout.href = "/logout";
+
+        sidebarElement.appendChild(logout);
     }
 
     updateSidebar();
