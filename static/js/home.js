@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 initForTeacher(user);
             }
             updateAssignment(user);
-            // updateClasses(user);
+            updateClasses(user);
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
@@ -94,6 +94,142 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+    function updateClasses(user){
+        timetableElement.textContent = ""
+        let user_id = user.id;
+        let enrolls = user.enrolls;
+        let enrollments = enrolls["data"];
+        let allTodayClass = []
+
+        for (let enrollment of enrollments) {
+            let course_name = enrollment["course"]["name"];
+            let course_id = enrollment["course"]["id"];
+            let timeLists = enrollment["course"]["timeList"]["data"];
+
+            console.log("Time list: ", timeLists)
+            if (Array.isArray(timeLists)){
+                for (let timeList of timeLists){
+                    let day = timeList["day"]
+                    let type = timeList["type"]
+                
+                    if(isDay(day)){
+                        console.log("Today learn this", course_name)
+                        let existingEnrollment = allTodayClass.find(e => e.course.id === enrollment.course.id);
+                         if (!existingEnrollment) {
+                            allTodayClass.push(enrollment);
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log("All start time for today", allTodayClass)
+        let classes= checkClasses(allTodayClass)
+        console.log("near ", classes.nearestClass)
+        console.log("rest" , classes.remainingClasses)
+        console.log(classes.nearestClass.name)
+
+        //Nearest Class
+        let div = document.createElement("div");
+        div.className = "classes-bar"
+        let div1 = document.createElement("div");
+        let div2 = document.createElement("div")
+        div2.className = "highlight"
+
+        let span1 = document.createElement("span");
+        span1.className = "medium";
+        span1.textContent = `${classes.nearestClass.name} (${classes.nearestClass.type})`;
+
+        let span2 = document.createElement("span")
+        span2.className = "small"
+        span2.textContent = `${classes.nearestClass.starttime} - ${classes.nearestClass.endtime}`
+        div2.appendChild(span2)
+        div1.appendChild(div2);
+
+        div.appendChild(span1);
+        div.appendChild(div1)
+
+        timetableElement.appendChild(div)
+
+        //Upcoming class
+        for(let remainingclasss of classes.remainingClasses){
+            div1 = document.createElement("div")
+            div1.className = "classes-bar-small"
+
+            span1 = document.createElement("span")
+            span1.className = "medium"
+            span1.textContent = `${remainingclasss.name} (${remainingclasss.type})`;
+
+            span2 = document.createElement("span")
+            span2.className = "small"
+            span2.textContent = `${remainingclasss.starttime} - ${remainingclasss.endtime}`
+
+            div1.appendChild(span1)
+            div1.appendChild(span2)
+            
+            timetableElement.appendChild(div1)
+        }
+
+
+    }
+
+    function checkClasses(classList) {
+        var currentTime = new Date();
+        var nearestClass = null;
+        var remainingClasses = [];
+        var smallestDiff = Infinity;
+    
+        for (let enrollment of classList) {
+            let timeLists = enrollment.course.timeList.data;
+            for (let timeList of timeLists) {
+                let starttime = parseTimeAMPM(timeList["starttime"]);
+                let endtime = parseTimeAMPM(timeList["endtime"]);
+    
+                // Check if the class start time is in the future
+                if (currentTime < starttime) {
+    
+                    // Check if this is the nearest upcoming class
+                    var timeDiff = starttime - currentTime;
+                    if (timeDiff < smallestDiff) {
+                        smallestDiff = timeDiff;
+                        nearestClass = {
+                            name: enrollment.course.name,
+                            starttime: timeList["starttime"],
+                            endtime: timeList["endtime"],
+                            type: timeList["type"]
+                        };
+                    }else{
+                        remainingClasses.push({
+                            name: enrollment.course.name,
+                            starttime: timeList["starttime"],
+                            endtime: timeList["endtime"],
+                            type: timeList["type"]
+                        });
+                    }
+                }
+            }
+        }
+    
+        // Sort the remaining classes by start time
+        remainingClasses.sort((a, b) => parseTimeAMPM(a.starttime) - parseTimeAMPM(b.starttime));
+    
+        return { nearestClass, remainingClasses };
+    }
+    
+
+    function parseTimeAMPM(timeStr) {
+        var [time, modifier] = timeStr.split(' ');
+        var [hours, minutes] = time.split(':').map(Number);
+    
+        var date = new Date();
+        if (modifier === 'PM' && hours < 12) hours += 12;
+        if (modifier === 'AM' && hours === 12) hours = 0;
+    
+        date.setHours(hours, minutes, 0, 0);
+        return date;
+    }
+
+
 
     function initForStudent(user) {
         console.log("initing for student");
@@ -392,6 +528,27 @@ document.addEventListener("DOMContentLoaded", function () {
     function getDayOfWeek(someDate) {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return daysOfWeek[someDate.getDay()];
+    }
+
+    function isDay(someDay) {
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var date = new Date();
+        var dayIndex = date.getDay();
+        return days[dayIndex] === someDay;
+    }
+
+    function getCurrentTimeAMPM() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+    
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
     }
 
     function updateDateTime() {

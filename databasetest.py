@@ -29,6 +29,7 @@ class Course(persistent.Persistent):
         self.description = description
         self.teacherName = teacherName
         self.credit = credit
+        self.timeList = persistent.list.PersistentList()
         self.gradeScheme = persistent.list.PersistentList()
         self.labs = persistent.list.PersistentList()
         self.attendances = persistent.list.PersistentList()
@@ -85,6 +86,11 @@ class Course(persistent.Persistent):
     def addStudent(self, User):
         self.students.append(User)
         return User
+    
+    def addTimeTable(self, day, starttime, endtime, type):
+        timeDict = {"day" : day, "starttime" : starttime, "endtime" : endtime, "type" : type}
+        self.timeList.append(timeDict)
+        return self.timeList
     
     def printStudents(self):
         for student in self.students:
@@ -284,7 +290,6 @@ class Assignment(persistent.Persistent):
 
         self.submissions = persistent.list.PersistentList()
         self.individual_comments = persistent.list.PersistentList() # Dictionary with student_id as key and their individual comments as value
-        self.class_comments = persistent.list.PersistentList() # List of class-wide comments
 
     def addSubmission(self, submission):
         self.submissions.append(submission)
@@ -355,52 +360,34 @@ class Post(persistent.Persistent):
     
     def printPost(self):
         print(self.__str__())
-        for comment in self.classroom_comments:
-            print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}", )
 
-class Token(persistent.Persistent):
-    def __init__(self, user:User):
-        self.user = user
-        self.token = uuid.uuid4().hex
-        self.expire = time.time() + 3600 #Expires in 1 hour
-
-    def getUser(self):
-        return self.user
-    
-    def getToken(self):
-        return self.token
-    
-    
-    def checkToken(self, token):
-        if self.token == token:
-            if (time.time() < self.expire):
-                self.expire = time.time() + 3600
-                return True
-        return False
-    
-    def validateToken(self, token) -> Union[User, None]:  
-        if self.checkToken(token):
-            return self.user
-        return None
-    
-    def str(self):
-        return self.token
-
-    def __repr__(self):
-        return f"<Token {self.token} for {self.user.name}>"
 
 # Initialize Example Courses
 root.courses = BTrees.OOBTree.BTree()
 root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'Lecturer 1 Name', 4)
+root.courses[101].addTimeTable('Wednesday', '1:00 PM', '4:00 PM', 'Lecture')
+root.courses[101].addTimeTable('Friday', '1:00 PM' , '4:00 PM', 'Lab')
 # root.courses[101].setGradeScheme(grading)
 root.courses[102] = Course(102, 'Web Programming', 'HTML, CSS, JS & more', 'Lecturer 1 Name', 4)
+root.courses[102].addTimeTable('Thursday', '9:00 AM', '12:00 PM', 'Lecture')
+root.courses[102].addTimeTable('Thursday', '5:00 PM' , '7:00 PM', 'Lab')
+root.courses[102].addTimeTable('Thursday', '9:00 PM' , '10:00 PM', 'Lab')
+root.courses[102].addTimeTable('Thursday', '11:00 PM' , '11:30 AM', 'Lab')
 # root.courses[201].setGradeScheme(grading)
 root.courses[103] = Course(103, 'Software Engineering Principles', 'Lets Learn Principles', 'Lecturer 2 Name', 5)
+root.courses[103].addTimeTable('Monday', '9:00 AM' ,'12:00 PM', 'Lecture')
+root.courses[103].addTimeTable('Wednesday', '1:00 PM', '4:00 PM', 'Lab')
+root.courses[103].addTimeTable('Friday', '9:00 AM' , '12:00 PM', 'Lecture')
 # root.courses[202].setGradeScheme(grading_se)
 root.courses[104] = Course(104, 'Artificial Intelligence', 'Lets Learn AI', 'Lecturer 2 Name', 3)
+root.courses[104].addTimeTable('Monday', '9:00 AM' ,'12:00 PM', 'Lecture')
+root.courses[104].addTimeTable('Wednesday', '1:00 PM', '4:00 PM', 'Lab')
+root.courses[104].addTimeTable('Thursday', '7:30 PM' , '8:00 PM', 'Lab')
 # root.courses[301].setGradeScheme(grading_ai)
 root.courses[105] = Course(105, 'Professional Communication', 'Professional Communication', 'Lecturer 3 Name', 3)
+root.courses[105].addTimeTable('Tuesday', '9:00 AM' ,'12:00 PM', 'Lecture')
 root.courses[106] = Course(106, 'Charm School', 'Have Fun At Charm School!', 'Lecturer 3 Name', 3)
+root.courses[106].addTimeTable('Tuesday', '12:00 PM' ,'4:00 PM', 'Lecture')
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
@@ -443,7 +430,7 @@ root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Do your SE website")
 root.courses[102].addAssignment(root.assignments[102001])
-root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/12/2023", "11:59 PM", "this project is late")
+root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "this project is late")
 root.courses[102].addAssignment(root.assignments[102002])
 
 # Testing Student 1102 submits homework at course 101, assignment 101001
