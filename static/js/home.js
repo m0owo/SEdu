@@ -169,8 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
             
             timetableElement.appendChild(div1)
         }
-
-
     }
 
     function checkClasses(classList) {
@@ -327,55 +325,83 @@ document.addEventListener("DOMContentLoaded", function () {
                 gradeValueInput.style.width = "2rem";
                 gradeValueInput.type = "text"
 
-                toEdit.parentNode.replaceChild(weightInput, toEdit);
+                toEdit.parentNode.replaceChild(gradeValueInput, toEdit);
 
                 gradeValueInput.focus();
 
                 gradeValueInput.addEventListener("keyup", function(e) {
                     if (e.key === "Enter") {
                         let pattern = /^[0-9]+(\.[0-9]+)?$/;
-                        let gradeValue = gradeValueInput.value;
+                        let gradeValue = parseFloat(gradeValueInput.value);
                         if (pattern.test(gradeValue) && gradeValue <= 100 && gradeValue >= 0) {
                             let gradeSchemeOutput = document.createElement("span");
                             let below = -1;
                             let above = 100;
-
                             // [above, below)
+                            console.log(name);
                             switch(name) {
                                 case "A":
                                     above = 100;
                                     below = courseGrades["B+"];
+                                    console.log("hello" + below);
+                                    break;
                                 case "B+":
                                     above = courseGrades["A"];
                                     below = courseGrades["B"];
+                                    break;
                                 case "B":
                                     above = courseGrades["B+"];
                                     below = courseGrades["C+"];
+                                    break;
                                 case "C+":
                                     above = courseGrades["B"];
                                     below = courseGrades["C"];
+                                    break;
                                 case "C":
                                     above = courseGrades["C+"];
                                     below = courseGrades["D+"];
+                                    break;
                                 case "D+":
                                     above = courseGrades["C"];
                                     below = courseGrades["D"];
+                                    break;
                                 case "D":
                                     above = courseGrades["D+"];
                                     below = courseGrades["F"];
+                                    break;
                                 case "F":
                                     above = courseGrades["D"];
                                     below = -1;
+                                    break;
                                 default:
                                     below = -1;
                                     above = 100;
-                                    
+                                    break;
                             }
-                            gradeSchemeOutput.innerText = inputValue;
+                            if (gradeValue <= above && gradeValue > below) {
+                                console.log(below);
+                                console.log(above);
 
-                            gradeSchemeOutput.addEventListener("click", editGrade);
+                                gradeSchemeOutput.innerText = gradeValue;
 
-                            e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
+                                gradeSchemeOutput.addEventListener("click", function(e) {
+                                    editGradeScheme(e, name);
+                                });
+
+                                e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
+
+                                courseGrades[name] = gradeValue;
+                            } else {
+
+                                gradeSchemeOutput.innerText = courseGrades[name];
+
+                                gradeSchemeOutput.addEventListener("click", function(e) {
+                                    editGradeScheme(e, name);
+                                });
+
+                                e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
+                                alert("Invalid Grade Value");
+                            }
                         } else {
                             alert("Invalid input! Please enter a valid grade scheme.")
                         }
@@ -651,6 +677,28 @@ document.addEventListener("DOMContentLoaded", function () {
                                         }
                                     });
                                 }
+
+                                function editGrade(e) {
+                                    let toEdit = e.target;
+                                    let weightInput = document.createElement("input");
+                                    toEdit.parentNode.replaceChild(weightInput, toEdit);
+                                    weightInput.focus();
+                                    weightInput.style.height = "1rem";
+                                    weightInput.style.width = "2rem";
+                                    weightInput.addEventListener("keydown", function(e) {
+                                        if (e.key === "Enter") {
+                                            inputValue = weightInput.value.toUpperCase();
+                                            if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
+                                                let weightOutput = document.createElement("span");
+                                                weightOutput.innerText = inputValue;
+                                                weightOutput.addEventListener("click", editGrade);
+                                                e.target.parentNode.replaceChild(weightOutput, e.target);
+                                            } else {
+                                                alert("Invalid input! Please enter a valid grade.")
+                                            }
+                                        }
+                                    });
+                                }
                                 
                                 // make an info row at the end of the table
                                 let infoRow = gradeTableBody.insertRow(-1);
@@ -727,28 +775,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Set user role and display the grade card
         userRoleElement.innerText = "Teacher";
         gradeCard.style.display = "flex";
-
-        function editGrade(e) {
-            let toEdit = e.target;
-            let weightInput = document.createElement("input");
-            toEdit.parentNode.replaceChild(weightInput, toEdit);
-            weightInput.focus();
-            weightInput.style.height = "1rem";
-            weightInput.style.width = "2rem";
-            weightInput.addEventListener("keydown", function(e) {
-                if (e.key === "Enter") {
-                    inputValue = weightInput.value.toUpperCase();
-                    if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
-                        let weightOutput = document.createElement("span");
-                        weightOutput.innerText = inputValue;
-                        weightOutput.addEventListener("click", editGrade);
-                        e.target.parentNode.replaceChild(weightOutput, e.target);
-                    } else {
-                        alert("Invalid input! Please enter a valid grade.")
-                    }
-                }
-            });
-        }
     }
 
     function calculateTotalScore(parent) {
