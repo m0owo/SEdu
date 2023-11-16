@@ -25,8 +25,24 @@ document.addEventListener("DOMContentLoaded", function () {
         let id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
+        let circle;
+        let container;
     
         for (let enrollment of enrollments) {
+            container = document.createElement("div");
+            container.style.display = "flex";
+            container.style.flexDirection = "row";
+
+            circle = document.createElement("div");
+            circle.style.width = "10px";
+            circle.style.height = "10px";
+            circle.style.borderRadius = "50%";
+            circle.style.backgroundColor = "orange";
+            circle.style.marginRight = "1rem";
+            circle.style.marginTop = "0.5rem";
+
+            container.appendChild(circle);
+
             let course_id = enrollment["course"]["id"];
             let course_name = enrollment["course"]["name"];
     
@@ -38,7 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
             a.href = `/${id}/course/${course_id}`;
             a.textContent = `${course_name}`;
     
-            list.appendChild(a);  
+            container.appendChild(a);
+            list.appendChild(container);  
             sidebarElement.appendChild(list);
         }
         let logout = document.createElement("a");
