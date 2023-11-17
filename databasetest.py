@@ -40,7 +40,14 @@ class Course(persistent.Persistent):
             "D" : 60,
             "F" : 55
         }
-        self.courseWeights = {}
+        self.courseWeights = {
+            "attendance" : 0,
+            "assignment" : 10,
+            "lab" : 10,
+            "project": 10,
+            "midterm": 30,
+            "final": 30
+        }
         self.assignments = persistent.list.PersistentList()
         self.posts = persistent.list.PersistentList()
         self.students = persistent.list.PersistentList()
@@ -227,7 +234,14 @@ class Enrollment(persistent.Persistent):
     def __init__(self, course):
         self.course = course
         self.submissions = persistent.list.PersistentList()
-        self.scores = {}
+        self.scores = { 
+            "attendance" : 0,
+            "assignment" : 0,
+            "lab" : 0,
+            "project" : 0,
+            "midterm" : 0,
+            "final" : 0
+        }
         self.grade = "F"
 
     def getCourse(self):
