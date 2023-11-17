@@ -297,8 +297,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function populateWeightTable(selected) {
             console.log("Populating weight Table");
-            let courseSelected;
             let courseWeights;
+            let courseSelected;
             // if there are enrolled courses
             if (courses && courses.length > 0) {
                 // loop through each course
@@ -308,6 +308,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("course found for weight: ");
                         console.log(course);
                         courseWeights = course.course.courseWeights;
+                        console.log("found course weights GHSFOSIJFL");
+                        console.log(courseWeights);
                         courseSelected = course;
                     }
                 }
@@ -319,6 +321,9 @@ document.addEventListener("DOMContentLoaded", function () {
             let midtermWeight = document.getElementById("midtermWeight");
             let finalWeight = document.getElementById("finalWeight");
 
+            console.log("course Weights");
+            console.log(courseWeights);
+
             attendanceWeight.innerText = courseWeights.attendance;
             assignmentWeight.innerText = courseWeights.assignment;
             labWeight.innerText = courseWeights.lab;
@@ -328,23 +333,95 @@ document.addEventListener("DOMContentLoaded", function () {
 
             attendanceWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "attendance");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
             assignmentWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected,  "assignment");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
             labWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "lab");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
             projectWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "project");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
             midtermWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "midterm");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
             finalWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "final");
+                populateGradeTable(courseSelected);
+                populateWeightTable(courseSelected);
             });
-        }
+
+            function editGradeWeight(e, course, category) {
+                console.log("Editing grade weight in course: ");
+                console.log(course);
+
+                let courseWeights = course.course.courseWeights;
+                console.log("courseWeights Before:");
+                console.log(courseWeights);
+
+                let toEdit = e.target;
+                let originalWeight = toEdit.innerText;
+                let newInput = document.createElement("input");
+                let positiveFloatPattern = /^[0-9]*\.?[0-9]+$/;
+                            
+                newInput.type = "text";
+                newInput.style.width = "3rem";
+                newInput.style.height = "1rem";
+                            
+                console.log(newInput);
+                console.log(toEdit);
+                toEdit.parentNode.replaceChild(newInput, toEdit);
+                newInput.focus();
+                            
+                newInput.addEventListener("keyup", function (e) {
+                    if (e.key == "Enter") {
+                        let newWeight = e.target.value;
+                        if (positiveFloatPattern.test(newWeight)) {
+                    
+                            let newWeightOutput = document.createElement("span");
+                            newWeightOutput.innerText = newWeight;
+                    
+                            courseWeights[category] = parseFloat(newWeight);
+                            console.log("Course Weights After: ");
+                            console.log(courseWeights);
+                    
+                            newWeightOutput.addEventListener("click", function(e) {
+                                editGradeWeight(e, course, category);
+                            });
+                            e.target.parentNode.replaceChild(newWeightOutput, e.target);
+                            newWeightOutput.id = category + "Weight";
+
+                            let totalWeight = calculateTotalWeight(newWeightOutput.parentNode.parentNode);
+                                                
+                            console.log("total weight" + totalWeight);
+                                            
+                            if (totalWeight == 100) {
+                                console.log("Course Selected to update grade and weight: ");
+                                console.log(course);
+                                postCourseWeightsToDB(course.course.id, courseWeights);
+                            } else if (totalWeight > 100) {
+                                newWeightOutput.innerText = originalWeight;
+                                alert("Invalid Weight Scheme ! Total Weight Exceeds 100%");
+                            }
+                        } else {
+                            alert("Invalid Weight");
+                        }
+                    }
+                });
+            }       
+        }   
+    
 
         function populateGradeSchemeTable(selected) {
             console.log("Populating Grade SCheme Table");
@@ -382,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
             f.innerText = courseGradeScheme["F"];
 
             a.addEventListener("click", function(e) {
-                editGradeScheme(e, courseSelected, "A");
+                editGradeScheme(e, selected, "A");
             });
             bPlus.addEventListener("click", function(e) {
                 editGradeScheme(e, selected, "B+");
@@ -416,6 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // check the course id and course name
             console.log(selected.value);
             console.log(selected.text);
+            
             // if there are enrolled courses
             if (courses && courses.length > 0) {
                 // loop through each course
@@ -607,6 +685,26 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 return "F";
             }
+        }
+
+        function postCourseWeightsToDB(courseId, weights) {
+            fetch(`/set-course-weights/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "course_id": courseId,
+                    "weights": weights,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Course Weights edited:', data);
+                })
+                .catch(error => {
+                    console.error('Error editing course weights:', error);
+                });
         }
     }
 
@@ -1051,7 +1149,5 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateDateTime, 60000);
 
     const gradeCourseTitle = document.getElementById("gradeCourseTitle");
-
-
 
 });

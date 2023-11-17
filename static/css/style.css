@@ -440,6 +440,7 @@ li {
 .grade-course-title {
     color: navy;
     display: inline-block;
+    width: fit-content;
 }
 
 select {

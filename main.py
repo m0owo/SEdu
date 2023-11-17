@@ -13,6 +13,10 @@ import os
 UPLOAD_DIR = Path() / 'static/upload'
 
 
+class CourseWeights(BaseModel):
+    course_id: int
+    weights: dict
+
 class DiscussionCreate(BaseModel):
     course_id: int
     author: str
@@ -84,7 +88,6 @@ async def read_login(requests: Request, student_id:str=Form(...), student_passwo
         return templates.TemplateResponse("home.html", {"request": requests, "user": user})
     raise HTTPException(status_code=404, detail="User not found")
     
-
 @app.get("/home/", include_in_schema=False)
 def redirect_home():
     with open("templates/home.html", "r", encoding="utf-8") as file:
@@ -313,7 +316,16 @@ async def post_new_comment(submission: SubmissionCreate):
         root.assignments[submission.assignment_id].addSubmission(new_submission)
     return new_submission
 
-
+@app.post("/set-course-weights/")
+async def set_course_weights(request: CourseWeights):
+    course_id = request.course_id
+    weights = request.weights
+    course = root.courses[course_id]
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    course.setCourseWeights(weights)
+    return {"course" : course, "weights" : weights}
 
 @app.on_event("shutdown")
 def shutdown_event():
