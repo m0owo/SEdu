@@ -106,17 +106,18 @@ document.addEventListener("DOMContentLoaded", function () {
             let course_id = enrollment["course"]["id"];
             let timeLists = enrollment["course"]["timeList"]["data"];
 
-            console.log("Time list: ", timeLists)
             if (Array.isArray(timeLists)){
                 for (let timeList of timeLists){
                     let day = timeList["day"];
+                    let starttime =  timeList["starttime"];
+                    let endtime = timeList["endtime"]
                     let type = timeList["type"];
                 
                     if(isDay(day)){
                         console.log("Today learn this", course_name);
                         let existingEnrollment = allTodayClass.find(e => e.course.id === enrollment.course.id);
                          if (!existingEnrollment) {
-                            allTodayClass.push(enrollment);
+                            allTodayClass.push({"course": course_name, "day": day, "starttime": starttime, "endtime": endtime, "type":type});
                         }
                     }
                 }
@@ -124,12 +125,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         console.log("All start time for today", allTodayClass);
-        let classes= checkClasses(allTodayClass);
+        let classes = checkClasses(allTodayClass);
         console.log("near ", classes.nearestClass);
         console.log("rest" , classes.remainingClasses);
-        console.log(classes.nearestClass.name);
 
-        if (nearestClass != Null){
+        if (classes.nearestClass != null){
         //Nearest Class
             let div = document.createElement("div");
             div.className = "classes-bar"
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
             timetableElement.appendChild(div)
         }
 
-        if (Array.isArray(remainingClasses)){
+        if (Array.isArray(classes.remainingClasses)){
         //Upcoming class
             for(let remainingclasss of classes.remainingClasses){
                 div1 = document.createElement("div")
@@ -167,56 +167,57 @@ document.addEventListener("DOMContentLoaded", function () {
                 span2.className = "small"
                 span2.textContent = `${remainingclasss.starttime} - ${remainingclasss.endtime}`
 
-            div1.appendChild(span1)
-            div1.appendChild(span2)
-            
-            timetableElement.appendChild(div1)
+                div1.appendChild(span1)
+                div1.appendChild(span2)
+                
+                timetableElement.appendChild(div1)
+            }
+
+
         }
-
-
     }
 
-    function checkClasses(classList) {
+    function checkClasses(timeLists) {
         var currentTime = new Date();
         var nearestClass = null;
         var remainingClasses = [];
         var smallestDiff = Infinity;
     
-        for (let enrollment of classList) {
-            let timeLists = enrollment.course.timeList.data;
-            for (let timeList of timeLists) {
-                let starttime = parseTimeAMPM(timeList["starttime"]);
-                let endtime = parseTimeAMPM(timeList["endtime"]);
-    
-                // Check if the class start time is in the future
+        for (let timeList of timeLists) {
+
+                console.log("NEBJWFONWEIFNOWEINKFLWE", timeList)
+                let starttime = parseTimeAMPM(timeList.starttime);
+                let endtime = parseTimeAMPM(timeList.endtime);
+        
+                    // Check if the class start time is in the future
                 if (currentTime < starttime) {
-    
-                    // Check if this is the nearest upcoming class
+        
+                        // Check if this is the nearest upcoming class
                     var timeDiff = starttime - currentTime;
                     if (timeDiff < smallestDiff) {
                         smallestDiff = timeDiff;
                         nearestClass = {
-                            name: enrollment.course.name,
-                            starttime: timeList["starttime"],
-                            endtime: timeList["endtime"],
-                            type: timeList["type"]
+                            name: timeList.name,
+                            starttime: timeList.starttime,
+                            endtime: timeList.endtime,
+                            type: timeList.type
                         };
                     }else{
                         remainingClasses.push({
-                            name: enrollment.course.name,
-                            starttime: timeList["starttime"],
-                            endtime: timeList["endtime"],
-                            type: timeList["type"]
+                            name: timeList.name,
+                            starttime: timeList.starttime,
+                            endtime: timeList.endtime,
+                            type: timeList.type
                         });
                     }
                 }
-            }
+
         }
-    
+        console.log("Nearest Class:", nearestClass);
+        console.log("Remaining Classes:", remainingClasses);
         // Sort the remaining classes by start time
         remainingClasses.sort((a, b) => parseTimeAMPM(a.starttime) - parseTimeAMPM(b.starttime));
-    
-        return { nearestClass, remainingClasses };
+        return {nearestClass, remainingClasses};
     }
     
 
