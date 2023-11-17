@@ -117,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Today learn this", course_name);
                         let existingEnrollment = allTodayClass.find(e => e.course.id === enrollment.course.id);
                          if (!existingEnrollment) {
+                            console.log(course_name)
                             allTodayClass.push({"course": course_name, "day": day, "starttime": starttime, "endtime": endtime, "type":type});
                         }
                     }
@@ -179,38 +180,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function checkClasses(timeLists) {
         var currentTime = new Date();
+        console.log("current time",currentTime)
         var nearestClass = null;
         var remainingClasses = [];
         var smallestDiff = Infinity;
     
         for (let timeList of timeLists) {
-
-                console.log("NEBJWFONWEIFNOWEINKFLWE", timeList)
-                let starttime = parseTimeAMPM(timeList.starttime);
-                let endtime = parseTimeAMPM(timeList.endtime);
-        
-                    // Check if the class start time is in the future
-                if (currentTime < starttime) {
-        
-                        // Check if this is the nearest upcoming class
-                    var timeDiff = starttime - currentTime;
-                    if (timeDiff < smallestDiff) {
-                        smallestDiff = timeDiff;
-                        nearestClass = {
-                            name: timeList.name,
-                            starttime: timeList.starttime,
-                            endtime: timeList.endtime,
-                            type: timeList.type
-                        };
-                    }else{
-                        remainingClasses.push({
-                            name: timeList.name,
-                            starttime: timeList.starttime,
-                            endtime: timeList.endtime,
-                            type: timeList.type
-                        });
-                    }
+            let starttime = parseTimeAMPM(timeList.starttime);
+            let endtime = parseTimeAMPM(timeList.endtime);
+            console.log("fenoifniwe", starttime)
+            
+            // Check if the class start time is in the future
+            if (currentTime < starttime) {
+                // Check if this is the nearest upcoming class
+                var timeDiff = starttime - currentTime;
+                console.log("DIFFFF", timeDiff)
+                if (timeDiff < smallestDiff) {
+                    smallestDiff = timeDiff;
+                    nearestClass = {
+                        name: timeList.course,
+                        starttime: timeList.starttime,
+                        endtime: timeList.endtime,
+                        type: timeList.type
+                    };
+                }else{
+                    remainingClasses.push({
+                        name: timeList.course,
+                        starttime: timeList.starttime,
+                        endtime: timeList.endtime,
+                        type: timeList.type
+                    });
                 }
+            }
 
         }
         console.log("Nearest Class:", nearestClass);
