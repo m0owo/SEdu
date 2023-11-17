@@ -735,7 +735,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 // info is put into span
                                 let infoSpan = document.createElement("span");
                                 infoCell.appendChild(infoSpan);
-                                infoSpan.innerText = student.id;
+                                infoSpan.innerText = "650" + student.id;
 
                                 // make cells for the different categories
                                 makeCell("attendance", infoRow, 1);

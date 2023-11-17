@@ -146,17 +146,25 @@ class Course(persistent.Persistent):
 class User(persistent.Persistent):
     def __init__(self, id, name, password, role):
         self.enrolls = persistent.list.PersistentList()
+        self.scores = {}
         self.id = id
         self.name = name
         self.password = password
         self.role = role
 
+    def setScores(self, score):
+        self.scores = score
+
+    def getScores(self):
+        return self.scores
+    
     def enrollCourse(self, Course):
         student = User(self.id, self.name, self.password, self.role)
         x = Enrollment(Course)
         if (self.getRole() == "student"):
             Course.addStudent(student)
         self.enrolls.append(x)
+        student.getScores()[Course.getId()] = 0
         return x
     
     def getRole(self):
