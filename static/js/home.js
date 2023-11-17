@@ -109,11 +109,11 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Time list: ", timeLists)
             if (Array.isArray(timeLists)){
                 for (let timeList of timeLists){
-                    let day = timeList["day"]
-                    let type = timeList["type"]
+                    let day = timeList["day"];
+                    let type = timeList["type"];
                 
                     if(isDay(day)){
-                        console.log("Today learn this", course_name)
+                        console.log("Today learn this", course_name);
                         let existingEnrollment = allTodayClass.find(e => e.course.id === enrollment.course.id);
                          if (!existingEnrollment) {
                             allTodayClass.push(enrollment);
@@ -123,11 +123,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        console.log("All start time for today", allTodayClass)
-        let classes= checkClasses(allTodayClass)
-        console.log("near ", classes.nearestClass)
-        console.log("rest" , classes.remainingClasses)
-        console.log(classes.nearestClass.name)
+        console.log("All start time for today", allTodayClass);
+        let classes= checkClasses(allTodayClass);
+        console.log("near ", classes.nearestClass);
+        console.log("rest" , classes.remainingClasses);
+        console.log(classes.nearestClass.name);
 
         //Nearest Class
         let div = document.createElement("div");

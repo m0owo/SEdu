@@ -97,12 +97,6 @@ class Course(persistent.Persistent):
         for student in self.students:
             print(student.__str__())
     
-    # def addLab(self, week, score):
-    #     self.labs.append(Lab(week, score))
-
-    # def recordAttendance(self, week, attended):
-    #     self.attendances.append(Attendance(week, attended))
-    
     def calculateLabScore(self):
         self.lab_score = sum(lab.getScore() for lab in self.labs)
         return self.lab_score
@@ -253,9 +247,8 @@ class Enrollment(persistent.Persistent):
     def getScores(self):
         return self.scores
     
-    def setScore(self, name, score):
-        if name in self.scores.getKeys():
-            self.scores[name] = score
+    def setScores(self, scores:dict):
+        self.scores = scores
 
     def setAssignmentScore(self, assignment_id, score):
         for submission in self.submissions:
