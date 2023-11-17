@@ -425,6 +425,7 @@ li {
 
 .grade-table td {
     width: max-content;
+    height: 1rem;
 }
 
 .grade-table {
