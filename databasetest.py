@@ -30,21 +30,20 @@ class Course(persistent.Persistent):
         self.teacherName = teacherName
         self.credit = credit
         self.timeList = persistent.list.PersistentList()
-        self.gradeScheme = persistent.list.PersistentList()
-        self.labs = persistent.list.PersistentList()
-        self.attendances = persistent.list.PersistentList()
+        self.gradeScheme = {
+            "A" : 90,
+            "B+" : 85,
+            "B" : 80,
+            "C+" : 75,
+            "C" : 70, 
+            "D+" : 65,
+            "D" : 60,
+            "F" : 55
+        }
+        self.courseWeights = {}
         self.assignments = persistent.list.PersistentList()
         self.posts = persistent.list.PersistentList()
         self.students = persistent.list.PersistentList()
-
-        self.assignment_score = 0
-        self.lab_score = 0
-        self.attendance_score = 0
-
-        self.midterm_total_score = 0
-        self.final_total_score = 0
-        self.project_total_score = 0
-
 
     def setName(self, name):
         self.name = name
@@ -58,22 +57,17 @@ class Course(persistent.Persistent):
     def getName(self):
         return self.name
     
-    def ScoreGrading(self, score):
-        for key in self.gradeScheme:
-            if  key["min"]<= score < key["max"]:
-                return key["Grade"]
-            
-    def setGradeScheme(self, grade_list):
-        self.gradeScheme = grade_list
+    def setCourseWeights(self, courseWeights:dict):
+        self.courseWeights = courseWeights
+    
+    def getCourseWeights(self):
+        return self.courseWeights
 
-    def setMidtermTotalScore(self, score):
-        self.midterm_total_score = score
-
-    def setFinalTotalScore(self, score):
-        self.final_total_score = score
-
-    def setProjectTotalScore(self, score):
-        self.project_total_score = score
+    def setGradeScheme(self, gradeScheme:dict):
+        self.gradeScheme = gradeScheme
+    
+    def getGradeScheme(self):
+        return self.gradeScheme
 
     def addAssignment(self, Assignment):
         self.assignments.append(Assignment)
@@ -155,7 +149,7 @@ class User(persistent.Persistent):
         self.name = name
         self.password = password
         self.role = role
-    
+
     def enrollCourse(self, Course):
         student = User(self.id, self.name, self.password, self.role)
         x = Enrollment(Course)
@@ -167,7 +161,7 @@ class User(persistent.Persistent):
     def getRole(self):
         return self.role
     
-    def getEnrollment(self,Course):
+    def getEnrollment(self, Course):
         if Course in self.enrolls:
             return Course
         return None
@@ -195,6 +189,7 @@ class User(persistent.Persistent):
             self.totalCredit += c.getCourse().getCredit()
             
         return (self.credit/self.totalCredit)
+    
     def printAllAssignments(self):
         print(f"Assignments for Student: {self.name} (ID: {self.id})")
         for enrollment in self.enrolls:
@@ -214,12 +209,10 @@ class User(persistent.Persistent):
                 if submission.student_id == self.id:
                     print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission.content}, Submission Time: {submission.submit_date} {submission.submit_time}, Score: {submission.score}/{assignment.total_score}")
     
-    def printEnrollment(self):
+    def printEnrollments(self):
         print(self.__str__())
         for c in self.enrolls:
             c.printDetail()
-        
-        # print("Total GPA is: " + "{:.2f}".format(self.calculateGPA()))
 
     def setName(self,name):
         self.name = name
@@ -231,30 +224,24 @@ class User(persistent.Persistent):
         return self.id
     
 class Enrollment(persistent.Persistent):
-    def __init__(self,course,score = 0):
+    def __init__(self, course):
         self.course = course
         self.submissions = persistent.list.PersistentList()
-        self.midterm_score = 0
-        self.final_score = 0
-        self.project_score = 0
+        self.scores = {}
+        self.grade = "F"
 
     def getCourse(self):
         return self.course
     
     def getGrade(self):
-        return str( self.course.ScoreGrading(self.getScore()))
+        return self.grade
     
-    def getScore(self):
-        return self.score 
+    def getScores(self):
+        return self.scores
     
-    def setMidtermTotalScore(self, score):
-            self.midterm_total_score = score
-
-    def setFinalTotalScore(self, score):
-        self.final_total_score = score
-
-    def setProjectTotalScore(self, score):
-        self.project_total_score = score
+    def setScore(self, name, score):
+        if name in self.scores.getKeys():
+            self.scores[name] = score
 
     def setAssignmentScore(self, assignment_id, score):
         for submission in self.submissions:
@@ -270,8 +257,7 @@ class Enrollment(persistent.Persistent):
         assignment_object.addSubmission(Submission)
 
     def __str__(self):
-        return f"{self.course}"
-    # return f"{self.course}, Score: {self.getScore()}, Grade:{self.getGrade()}"
+        return f"Course: {self.course} Weights: {self.course.getCourseWeights()} Scores: {self.scores}"
     
     def printDetail(self):
         print(self.__str__())
@@ -410,6 +396,9 @@ root.users[1103].enrollCourse(root.courses[102])
 root.users[1103].enrollCourse(root.courses[103])
 root.users[1103].enrollCourse(root.courses[104])
 root.users[1103].enrollCourse(root.courses[105])
+root.users[1103].printEnrollments()
+print()
+
 
 #Initialize teacher info and enroll courses
 root.users[1104] = User(1104, 'Lecturer 1 Name', "1111", "teacher")
