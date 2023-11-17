@@ -723,28 +723,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                         }
                                     });
                                 }
-
-                                // function editGrade(e) {
-                                //     let toEdit = e.target;
-                                //     let weightInput = document.createElement("input");
-                                //     toEdit.parentNode.replaceChild(weightInput, toEdit);
-                                //     weightInput.focus();
-                                //     weightInput.style.height = "1rem";
-                                //     weightInput.style.width = "2rem";
-                                //     weightInput.addEventListener("keydown", function(e) {
-                                //         if (e.key === "Enter") {
-                                //             inputValue = weightInput.value.toUpperCase();
-                                //             if (inputValue == "A" || inputValue == "B+" || inputValue == "B" || inputValue == "C+" || inputValue == "C" || inputValue == "D+" || inputValue == "D" || inputValue == "F") {
-                                //                 let weightOutput = document.createElement("span");
-                                //                 weightOutput.innerText = inputValue;
-                                //                 weightOutput.addEventListener("click", editGrade);
-                                //                 e.target.parentNode.replaceChild(weightOutput, e.target);
-                                //             } else {
-                                //                 alert("Invalid input! Please enter a valid grade.")
-                                //             }
-                                //         }
-                                //     });
-                                // }
                                 
                                 // make an info row at the end of the table
                                 let infoRow = gradeTableBody.insertRow(-1);
