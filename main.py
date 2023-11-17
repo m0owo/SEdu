@@ -144,6 +144,18 @@ async def read_user_assignment(request: Request, user_id: int, course_id: int, a
         {"request": request, "user": user, "course": course, "assignment": assignment},
     )
 
+@app.get("/students/")
+async def getAllStudents():
+    students = []
+    for user in root.users.values():
+        if user.getRole() == "student":
+            students.append(user)
+    
+    if students:
+        return students
+    else:
+        return {"error": "No Students found"}
+
 @app.get("/students/{user_id}")
 async def findStudent(user_id: int):
     if user_id in root.users.keys():

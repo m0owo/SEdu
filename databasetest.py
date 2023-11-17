@@ -49,7 +49,6 @@ class Course(persistent.Persistent):
         }
         self.assignments = persistent.list.PersistentList()
         self.posts = persistent.list.PersistentList()
-        self.students = persistent.list.PersistentList()
 
     def setName(self, name):
         self.name = name
@@ -82,19 +81,11 @@ class Course(persistent.Persistent):
     def addPost(self, Post):
         self.posts.append(Post)
         return Post
-    
-    def addStudent(self, User):
-        self.students.append(User)
-        return User
-    
+
     def addTimeTable(self, day, starttime, endtime, type):
         timeDict = {"day" : day, "starttime" : starttime, "endtime" : endtime, "type" : type}
         self.timeList.append(timeDict)
         return self.timeList
-    
-    def printStudents(self):
-        for student in self.students:
-            print(student.__str__())
     
     def calculateLabScore(self):
         self.lab_score = sum(lab.getScore() for lab in self.labs)
@@ -109,27 +100,9 @@ class Course(persistent.Persistent):
         self.assignment_score = sum(assignment.getScore()/assignment.totalGrade() for assignment in self.assignments)
         return self.assignment_score
     
-    def calculateOverallScore(self, gradingScheme):
-        """
-        gradingScheme is a dict like:
-        {
-            "midterm": 25,
-            "final": 40,
-            "lab": 15,
-            "project": 15,
-            "attendance": 5
-        }
-        """
-
-        total_score = (
-            self.midtermScore * gradingScheme["midterm"] / 100 +
-            self.finalScore * gradingScheme["final"] / 100 +
-            self.calculateLabScore() * gradingScheme["lab"] / 100 +
-            self.projectScore * gradingScheme["project"] / 100 +
-            self.calculateAttendanceScore * gradingScheme["attendance"] / 100 +
-            self.calculateAssignmentScore * gradingScheme["assignment"] / 100
-        )
-        return total_score
+    def printStudents(self):
+        for student in self.students:
+            print(student.id)
     
     def __str__(self):
         return f"ID: {self.id} Course Name: {self.name.ljust(30)}, Credit {self.credit}"
@@ -150,14 +123,21 @@ class User(persistent.Persistent):
         self.password = password
         self.role = role
 
-    def enrollCourse(self, Course):
-        student = User(self.id, self.name, self.password, self.role)
-        x = Enrollment(Course)
-        if (self.getRole() == "student"):
-            Course.addStudent(student)
-        self.enrolls.append(x)
-        return x
+    def getName(self):
+        return self.name
     
+    def getId(self):
+        return self.id
+
+    def setEnrolls(self, enrolls):
+        self.enrolls = enrolls
+
+    def enrollCourse(self, course):
+        print(f"Enrolling in course {course.getName()}")
+        enrollment = Enrollment(course)
+        self.enrolls.append(enrollment)
+        return enrollment
+
     def getRole(self):
         return self.role
     
@@ -223,6 +203,9 @@ class User(persistent.Persistent):
     def getstudentID(self):
         return self.id
     
+    def getRole(self):
+        return self.role
+    
 class Enrollment(persistent.Persistent):
     def __init__(self, course):
         self.course = course
@@ -263,7 +246,15 @@ class Enrollment(persistent.Persistent):
         assignment_object.addSubmission(Submission)
 
     def __str__(self):
-        return f"Course: {self.course} Weights: {self.course.getCourseWeights()} Scores: {self.scores}"
+        course_str = str(self.course)  # Call the __str__ method of the Course class
+        weights_str = "Weights not available"
+
+        if hasattr(self.course, 'getCourseWeights') and callable(getattr(self.course, 'getCourseWeights')):
+            weights_str = self.course.getCourseWeights()
+
+        return f"Course: {course_str} Weights: {weights_str} Scores: {self.scores}"
+
+
     
     def printDetail(self):
         print(self.__str__())
@@ -382,6 +373,7 @@ root.courses = BTrees.OOBTree.BTree()
 root.courses[101] = Course(101, 'Computer Programming', 'Learn C++', 'Lecturer 1 Name', 4)
 root.courses[101].addTimeTable('Saturday', '1:00 PM', '4:00 PM', 'Lecture')
 root.courses[101].addTimeTable('Friday', '1:00 PM' , '4:00 PM', 'Lab')
+
 # root.courses[101].setGradeScheme(grading)
 root.courses[102] = Course(102, 'Web Programming', 'HTML, CSS, JS & more', 'Lecturer 1 Name', 4)
 root.courses[102].addTimeTable('Saturday', '9:00 AM', '12:00 PM', 'Lecture')
@@ -401,12 +393,16 @@ root.courses[104].addTimeTable('Thursday', '7:30 PM' , '8:00 PM', 'Lab')
 # root.courses[301].setGradeScheme(grading_ai)
 root.courses[105] = Course(105, 'Professional Communication', 'Professional Communication', 'Lecturer 3 Name', 3)
 root.courses[105].addTimeTable('Tuesday', '9:00 AM' ,'12:00 PM', 'Lecture')
+
 root.courses[106] = Course(106, 'Charm School', 'Have Fun At Charm School!', 'Lecturer 3 Name', 3)
 root.courses[106].addTimeTable('Tuesday', '12:00 PM' ,'4:00 PM', 'Lecture')
 
+
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
+
 root.users[1101] = User(1101, 'Miki Ajiki', "1111", "student")
+
 s1_id = root.users[1101].id
 root.users[1101].enrollCourse(root.courses[102])
 s1_enroll1 = root.users[1101].enrollCourse(root.courses[103])
@@ -425,6 +421,8 @@ root.users[1103].enrollCourse(root.courses[102])
 root.users[1103].enrollCourse(root.courses[103])
 root.users[1103].enrollCourse(root.courses[104])
 root.users[1103].enrollCourse(root.courses[105])
+
+print("printing all enrollments")
 root.users[1103].printEnrollments()
 print()
 
