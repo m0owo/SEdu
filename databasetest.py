@@ -3,9 +3,8 @@ import BTrees._OOBTree
 import transaction
 import persistent
 from fastapi import Form
-import uuid
-import time
 from typing import Union
+
 
 storage = ZODB.FileStorage.FileStorage('mydata.fs')
 db = ZODB.DB(storage)
@@ -280,13 +279,21 @@ class Assignment(persistent.Persistent):
         self.description = description  # Description of the assignment (text, instructions, etc.)
         self.student_id = 0
         self.total_score = 0
-
+        
+        self.files = persistent.list.PersistentList()
         self.submissions = persistent.list.PersistentList()
         self.individual_comments = persistent.list.PersistentList() # Dictionary with student_id as key and their individual comments as value
 
     def addSubmission(self, submission):
         self.submissions.append(submission)
         return self.submissions
+    
+    def addFile(self, File):
+       self.files.append(File)
+       return File
+
+    def get_files_data(self):
+        return [{'path': file_info['path'], 'type': file_info['type']} for file_info in self.files]
     
     def setTotalScore(self, totalGrade):
         self.total_score = totalGrade
@@ -300,7 +307,7 @@ class Assignment(persistent.Persistent):
         comment = {"commenter": commenter, "comment_date": comment_date, "comment_time":comment_time, "text": comment_text}
         self.class_comments.append(comment)
         return self.class_comments
-
+    
     def __str__(self):
         return f"Homework: {self.title}, Assign date: {self.assign_date} {self.assign_time} Due date: {self.due_date} {self.due_time}, Description: {self.description}"
     
@@ -354,6 +361,21 @@ class Post(persistent.Persistent):
     def printPost(self):
         print(self.__str__())
 
+class File(persistent.Persistent):
+    def __init__(self, file_name, file_path, file_owner):
+        self.file_name = file_name
+        self.file_path = file_path
+        self.file_owner = file_owner
+    
+    def getFileName(self):
+        return self.file_name
+
+class Allstudent(persistent.Persistent):
+    def __init__(self):
+        self.student = persistent.list()
+    
+    def add_student(self, Student):
+        self.student.append(Student)
 
 # Initialize Example Courses
 root.courses = BTrees.OOBTree.BTree()
@@ -424,6 +446,7 @@ root.users[1106].enrollCourse(root.courses[106])
 root.assignments = BTrees.OOBTree.BTree()
 root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
+root.assignments[101001].addFile(File("python_06.pdf", "upload", root.users[1104].name))
 root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Do your SE website")
 root.courses[102].addAssignment(root.assignments[102001])
 root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "this project is late")

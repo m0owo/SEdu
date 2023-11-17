@@ -175,20 +175,17 @@ const resourceFrames = document.getElementById("resourceFrames");
 fileInputButton.addEventListener('click', function () {
     fileInput.click();
 })
-fileInput.addEventListener('change', function () {
-    const selectedFile = fileInput.files[0];
-    if (selectedFile) {
-        files.push(selectedFile);
-        updateFileFrame();
-    }
-})
+
 
 function updateFileFrame() {
+    resourceFrames.innerHTML = ''; 
     if (files.length == 0) {
         resourceFrames.style.visibility = "hidden";
     } else if (files.length > 0) {
         resourceFrames.style.visibility = "visible";
         files.forEach(function (file) {
+            console.log("Adding file to frame:", file.name); 
+            console.log(typeof file, file);
             let iframe = document.createElement("iframe");
             let downloadButton = document.createElement("button");
             resourceFrames.appendChild(document.createElement("br"));
@@ -210,6 +207,86 @@ function updateFileFrame() {
     }
 }
 
+fileInput.addEventListener('change', function () {
+    const selectedFile = fileInput.files[0];
+    if (selectedFile) {
+        files.push(selectedFile);
+        updateFileFrame();
+    }
+})
+
+// assignment ---File------- code
+const sentFileButton = document.getElementById("sentFileButton");
+sentFileButton.addEventListener('click', function () {
+    // Assuming files is an array of File objects
+    resourceFrames.innerHTML = "";
+    resourceFrames.style.visibility = "hidden";
+    console.log("-----TO DB------");
+    postFilesToDB(files);
+
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append("fileInput", file);
+
+        fetch("/uploadfile/", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data
+            console.log("File uploaded the fileeee:", data);
+        })
+        .catch(error => {
+            console.error("Error uploading file:", error);
+        });
+    } else {
+        console.error("No file selected.");
+    }
+});
+
+function postFilesToDB(file) {
+    fetch(`/students/${user}`)
+    .then(response => response.json())
+    .then(user => {
+        //fetch to post comments in assignment
+        fetch("/edit-assignment/", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "course_id": course_id, 
+                "assignment_id": assignment_id, 
+                "files": files.map(file => ({
+                    "file_name": file.name, 
+                    "file_owner": user["name"]
+                })),
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                
+                fetchDBtoUpdate();
+                console.log(file.name, user["name"], `upload/${file.name}`)
+                console.log("File uploaded:", data);
+        
+            })
+            .catch((error) => {
+                console.error("Error uploading file:", error);
+            });
+    })
+    .catch(error => {
+        console.error('Error fetching user data:', error);
+    });
+
+  }
+
+
+
+  
 // assignment ---Comments--- code
 let comments = [];
 const commentInput = document.getElementById("commentInput");
@@ -519,6 +596,44 @@ function fetchDBtoUpdate() {
                                 commentContainer.appendChild(commentBox);
                             }
                         }
+
+            
+                        let files = assignment["files"]["data"];
+                        filearea = document.getElementById("dataBaseFrame")
+                        filearea.style.visibility = "visible";
+                        filearea.innerText = ''
+                        if (Array.isArray(files)) {
+                            for (let file of files) {
+                            
+                                console.log("----File from database----", file);
+                                let iframe = document.createElement("iframe");
+                                const filePath = `/static/${file.file_path}/${file.file_name}`;
+                                iframe.setAttribute("src", filePath);
+                        
+                                let downloadButton = document.createElement("button");
+                                filearea.appendChild(document.createElement("br"));
+                                downloadButton.innerText = "Download";
+                                downloadButton.classList.add("edit-button");
+                                filearea.appendChild(iframe);
+                                filearea.appendChild(downloadButton);
+                                iframe.classList.add("fileFrame");
+                        
+                                // Declare downloadLink outside the event listener
+                                let downloadLink = document.createElement("a");
+                                downloadLink.href = filePath;
+                                downloadLink.download = file.name;
+                        
+                                downloadButton.addEventListener('click', function () {
+                                    console.log("clicked");
+                                    downloadLink.click();
+                                });
+                        
+                                console.log("Adding file to frame:", file.name);
+                                console.log("Download Link:", downloadLink);
+                            }
+                        }
+                          
+                        
 
                         //update submissions
                         //1) NOT DONE!! - Teacher Additional Files Update and Post

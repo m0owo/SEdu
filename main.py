@@ -1,14 +1,17 @@
-from fastapi import FastAPI, Request, Depends, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi import FastAPI, Request, Depends, HTTPException, Form, File, UploadFile, Query
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from databasetest import root, commit_transaction, Assignment, Post, Submission  # Import your database-related code
-from fastapi import Form
-from fastapi.security import OAuth2PasswordBearer
+from databasetest import root, commit_transaction, Assignment, Post, Submission, File  # Import your database-related code
+from typing import List
 from pydantic import BaseModel
+from pathlib import Path
 import json
+import urllib.parse
+import os
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+UPLOAD_DIR = Path() / 'static/upload'
+
 
 class DiscussionCreate(BaseModel):
     course_id: int
@@ -35,6 +38,10 @@ class CommentCreate(BaseModel):
     comment_text: str = None
     comment_post: int = None
 
+class FileCreate(BaseModel):
+    file_name: str = None
+    file_owner: str = None
+
 class AssignmentUpdate(BaseModel):
     course_id: int
     assignment_id: int
@@ -42,6 +49,7 @@ class AssignmentUpdate(BaseModel):
     description: str = None
     date: str = None
     time: str = None
+    files: List[FileCreate] = None
 
 class SubmissionCreate(BaseModel):
     user_id: int
@@ -52,6 +60,7 @@ class SubmissionCreate(BaseModel):
     submit_time: str = None
     score: str = None
     sent: str = True
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -92,6 +101,14 @@ async def read_user_home(request: Request, user_id: int):
         "home.html",
         {"request": request, "user": user},
     )
+
+@app.post('/uploadfile/')
+async def create_upload_file(fileInput: UploadFile):
+    data = await fileInput.read()
+    save_to = UPLOAD_DIR / fileInput.filename
+    with open(save_to, 'wb') as f:
+        f.write(data)
+    return {"filename" : fileInput.filename}
 
 @app.get("/{user_id}/course/{course_id}", response_class=HTMLResponse)
 async def read_user_course(request: Request, user_id: int, course_id: int):
@@ -239,14 +256,19 @@ async def edit_assignment(assignment: AssignmentUpdate):
 
     if assignment.description:
         assignment_db.description = assignment.description
-
+    
     if assignment.date:
         assignment_db.due_date = assignment.date
 
     if assignment.time:
         assignment_db.due_time = assignment.time
 
-    root.assignments[assignment.assignment_id] = assignment_db
+    if assignment.files is not None:
+        for file in assignment.files:
+            new_file_path = f"upload"
+            new_file = File(file_name=file.file_name, file_path=new_file_path, file_owner=file.file_owner)
+            assignment_db.files.append(new_file)
+    
 
     return root.assignments[assignment.assignment_id]
 
@@ -278,6 +300,7 @@ async def post_new_comment(submission: SubmissionCreate):
     if not submitted or len(submissions) == 0: #not submitted or if submissions are empty
         root.assignments[submission.assignment_id].addSubmission(new_submission)
     return new_submission
+
 
 
 @app.on_event("shutdown")

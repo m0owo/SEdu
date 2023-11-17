@@ -34,7 +34,7 @@ textarea .description-input {
     transition: none;
 }
 
-.edit-button {
+.edit-button, .sent-button{
     width: fit-content;
     height: 1.5rem;
     border-radius: 5px;
@@ -49,7 +49,8 @@ textarea .description-input {
     padding-right: 0.3rem;
 }
 
-.edit-button:hover {
+
+.edit-button:hover, .sent-button:hover{
     background-color: lightgray;
     color: black;
 }
@@ -58,7 +59,7 @@ input[type="file"] {
     display: none;
 }
 
-input .edit-button {
+input .edit-button, input .sent-button {
     width: fit-content;
     height: 1.5rem;
     border-radius: 5px;
@@ -73,7 +74,7 @@ input .edit-button {
     padding-right: 0.3rem;
 }
 
-input .edit-button:hover {
+input .edit-button:hover, input .sent-button{
     background-color: lightgray;
     color: black;
 }
@@ -88,11 +89,18 @@ input .edit-button:hover {
     visibility: hidden;
 }
 
+
+
+
+
 .file-frame {
     width: 500px;
     height: 100px;
     display: flex;
 }
+
+
+
 
 hr {
     width: 100%;

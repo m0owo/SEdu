@@ -129,46 +129,51 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("rest" , classes.remainingClasses);
         console.log(classes.nearestClass.name);
 
+        if (nearestClass != Null){
         //Nearest Class
-        let div = document.createElement("div");
-        div.className = "classes-bar"
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div")
-        div2.className = "highlight"
+            let div = document.createElement("div");
+            div.className = "classes-bar"
+            let div1 = document.createElement("div");
+            let div2 = document.createElement("div")
+            div2.className = "highlight"
 
-        let span1 = document.createElement("span");
-        span1.className = "medium";
-        span1.textContent = `${classes.nearestClass.name} (${classes.nearestClass.type})`;
+            let span1 = document.createElement("span");
+            span1.className = "medium";
+            span1.textContent = `${classes.nearestClass.name} (${classes.nearestClass.type})`;
 
-        let span2 = document.createElement("span")
-        span2.className = "small"
-        span2.textContent = `${classes.nearestClass.starttime} - ${classes.nearestClass.endtime}`
-        div2.appendChild(span2)
-        div1.appendChild(div2);
-
-        div.appendChild(span1);
-        div.appendChild(div1)
-
-        timetableElement.appendChild(div)
-
-        //Upcoming class
-        for(let remainingclasss of classes.remainingClasses){
-            div1 = document.createElement("div")
-            div1.className = "classes-bar-small"
-
-            span1 = document.createElement("span")
-            span1.className = "medium"
-            span1.textContent = `${remainingclasss.name} (${remainingclasss.type})`;
-
-            span2 = document.createElement("span")
+            let span2 = document.createElement("span")
             span2.className = "small"
-            span2.textContent = `${remainingclasss.starttime} - ${remainingclasss.endtime}`
+            span2.textContent = `${classes.nearestClass.starttime} - ${classes.nearestClass.endtime}`
+            div2.appendChild(span2)
+            div1.appendChild(div2);
+
+            div.appendChild(span1);
+            div.appendChild(div1)
+
+            timetableElement.appendChild(div)
+        }
+
+        if (Array.isArray(remainingClasses)){
+        //Upcoming class
+            for(let remainingclasss of classes.remainingClasses){
+                div1 = document.createElement("div")
+                div1.className = "classes-bar-small"
+
+                span1 = document.createElement("span")
+                span1.className = "medium"
+                span1.textContent = `${remainingclasss.name} (${remainingclasss.type})`;
+
+                span2 = document.createElement("span")
+                span2.className = "small"
+                span2.textContent = `${remainingclasss.starttime} - ${remainingclasss.endtime}`
 
             div1.appendChild(span1)
             div1.appendChild(span2)
             
             timetableElement.appendChild(div1)
         }
+
+
     }
 
     function checkClasses(classList) {
