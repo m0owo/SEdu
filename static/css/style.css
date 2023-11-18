@@ -521,6 +521,7 @@ select {
         justify-content: space-between;
         padding-top: 3%;
         max-width: 35%;
+        min-width: fit-content;
     }
 
     .image {

@@ -236,10 +236,38 @@ document.addEventListener("DOMContentLoaded", function () {
     function initForStudent(user) {
         console.log("initing for student");
         console.log(user.id + " " + user.name + " " + user.role);
+
         let userRoleElement = document.getElementById("userRole")
         userRoleElement.innerText = "Student";
+
         let profileCard = document.getElementById("profile-card");
         profileCard.style.display = "flex";
+
+        let unofficialGradesDisplay = document.getElementById("unofficialGrades");
+        unofficialGradesDisplay.style.display = "flex";
+
+        let unofficialGradesTable = document.getElementById("unofficialGradesTable");
+
+        let enrolls = user.enrolls.data;
+
+        if (enrolls && enrolls.length > 0) {
+            for (let enroll of enrolls) {
+                //populate the grades table
+                let newRow = unofficialGradesTable.insertRow(-1);
+                let newHead = newRow.insertCell(0);
+                newHead.classList.add("small-bold");
+                newHead.classList.add("grade-table-body-cell");
+                newHead.style.textAlign = "left";
+                newHead.innerText = enroll.course.name;
+                
+                let newGrade = newRow.insertCell(1);
+                newGrade.classList.add("small-bold");
+                newGrade.classList.add("grade-table-body-cell");
+                newGrade.innerText = enroll.grade;
+
+                // calculate the unofficial GPA
+            }
+        }
     }
 
     function getSelection() {
@@ -562,8 +590,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let gradeTableBody = document.getElementById("gradeTableBody");
             // empty the grade table
             gradeTableBody.innerHTML = "";
-            // check the course id and course name
-            
             // if there are enrolled courses
             if (courses && courses.length > 0) {
                 // loop through each course
@@ -989,7 +1015,6 @@ document.addEventListener("DOMContentLoaded", function () {
             timetableElement.appendChild(div);
         }
         else if (currentDay == 1) {
-
         }
     }
     updateAssignment();

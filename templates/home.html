@@ -47,14 +47,14 @@
                         <span class="small">Year 2, Semester 1</span>
                     </div>
                     <div>
-                        <!-- <span class="grade">B</span>
-                        <span class="small">80.5%</span> -->
+                        <span class="grade" id="gpaGrade">B</span>
+                        <span class="small" id="gpaTotalScore">80.5%</span>
                     </div>
                 </div>
                 <div class="gpa-bar"></div>
                 <div class="gpa-text">
-                    <!-- <span class="small-bold">Cumulative GPA</span>
-                    <span class="small">3.22</span> -->
+                    <span class="small-bold">Unofficial GPA</span>
+                    <span class="small" id="unofficialGPA">3.22</span>
                 </div>
             </div>
 
@@ -118,6 +118,23 @@
                                 <span class="medium">Web Programming (Lab)</span>
                                 <span class="small">4.30 PM - 6:00 PM</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section" id="unofficialGrades" style="display:none;">
+                    <div class="course-grade-title">
+                        <span class="medium-bold"> Unofficial Grades</span>
+                    </div>
+                    <div class="card" style="width: fit-content;">
+                        <div class="card-content" style="width: fit-content;">
+                            <table class="grade-table">
+                                <thead>
+                                    <th>Courses</th>
+                                    <th>Grades</th>
+                                </thead>
+                                <tbody class="grade-table-body" id="unofficialGradesTable"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
