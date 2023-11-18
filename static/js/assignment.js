@@ -455,6 +455,54 @@ function updateScore(rawScoreInput, newScoreValue) {
     });
 }
 
+//====================================
+//student submission
+let studentFiles = [];
+const studentFileInputButton = document.getElementById("studentFileInputButton");
+const studentFileInput = document.getElementById("studentFileInput");
+const studentDataBaseFrame = document.getElementById("studentDataBaseFrame")
+
+studentFileInputButton.addEventListener('click', function () {
+    studentFileInput.click();
+})
+
+function studentupdateFileFrame() {
+    studentDataBaseFrame.innerHTML = ''; 
+    if (studentFiles.length == 0) {
+        studentDataBaseFrame.style.visibility = "hidden";
+    } else if (studentFiles.length > 0) {
+        studentDataBaseFrame.style.visibility = "visible";
+        studentFiles.forEach(function (file) {
+            console.log("Adding file to frame:", studentFiles.name); 
+            console.log(typeof file, file);
+            let iframe = document.createElement("iframe");
+            let downloadButton = document.createElement("button");
+            studentDataBaseFrame.appendChild(document.createElement("br"));
+            downloadButton.innerText = "Download";
+            downloadButton.classList.add("edit-button");
+            studentDataBaseFrame.appendChild(iframe);
+            studentDataBaseFrame.appendChild(downloadButton);
+            const fileURL = URL.createObjectURL(file);
+            iframe.classList.add("fileFrame");
+            iframe.setAttribute("src", fileURL);
+            downloadButton.addEventListener('click', function () {
+                console.log("clicked");
+                let downloadLink = document.createElement("a");
+                downloadLink.href = fileURL;
+                downloadLink.download = file.name;
+                downloadLink.click();
+            });
+        });
+    }
+}
+
+studentFileInput.addEventListener('change', function () {
+    const selectedFile = studentFileInput.files[0];
+    if (selectedFile) {
+        studentFiles.push(selectedFile);
+        studentupdateFileFrame();
+    }
+})
 
 
 //====================================
@@ -485,6 +533,10 @@ function addSubmission() {
                     "assignment_id": assignment_id,
                     //========================= file is "test" right now
                     "content": "test",
+                    "files": studentFiles.map(file => ({
+                        "file_name": file.name, 
+                        "file_owner": user["name"]
+                    })),
                     //=========================
                     "submit_date": date,
                     "submit_time": time,
@@ -502,6 +554,28 @@ function addSubmission() {
         .catch(error => {
             console.error('Error fetching user data:', error);
         });
+
+    const studentfile = studentFileInput.files[0];
+    if (studentfile) {
+        const formData = new FormData();
+        formData.append("fileInput", studentfile);
+
+        fetch("/uploadfile/", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data
+            console.log("File uploaded the fileeee:", data);
+        })
+        .catch(error => {
+            console.error("Error uploading file:", error);
+        });
+    } else {
+        console.error("No file selected.");
+    }
+
 }
 
 //==============================================
@@ -516,12 +590,14 @@ function fetchDBtoUpdate() {
         const submissionsBox = document.getElementById("submissionsBox");
         const turnedIn = document.getElementById("turned-in");
         const notTurnedIn = document.getElementById("not-turned-in");
+        const studentNotTurnedIn = document.getElementById("students-not-turned-in");
         submission_title.textContent = "Submission Box";
         roleSpan.innerText = "Student";
         descriptionEdit.style.display = "none";
         submissionTable.style.display = "none";
         turnedIn.style.display = "none";
         notTurnedIn.style.display = "none";
+        studentNotTurnedIn.style.display = "none";
         fileInput.style.display = "none";
         fileInputButton.style.display = "none";
         sentFileButton.style.display = "none";
@@ -531,6 +607,9 @@ function fetchDBtoUpdate() {
         roleSpan.innerText = "Lecturer";
         submitButton.style.display = "none";
         submission_state.style.display = "none";
+        studentFileInput.style.display = "none";
+        studentFileInputButton.style.display = "none";
+        studentDataBaseFrame.style.display = "none";
     }
 
     fetch(`/students/${user}`)
@@ -625,14 +704,14 @@ function fetchDBtoUpdate() {
                                 // Declare downloadLink outside the event listener
                                 let downloadLink = document.createElement("a");
                                 downloadLink.href = filePath;
-                                downloadLink.download = file.name;
+                                downloadLink.download = file.file_name;
                         
                                 downloadButton.addEventListener('click', function () {
                                     console.log("clicked");
                                     downloadLink.click();
                                 });
                         
-                                console.log("Adding file to frame:", file.name);
+                                console.log("Adding file to frame:", file.file_name);
                                 console.log("Download Link:", downloadLink);
                             }
                         }
@@ -640,7 +719,7 @@ function fetchDBtoUpdate() {
                         
 
                         //update submissions
-                        //1) NOT DONE!! - Teacher Additional Files Update and Post
+                        //1) NOT DONE!! - Teacher Additional Files Update and Post (DONE)
 
                         //2) Student submission Update and Post
                             //2.1) NOT DONE!! - Submission content having actual files instead of {content: "test"}
@@ -675,8 +754,47 @@ function fetchDBtoUpdate() {
                                         submission_state.textContent = "Turned In";
                                         submission_state.style.color = "Green";
                                     }
-                                    break
+                                    
+                                    const studentDataBaseFrame = document.getElementById("studentDataBaseFrame")
+                                    if (submission["user_id"] == user_id){
+                                        let studentfiles = submission["files"]["data"];
+                                        if (Array.isArray(studentfiles)) {
+                                            studentDataBaseFrame.innerHTML = "";
+                                            studentDataBaseFrame.style.visibility = "visible";
+                                            for (let file of studentfiles) {
+                                                console.log("----File from database----", studentfiles);
+                                                let iframe = document.createElement("iframe");
+                                                const filePath = `/static/${file.file_path}/${file.file_name}`;
+                                                iframe.setAttribute("src", filePath);
+                                        
+                                                let downloadButton = document.createElement("button");
+                                                studentDataBaseFrame.appendChild(document.createElement("br"));
+                                                downloadButton.innerText = "Download";
+                                                downloadButton.classList.add("edit-button");
+                                                studentDataBaseFrame.appendChild(iframe);
+                                                studentDataBaseFrame.appendChild(downloadButton);
+                                                iframe.classList.add("fileFrame");
+                                        
+                                                // Declare downloadLink outside the event listener
+                                                let downloadLink = document.createElement("a");
+                                                downloadLink.href = filePath;
+                                                downloadLink.download = file.file_name;
+                                        
+                                                downloadButton.addEventListener('click', function () {
+                                                    console.log("clicked");
+                                                    downloadLink.click();
+                                                });
+                                        
+                                                console.log("Adding file to frame:", file.file_name);
+                                                console.log("Download Link:", downloadLink);
+                                            }
+                                        }
+    
+                                    }
+                                    break;
                                 }
+
+                                
 
                             //display all submissions for teacher =================================
                                 let submissionTable = document.getElementById("submissionsTable");

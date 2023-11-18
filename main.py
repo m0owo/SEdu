@@ -69,6 +69,7 @@ class SubmissionCreate(BaseModel):
     course_id: int
     assignment_id: int
     content: str = None
+    files: List[FileCreate] = None
     submit_date: str = None
     submit_time: str = None
     score: str = None
@@ -306,10 +307,18 @@ async def post_new_comment(submission: SubmissionCreate):
         raise HTTPException(status_code=404, detail="Course not found")
 
     assignment = root.assignments.get(submission.assignment_id)
+
     if assignment is None:
         raise HTTPException(status_code=404, detail="Assignment not found")
     if (submission.content and submission.submit_date and submission.submit_time):
         new_submission = Submission(submission.user_id, submission.course_id, submission.assignment_id, submission.content, submission.submit_date, submission.submit_time)
+        if assignment.files is not None:
+            for file in submission.files:
+                new_file_path = f"upload"
+                new_file = File(file_name=file.file_name, file_path=new_file_path, file_owner=file.file_owner)
+                new_submission.files.append(new_file)
+                
+
 
     #if user already submitted before, resubmit
     submissions = root.assignments[submission.assignment_id].submissions

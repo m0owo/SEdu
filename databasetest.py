@@ -320,6 +320,7 @@ class Submission(persistent.Persistent):
         self.course_id = course_id
         self.assignment_id = assignment_id
         self.content = content
+        self.files = persistent.list.PersistentList()
         self.submit_date = submit_date
         self.submit_time = submit_time 
         self.score = None
