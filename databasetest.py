@@ -411,7 +411,7 @@ root.courses[107].addTimeTable('Thursday', '1:00 PM' ,'4:00 PM', 'Lecture')
 
 root.courses[108] = Course(108, 'Discrete Mathematics', 'Have Fun At Charm School!', 'Lecturer 4 Name', 3)
 root.courses[108].addTimeTable('Monday', '1:00 PM' ,'4:00 PM', 'Lecture')
-root.courses[108].addTimeTable('Friday', '9:00 PM' ,'12:00 PM', 'Lecture')
+root.courses[108].addTimeTable('Friday', '9:00 AM' ,'12:00 PM', 'Lecture')
 
 
 #Initialize student info and enroll courses

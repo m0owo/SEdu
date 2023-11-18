@@ -1,6 +1,8 @@
+let currentTime = new Date();
 document.addEventListener("DOMContentLoaded", function () {
     const userElement = document.getElementById("user-data");
     let user = userElement.getAttribute("data");
+
 
     fetch(`/students/${user}`)
         .then(response => response.json())
@@ -14,11 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             updateAssignment(user);
             updateClasses(user);
+            setInterval(function () {
+                currentTime = new Date();
+                // Update classes with the latest current time
+                updateClasses(user);
+            }, 60000); // 60000 milliseconds = 1 minute
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
         });
-    
+        
     const dateElement = document.getElementById("date");
     const timeElement = document.getElementById("time");
     const timetableElement = document.getElementById("timetable");
@@ -94,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
     function updateClasses(user){
         timetableElement.textContent = ""
         let user_id = user.id;
@@ -178,7 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function checkClasses(timeLists) {
-        var currentTime = new Date();
         console.log("current time",currentTime)
         var nearestClass = null;
         var remainingClasses = [];
@@ -1020,5 +1027,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateAssignment();
     updateDateTime();
     setInterval(updateDateTime, 60000);
+    
 
 });
