@@ -180,7 +180,7 @@ class User(persistent.Persistent):
                 print(f"    Assignment: {assignment.title}")
                 for submission in enrollment.submissions:
                     if submission.assignment_id == assignment.id:
-                        print(f"      Submission: {submission.content}, Score: {submission.score}")
+                        print(f"Score: {submission.score}")
 
     def printSubmissions(self):
         for enrollment in self.enrolls:
@@ -188,7 +188,7 @@ class User(persistent.Persistent):
             for submission in enrollment.submissions:
                 assignment = getAssignmentByID(submission.assignment_id)
                 if submission.student_id == self.id:
-                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Details: {submission.content}, Submission Time: {submission.submit_date} {submission.submit_time}, Score: {submission.score}/{assignment.total_score}")
+                    print(f"Course: {course.name}, Assignment ID: {assignment.id}, Submission Time: {submission.submit_date} {submission.submit_time}, Score: {submission.score}/{assignment.total_score}")
     
     def printEnrollments(self):
         print(self.__str__())
@@ -318,16 +318,19 @@ class Assignment(persistent.Persistent):
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}")
 
 class Submission(persistent.Persistent):
-    def __init__(self, user_id, course_id, assignment_id, content, submit_date, submit_time):
+    def __init__(self, user_id, course_id, assignment_id, submit_date, submit_time):
         self.user_id = user_id
         self.course_id = course_id
         self.assignment_id = assignment_id
-        self.content = content
         self.files = persistent.list.PersistentList()
         self.submit_date = submit_date
         self.submit_time = submit_time 
         self.score = None
         self.sent = True
+
+    def addFile(self, File):
+        self.files.append(File)
+        return File
 
 class Post(persistent.Persistent):
     def __init__(self, author, posted_date, posted_time, content):
@@ -382,10 +385,9 @@ root.courses[101].addTimeTable('Friday', '1:00 PM' , '4:00 PM', 'Lab')
 
 # root.courses[101].setGradeScheme(grading)
 root.courses[102] = Course(102, 'Web Programming', 'HTML, CSS, JS & more', 'Lecturer 1 Name', 4)
-root.courses[102].addTimeTable('Saturday', '9:00 AM', '12:00 PM', 'Lecture')
+root.courses[102].addTimeTable('Wednesday', '9:00 AM', '12:00 PM', 'Lecture')
 root.courses[102].addTimeTable('Thursday', '5:00 PM' , '7:00 PM', 'Lab')
-root.courses[102].addTimeTable('Friday', '9:00 PM' , '10:00 PM', 'Lab')
-root.courses[102].addTimeTable('Friday', '11:00 PM' , '11:30 AM', 'Lab')
+
 # root.courses[201].setGradeScheme(grading)
 root.courses[103] = Course(103, 'Software Engineering Principles', 'Lets Learn Principles', 'Lecturer 2 Name', 5)
 root.courses[103].addTimeTable('Monday', '9:00 AM' ,'12:00 PM', 'Lecture')
@@ -393,7 +395,7 @@ root.courses[103].addTimeTable('Wednesday', '1:00 PM', '4:00 PM', 'Lab')
 root.courses[103].addTimeTable('Saturday', '11:30 PM' , '12:00 AM', 'Lecture')
 # root.courses[202].setGradeScheme(grading_se)
 root.courses[104] = Course(104, 'Artificial Intelligence', 'Lets Learn AI', 'Lecturer 2 Name', 3)
-root.courses[104].addTimeTable('Monday', '9:00 AM' ,'12:00 PM', 'Lecture')
+root.courses[104].addTimeTable('Monday', '1:00 PM' ,'4:00 PM', 'Lecture')
 root.courses[104].addTimeTable('Wednesday', '1:00 PM', '4:00 PM', 'Lab')
 root.courses[104].addTimeTable('Thursday', '7:30 PM' , '8:00 PM', 'Lab')
 # root.courses[301].setGradeScheme(grading_ai)
@@ -403,30 +405,78 @@ root.courses[105].addTimeTable('Tuesday', '9:00 AM' ,'12:00 PM', 'Lecture')
 root.courses[106] = Course(106, 'Charm School', 'Have Fun At Charm School!', 'Lecturer 3 Name', 3)
 root.courses[106].addTimeTable('Tuesday', '12:00 PM' ,'4:00 PM', 'Lecture')
 
+root.courses[107] = Course(107, 'Introduction to Logic', 'Have Fun At Charm School!', 'Lecturer 4 Name', 3)
+root.courses[107].addTimeTable('Wednesday', '9:00 AM' ,'12:00 AM', 'Lecture')
+root.courses[107].addTimeTable('Thursday', '1:00 PM' ,'4:00 PM', 'Lecture')
+
+root.courses[108] = Course(108, 'Discrete Mathematics', 'Have Fun At Charm School!', 'Lecturer 4 Name', 3)
+root.courses[108].addTimeTable('Monday', '1:00 PM' ,'4:00 PM', 'Lecture')
+root.courses[108].addTimeTable('Friday', '9:00 PM' ,'12:00 PM', 'Lecture')
+
 
 #Initialize student info and enroll courses
 root.users = BTrees.OOBTree.BTree()
 
 root.users[1101] = User(1101, 'Miki Ajiki', "1111", "student")
-
 s1_id = root.users[1101].id
-root.users[1101].enrollCourse(root.courses[102])
-s1_enroll1 = root.users[1101].enrollCourse(root.courses[103])
-s1_enroll2 = root.users[1101].enrollCourse(root.courses[104])
-s1_enroll3 = root.users[1101].enrollCourse(root.courses[105])
-s1_enroll4 = root.users[1101].enrollCourse(root.courses[106])
+root.users[1101].enrollCourse(root.courses[101])
+s1_enroll1 = root.users[1101].enrollCourse(root.courses[102])
+s1_enroll2 = root.users[1101].enrollCourse(root.courses[106])
+s1_enroll3 = root.users[1101].enrollCourse(root.courses[107])
 
 root.users[1102] = User(1102, 'Putter Something', "1111", "student")
 root.users[1102].enrollCourse(root.courses[101])
 root.users[1102].enrollCourse(root.courses[102])
-root.users[1102].enrollCourse(root.courses[103])
-root.users[1102].enrollCourse(root.courses[104])
+root.users[1102].enrollCourse(root.courses[106])
+root.users[1102].enrollCourse(root.courses[107])
 
 root.users[1103] = User(1103, 'Music Auyeung', "1111", "student")
+root.users[1103].enrollCourse(root.courses[101])
 root.users[1103].enrollCourse(root.courses[102])
-root.users[1103].enrollCourse(root.courses[103])
-root.users[1103].enrollCourse(root.courses[104])
-root.users[1103].enrollCourse(root.courses[105])
+root.users[1103].enrollCourse(root.courses[106])
+root.users[1103].enrollCourse(root.courses[107])
+
+root.users[1107] = User(1107, 'Student 1', "1111", "student")
+root.users[1107].enrollCourse(root.courses[101])
+root.users[1107].enrollCourse(root.courses[102])
+root.users[1107].enrollCourse(root.courses[106])
+root.users[1107].enrollCourse(root.courses[107])
+
+root.users[1108] = User(1108, 'Student 2', "1111", "student")
+root.users[1108].enrollCourse(root.courses[101])
+root.users[1108].enrollCourse(root.courses[102])
+root.users[1108].enrollCourse(root.courses[106])
+root.users[1108].enrollCourse(root.courses[107])
+
+root.users[1109] = User(1109, 'Student 3', "1111", "student")
+root.users[1109].enrollCourse(root.courses[103])
+root.users[1109].enrollCourse(root.courses[104])
+root.users[1109].enrollCourse(root.courses[105])
+root.users[1109].enrollCourse(root.courses[108])
+
+root.users[1110] = User(1110, 'Student 4', "1111", "student")
+root.users[1110].enrollCourse(root.courses[103])
+root.users[1110].enrollCourse(root.courses[104])
+root.users[1110].enrollCourse(root.courses[105])
+root.users[1110].enrollCourse(root.courses[108])
+
+root.users[1111] = User(1111, 'Student 5', "1111", "student")
+root.users[1111].enrollCourse(root.courses[103])
+root.users[1111].enrollCourse(root.courses[104])
+root.users[1111].enrollCourse(root.courses[105])
+root.users[1111].enrollCourse(root.courses[108])
+
+root.users[1112] = User(1112, 'Student 6', "1111", "student")
+root.users[1112].enrollCourse(root.courses[103])
+root.users[1112].enrollCourse(root.courses[104])
+root.users[1112].enrollCourse(root.courses[105])
+root.users[1112].enrollCourse(root.courses[108])
+
+root.users[1113] = User(1113, 'Student 7', "1111", "student")
+root.users[1113].enrollCourse(root.courses[103])
+root.users[1113].enrollCourse(root.courses[104])
+root.users[1113].enrollCourse(root.courses[105])
+root.users[1113].enrollCourse(root.courses[108])
 
 print("printing all enrollments")
 root.users[1103].printEnrollments()
@@ -446,20 +496,41 @@ root.users[1106] = User(1106, 'Lecturer 3 Name', "1111", "teacher")
 root.users[1106].enrollCourse(root.courses[105])
 root.users[1106].enrollCourse(root.courses[106])
 
+root.users[1114] = User(1114, 'Lecturer 4 Name', "1111", "teacher")
+root.users[1114].enrollCourse(root.courses[107])
+root.users[1114].enrollCourse(root.courses[108])
+
 #Teacher Assign homework to student
 root.assignments = BTrees.OOBTree.BTree()
-root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Create a house by using turtle")
+root.assignments[101001] = Assignment(101001,"Homework1 turtle", "11/01/2023", "12:00 AM", "10/10/2023", "11:59 PM", "Create a house by using turtle")
 root.courses[101].addAssignment(root.assignments[101001]).setTotalScore(100)
 root.assignments[101001].addFile(File("python_06.pdf", "upload", root.users[1104].name))
-root.assignments[102001] = Assignment(102001,"Project amazing", "11/01/2023", "12:00 AM", "11/21/2023", "11:59 PM", "Do your SE website")
+root.assignments[101003] = Assignment(101003,"Homework2 List and Dict", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Please follow the instruction that in the file.")
+root.courses[101].addAssignment(root.assignments[101003]).setTotalScore(100)
+root.assignments[101003].addFile(File("python_06.pdf", "upload", root.users[1104].name))
+root.assignments[101004] = Assignment(101004,"Homework3 Recursion", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "Please follow the instruction that in the file.")
+root.courses[101].addAssignment(root.assignments[101004]).setTotalScore(100)
+root.assignments[101004].addFile(File("python_06.pdf", "upload", root.users[1104].name))
+
+root.assignments[102001] = Assignment(102001,"Basic HTML", "11/01/2023", "12:00 AM", "11/9/2023", "11:59 PM", "Please follow the instruction")
 root.courses[102].addAssignment(root.assignments[102001])
-root.assignments[102002] = Assignment(102002,"project late na", "11/01/2023", "12:00 AM", "11/20/2023", "11:59 PM", "this project is late")
+root.assignments[102002] = Assignment(102002,"Basic HTML2", "11/01/2023", "12:00 AM", "11/25/2023", "11:59 PM", "Please follow the instruction")
 root.courses[102].addAssignment(root.assignments[102002])
 
 # Testing Student 1102 submits homework at course 101, assignment 101001
 root.submissions = BTrees.OOBTree.BTree()
-root.submissions[1001] = Submission(1102, 101, root.assignments[101001].id, "main.py", "2023-11-11", "12:00 PM")
+root.submissions[1001] = Submission(1101, 101, root.assignments[101001].id, "2023-01-11", "12:00 PM")
+root.submissions[1001].addFile(File("python_06.pdf", "upload", root.users[1104].name))
 root.assignments[101001].addSubmission(root.submissions[1001])
+root.submissions[1002] = Submission(1102, 101, root.assignments[101001].id, "2023-02-11", "11:23 AM")
+root.submissions[1002].addFile(File("python_06.pdf", "upload", root.users[1104].name))
+root.assignments[101001].addSubmission(root.submissions[1002])
+root.submissions[1003] = Submission(1103, 101, root.assignments[101001].id,"2023-04-11", "12:00 PM")
+root.submissions[1003].addFile(File("python_06.pdf", "upload", root.users[1104].name))
+root.assignments[101001].addSubmission(root.submissions[1003])
+root.submissions[1004] = Submission(1107, 101, root.assignments[101001].id, "2023-11-11", "12:00 PM")
+root.submissions[1004].addFile(File("python_06.pdf", "upload", root.users[1104].name))
+root.assignments[101001].addSubmission(root.submissions[1004])
 
 #Adding comment in Assginment
 root.assignments[101001].addIndividualComment(root.users[1104].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")
