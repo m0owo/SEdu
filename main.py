@@ -25,6 +25,7 @@ class StudentScores(BaseModel):
     student_id: int
     course_id: int
     new_scores: dict
+    new_grade: str
 
 class DiscussionCreate(BaseModel):
     course_id: int
@@ -350,6 +351,7 @@ async def set_student_scores(request: StudentScores):
     student_id = request.student_id
     course_id = request.course_id
     new_scores = request.new_scores
+    new_grade = request.new_grade
 
     student = root.users[student_id]
     if student is None:
@@ -364,7 +366,8 @@ async def set_student_scores(request: StudentScores):
         raise HTTPException(status_code=404, detail="Enrollment not found")
     
     enrollment.setScores(new_scores)
-    return {"student" : student, "course" : course, "scores": enrollment.getScores()}
+    enrollment.setGrade(new_grade)
+    return {"student" : student, "course" : course, "scores": enrollment.getScores(), "grades" : enrollment.getGrade()}
 
 @app.post("/set-course-grade-scheme/")
 async def set_grade_scheme(request: GradeScheme):
@@ -377,7 +380,6 @@ async def set_grade_scheme(request: GradeScheme):
     
     course.setGradeScheme(grade_scheme)
     return {"course" : course, "gradeScheme": course.getGradeScheme()}
-
 @app.on_event("shutdown")
 def shutdown_event():
     commit_transaction()  # Commit the transaction on shutdown

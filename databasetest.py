@@ -227,6 +227,9 @@ class Enrollment(persistent.Persistent):
     def getGrade(self):
         return self.grade
     
+    def setGrade(self, grade):
+        self.grade = grade
+    
     def getScores(self):
         return self.scores
     

@@ -256,8 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(user.id + " " + user.name + " " + user.role);
 
         let courses = user["enrolls"].data;
-        console.log("Courses: ");
-        console.log(courses);
 
         //populate the selection
         let userRoleElement = document.getElementById("userRole");
@@ -267,17 +265,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // populate options to choose to populate grade table
         if (courses && courses.length > 0) {
-            console.log("Populating selection")
             for (let course of courses) {
                 let courseOption = document.createElement("option");
                 courseOption.value = course.course.id;
                 courseOption.innerText = course.course.name;
                 courseSelection.appendChild(courseOption);
             }
-            let selected = getSelection();
-            console.log("selection")
-            console.log(selected);
-
             //initial call using the initial selection
             populateGradeTable();
             populateWeightTable();
@@ -285,8 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Event listener for dropdown change
             courseSelection.addEventListener("change", function () {
-                console.log("Selection Changed");
-
                 populateGradeTable();
                 populateWeightTable();
                 populateGradeSchemeTable();
@@ -294,8 +285,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function updateStatusDisplay(totalWeight) {
-            console.log("total weight");
-            console.log(totalWeight);
             let status = document.getElementById("statusDisplay");
             status.innerText = "Total: " + totalWeight + "%";
             if (parseFloat(totalWeight) == 100) {
@@ -318,11 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 for (let course of courses) {
                     // find the course that matches the selected course
                     if (course.course.id == selected.value) {
-                        console.log("course found for weight: ");
-                        console.log(course);
                         courseWeights = course.course.courseWeights;
-                        console.log("found course weights GHSFOSIJFL");
-                        console.log(courseWeights);
                         courseSelected = course;
                     }
                 }
@@ -334,13 +319,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let projectWeight = document.getElementById("projectWeight");
             let midtermWeight = document.getElementById("midtermWeight");
             let finalWeight = document.getElementById("finalWeight");
-
-            console.log(attendanceWeight);
-            console.log(assignmentWeight);
-            console.log(midtermWeight);
-
-            console.log("course Weights");
-            console.log(courseWeights);
 
             attendanceWeight.innerText = courseWeights.attendance;
             assignmentWeight.innerText = courseWeights.assignment;
@@ -383,13 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             function editGradeWeight(e, course, category) {
-                console.log("Editing grade weight in course: ");
-                console.log(course);
-
                 let courseWeights = course.course.courseWeights;
-                console.log("courseWeights Before:");
-                console.log(courseWeights);
-
                 let toEdit = e.target;
                 let originalWeight = toEdit.innerText;
                 let newInput = document.createElement("input");
@@ -398,9 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 newInput.type = "text";
                 newInput.style.width = "3rem";
                 newInput.style.height = "1rem";
-                            
-                console.log(newInput);
-                console.log(toEdit);
+
                 toEdit.parentNode.replaceChild(newInput, toEdit);
                 newInput.focus();
                             
@@ -413,8 +383,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             newWeightOutput.innerText = newWeight;
                     
                             courseWeights[category] = parseFloat(newWeight);
-                            console.log("Course Weights After: ");
-                            console.log(courseWeights);
                     
                             newWeightOutput.addEventListener("click", function(e) {
                                 editGradeWeight(e, course, category);
@@ -427,8 +395,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             updateStatusDisplay(totalWeight);
                                             
                             if (totalWeight == 100) {
-                                console.log("Course Selected to update grade and weight: ");
-                                console.log(course);
                                 postCourseWeightsToDB(course.course.id, courseWeights);
 
                             } else if (totalWeight > 100) {
@@ -444,7 +410,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function populateGradeSchemeTable() {
             let selected = getSelection();
-            console.log("Populating Grade SCheme Table");
             let course;
             let courseGradeScheme;
             // if there are enrolled courses
@@ -453,16 +418,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 for (let course of courses) {
                     // find the course that matches the selected course
                     if (course.course.id == selected.value) {
-                        console.log("course found: ");
-                        console.log(course);
                         courseSelected = course.course;
                         courseGradeScheme = course.course.gradeScheme;
                     }
                 }
             }
             let a = document.getElementById("A");
-            console.log("A");
-            console.log(a);
             let bPlus = document.getElementById("B+");
             let b = document.getElementById("B");
             let cPlus = document.getElementById("C+");
@@ -529,12 +490,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             let below = -1;
                             let above = 100;
                             // [above, below)
-                            console.log(category);
                             switch(category) {
                                 case "A":
                                     above = 100;
                                     below = courseGradeScheme["B+"];
-                                    console.log("hello" + below);
                                     break;
                                 case "B+":
                                     above = courseGradeScheme["A"];
@@ -570,8 +529,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     break;
                             }
                             if (gradeValue <= above && gradeValue > below) {
-                                console.log(below);
-                                console.log(above);
 
                                 gradeSchemeOutput.innerText = gradeValue;
 
@@ -580,8 +537,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 });
 
                                 e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
-
-                                console.log("grade scheme after");
                                 courseGradeScheme[category] = gradeValue;
                                 postGradeSchemeToDB(courseId, courseGradeScheme);
                             } else {
@@ -605,14 +560,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function populateGradeTable() {
             let selected = getSelection();
-            console.log("Populating Grade Table");
             // see which course is selected
             let gradeTableBody = document.getElementById("gradeTableBody");
             // empty the grade table
             gradeTableBody.innerHTML = "";
             // check the course id and course name
-            console.log(selected.value);
-            console.log(selected.text);
             
             // if there are enrolled courses
             if (courses && courses.length > 0) {
@@ -620,22 +572,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 for (let course of courses) {
                     // find the course that matches the selected course
                     if(course.course.id == selected.value) {
-                        console.log("course found: ");
-                        console.log(course);
                         // get the course weights and grade scheme
                         let courseWeights = course.course.courseWeights;
                         let courseGradeScheme = course.course.gradeScheme;
-                        console.log("Course Weights: ");
-                        console.log(courseWeights);
-                        console.log("Course Grade Scheme: ");
-                        console.log(courseGradeScheme);
 
                         // fetch all students
                         fetch (`/students/`)
                             .then(response => response.json())
                             .then(fetchedStudents => {
-                                // console.log("fetched all students");
-                                // console.log("All Students")
                                 console.log(fetchedStudents);
                                 populateStudentsInfo(fetchedStudents);
                             })
@@ -646,35 +590,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         function populateStudentsInfo(fetched) {
                             let students = [];
                             for (let fetchedStudent of fetched) {
-                                // console.log("Fetched Student: ");
-                                // console.log(fetchedStudent);
                                 let enrolls = fetchedStudent["enrolls"].data;
                                 for (let enroll of enrolls) {
-                                    // console.log("This Enroll: ");
-                                    // console.log(enroll);
-                                    // console.log("Its ID");
-                                    // console.log(enroll.course.id);
-                                    // console.log("The ID of this course");
-                                    // console.log(selected.value);
                                     if (enroll.course.id == selected.value) {
-                                        // console.log("This student is enrolled in this course");
                                         students.push(fetchedStudent);
                                     }
                                 }
                             }
-                            console.log("Students Enrolled in this course")
-                            console.log(students);
-
                             // if there are students enrolled in this course
                             if (students && students.length > 0) {
                                 // get each student's scores
                                 for (let student of students) {
-                                    console.log("Student");
-                                    console.log(student);
                                     // create a new row for each student
                                     let newStudentRow = gradeTableBody.insertRow(-1);
 
                                     let scores;
+                                    let courseId;
 
                                     // make a new cell for the student id
                                     let studentIdCell = newStudentRow.insertCell(0);
@@ -682,18 +613,15 @@ document.addEventListener("DOMContentLoaded", function () {
                                     studentIdCell.innerText = "650" + student.id;
 
                                     let enrolls = student.enrolls.data;
-                                    console.log("Enrolls");
-                                    console.log(enrolls);
                                     
                                     // find the course in the student's enrolls
                                     for (let enroll of enrolls) {
                                         if (enroll.course.id == selected.value) {
-                                            console.log("Course Found in student's enrolls:");
-                                            console.log(enroll);
-
+                                            
+                                            grade = enroll.grade;
                                             scores = enroll.scores;
-                                            console.log("Scores:");
-                                            console.log(scores);
+                                            courseId = enroll.course.id;
+            
                                             
                                             // populate the cells with the student's scores
                                             populateScoreCell(student, enroll, scores, "attendance", newStudentRow, 1);
@@ -720,14 +648,19 @@ document.addEventListener("DOMContentLoaded", function () {
                                     gradeSpan.classList.add("small-bold");
                                     gradeSpan.innerText = " / 100";
                                     totalCell.appendChild(gradeSpan);
-    
+                                    
                                     // the grade cell
                                     let gradeCell = newStudentRow.insertCell(8);
                                     gradeCell.classList.add("grade-table-body-cell");
                                     gradeCell.classList.add("small-bold");
                                     gradeSpan = document.createElement("span");
-                                    gradeSpan.innerText = calculateGrade(scoreSum, courseGradeScheme);
-                                    gradeCell.appendChild(gradeSpan);
+                                    let calGrade = calculateGrade(scoreSum, courseGradeScheme);
+                                    if (calGrade != grade) {
+                                        postNewScoresToDB(student.id, courseId, scores, calGrade);
+                                    } else {
+                                        gradeSpan.innerText = grade;
+                                        gradeCell.appendChild(gradeSpan);
+                                    }
                                 }
                             }
                             // function for populating score cells
@@ -735,19 +668,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 //get the weight and score for the category
                                 let weight = courseWeights[category];
                                 if (scores[category] > weight) {
-                                    console.log("student id");
-                                    console.log(student.id)
-                                    console.log("course id");
-                                    console.log(enroll)
-                                    console.log(enroll.id);
-                                    // postNewScoresToDB(student.id, enroll.course.id, scores);
                                     scores[category] = 0;
                                 }
                                 let score = scores[category];
-                                console.log("Weight:");
-                                console.log(weight);
-                                console.log("Score:");
-                                console.log(score);
 
                                 //make a new cell
                                 let newCell = parent.insertCell(index);
@@ -779,10 +702,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
             // function for editing student score in grade table
             function editScore(e, student, enroll, category) {
-                console.log("Student score to edit");
-                console.log(student);
-                console.log(enroll);
-
                 let courseId = enroll.course.id;
                 let courseWeights;
                 let gradeScheme;
@@ -795,11 +714,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     for (studentEnroll of studentEnrolls){
                         if (studentEnroll.course.id == courseId) {
                             //find the current scores
-                            console.log("Course Found");
                             newScores = studentEnroll.scores;
-                            console.log(newScores);
                             courseWeights = studentEnroll.course.courseWeights;
-                            console.log(courseWeights);
                             gradeScheme = studentEnroll.course.gradeScheme;
                         }
                     }
@@ -856,13 +772,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             let grade = calculateGrade(totalScore, gradeScheme);
                             gradeCell.innerHTML = `<span>${grade}</span>`;
 
-                            postNewScoresToDB(studentId, courseId, newScores, getSelection());
+                            postNewScoresToDB(studentId, courseId, newScores, grade);
                         } else { // if result is more than the max
                             alert("Invalid! Score cannot exceed weight ");
                         }
                     } else if (patternExpression.test(scoreInput.value)) {
                         let result = parseFloat(eval(scoreInput.value) * weight);
-                        console.log("result:" + result);
                         if (result <= weight) {
                             let score = result.toFixed(2);
                             newScores[category] = score; 
@@ -892,13 +807,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             let grade = calculateGrade(totalScore, gradeScheme);
                             gradeCell.innerHTML = `<span>${grade}</span>`;
 
-                            postNewScoresToDB(studentId, courseId, newScores, getSelection);
+                            postNewScoresToDB(studentId, courseId, newScores, grade);
                         }
                     } else {
                         alert("Invalid input! Please enter a valid float value.");
                     }
-                    console.log("New Scores");
-                    console.log(newScores);
                 }
             });
         }
@@ -907,48 +820,43 @@ document.addEventListener("DOMContentLoaded", function () {
             let total = 0;
             for (let i = 1; i < 7; i++) {
                 let cur = parent.cells[i];
-                console.log("cur");
-                console.log(cur);
                 let score = cur.querySelectorAll("span")[0].innerText;
-                console.log("score");
-                console.log(score);
                 total += parseFloat(score);
             }
             return total;
         }
 
         function calculateTotalWeight(parent) {
-            console.log("parent:");
-            console.log(parent);
             let total = 0;
             for (let i = 0; i < 6; i++) {
                 let cur = parent.cells[i];
                 let score = cur.querySelectorAll("span")[0].innerText;
                 total += parseFloat(score);
             }
-            console.log("total weight");
-            console.log(total);
             return total;
         }
 
         function calculateGrade(score, scheme) {
-            if (score <= scheme["A"] && score > scheme["B+"]) {
+            if (score > scheme["A"]){
                 return "A";
-            } else if (score <= scheme["B+"] && score > scheme["B"]) {
+            } else if (score <= scheme["A"] && score > scheme["B+"]) {
                 return "B+";
-            } else if (score <= scheme["B"] && score > scheme["C+"]) {
+            } else if (score <= scheme["B+"] && score > scheme["B"]) {
                 return "B";
-            } else if (score <= scheme["C+"] && score > scheme["C"]) {
+            } else if (score <= scheme["B"] && score > scheme["C+"]) {
                 return "C+";
-            } else if (score <= scheme["C"] && score > scheme["D+"]) {
+            } else if (score <= scheme["C+"] && score > scheme["C"]) {
                 return "C";
-            } else if (score <= scheme["D+"] && score > scheme["D"]) {
+            } else if (score <= scheme["C"] && score > scheme["D+"]) {
                 return "D+";
-            } else if (score <= scheme["D"] && score > scheme["F"]) {
+            } else if (score <= scheme["D+"] && score > scheme["D"]) {
                 return "D";
+            } else if (score <= scheme["D"] && score > scheme["F"]) {
+                return "F";
             } else {
                 return "F";
             }
+
         }
 
         function postCourseWeightsToDB(courseId, weights) {
@@ -964,15 +872,15 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Course Weights edited:', data);
                     populateGradeTable();
+                    populateWeightTable();
                 })
                 .catch(error => {
                     console.error('Error editing course weights:', error);
                 });
         }
 
-        function postNewScoresToDB(studentId, courseId, newScores) {
+        function postNewScoresToDB(studentId, courseId, newScores, newGrade) {
             fetch(`/set-student-scores/`, {
                 method: 'POST',
                 headers: {
@@ -982,12 +890,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     "student_id": studentId,
                     "course_id": courseId,
                     "new_scores": newScores,
+                    "new_grade": newGrade,
                 }),
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Student Scores edited:', data);
+                    console.log(data);
                     populateGradeTable();
+                    populateGradeSchemeTable();
                 })
                 .catch(error => {
                     console.error('Error editing student scores:', error);
@@ -995,8 +905,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function postGradeSchemeToDB(courseId, gradeScheme) {
-            console.log("courseid");
-            console.log(courseId);
             fetch(`/set-course-grade-scheme/`, {
                 method: 'POST',
                 headers: {
@@ -1010,8 +918,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Course grade scheme edited:', data);
-                    populateGradeSchemeTable();
                     populateGradeTable();
+                    populateGradeSchemeTable();
                 })
                 .catch(error => {
                     console.error('Error editing grade scheme:', error);
@@ -1089,7 +997,5 @@ document.addEventListener("DOMContentLoaded", function () {
     updateAssignment();
     updateDateTime();
     setInterval(updateDateTime, 60000);
-
-    const gradeCourseTitle = document.getElementById("gradeCourseTitle");
 
 });
