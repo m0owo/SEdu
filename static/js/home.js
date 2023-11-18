@@ -244,6 +244,13 @@ document.addEventListener("DOMContentLoaded", function () {
         profileCard.style.display = "flex";
     }
 
+    function getSelection() {
+        let courseSelection = document.getElementById("courseSelection");
+        let currentIndex = courseSelection.selectedIndex;
+        let courseSelected = courseSelection.options[currentIndex];
+        return courseSelected;
+    }
+
     function initForTeacher(user) {
         console.log("initing for teacher");
         console.log(user.id + " " + user.name + " " + user.role);
@@ -251,9 +258,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let courses = user["enrolls"].data;
         console.log("Courses: ");
         console.log(courses);
-
-        // make the course selection object
-        let courseSelection = document.getElementById("courseSelection");
 
         //populate the selection
         let userRoleElement = document.getElementById("userRole");
@@ -270,32 +274,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 courseOption.innerText = course.course.name;
                 courseSelection.appendChild(courseOption);
             }
-            let currentIndex = courseSelection.selectedIndex;
-            let courseSelected = courseSelection.options[currentIndex];
-            console.log("Course Selected");
-            console.log(courseSelected);
+            let selected = getSelection();
+            console.log("selection")
+            console.log(selected);
 
             //initial call using the initial selection
-            populateGradeTable(courseSelected);
-            populateWeightTable(courseSelection);
-            populateGradeSchemeTable(courseSelection);
+            populateGradeTable();
+            populateWeightTable();
+            populateGradeSchemeTable();
 
             // Event listener for dropdown change
             courseSelection.addEventListener("change", function () {
                 console.log("Selection Changed");
-                let currentIndex = courseSelection.selectedIndex;
-                let courseSelected = courseSelection.options[currentIndex];
 
-                console.log("Course Selected");
-                console.log(courseSelected);
-
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
-                populateGradeSchemeTable(courseSelected);
+                populateGradeTable();
+                populateWeightTable();
+                populateGradeSchemeTable();
             });
         }
 
-        function populateWeightTable(selected) {
+        function updateStatusDisplay(totalWeight) {
+            console.log("total weight");
+            console.log(totalWeight);
+            let status = document.getElementById("statusDisplay");
+            status.innerText = totalWeight + "%";
+            if (parseFloat(totalWeight) == 100) {
+                status.style.color = "green";
+            } else if (parseFloat(totalWeight) > 100) {
+                status.style.color = "red";
+            } else if (parseFloat(totalWeight) < 100) {
+                status.style.color = "orange";
+            }
+        }
+
+        function populateWeightTable() {
+            let selected = getSelection();
             console.log("Populating weight Table");
             let courseWeights;
             let courseSelected;
@@ -314,6 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
             }
+
             let attendanceWeight = document.getElementById("attendanceWeight");
             let assignmentWeight = document.getElementById("assignmentWeight");
             let labWeight = document.getElementById("labWeight");
@@ -335,35 +349,37 @@ document.addEventListener("DOMContentLoaded", function () {
             midtermWeight.innerText = courseWeights.midterm;
             finalWeight.innerText = courseWeights.final;
 
+            updateStatusDisplay(calculateTotalWeight(attendanceWeight.parentNode.parentNode));
+
             attendanceWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "attendance");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
             assignmentWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected,  "assignment");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
             labWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "lab");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
             projectWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "project");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
             midtermWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "midterm");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
             finalWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "final");
-                populateGradeTable(selected);
-                populateWeightTable(selected);
+                populateGradeTable();
+                populateWeightTable();
             });
 
             function editGradeWeight(e, course, category) {
@@ -408,15 +424,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             newWeightOutput.id = category + "Weight";
 
                             let totalWeight = calculateTotalWeight(newWeightOutput.parentNode.parentNode);
-                                                
-                            console.log("total weight" + totalWeight);
+                            updateStatusDisplay(totalWeight);
                                             
                             if (totalWeight == 100) {
                                 console.log("Course Selected to update grade and weight: ");
                                 console.log(course);
                                 postCourseWeightsToDB(course.course.id, courseWeights);
+
                             } else if (totalWeight > 100) {
-                                newWeightOutput.innerText = originalWeight;
                                 alert("Invalid Weight Scheme ! Total Weight Exceeds 100%");
                             }
                         } else {
@@ -428,7 +443,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }   
     
 
-        function populateGradeSchemeTable(selected) {
+        function populateGradeSchemeTable() {
+            let selected = getSelection();
             console.log("Populating Grade SCheme Table");
             let courseGradeScheme;
             // if there are enrolled courses
@@ -464,32 +480,33 @@ document.addEventListener("DOMContentLoaded", function () {
             f.innerText = courseGradeScheme["F"];
 
             a.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "A");
+                editGradeScheme(e, "A");
             });
             bPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "B+");
+                editGradeScheme(e, "B+");
             });
             b.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "B");
+                editGradeScheme(e, "B");
             });
             cPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "C+");
+                editGradeScheme(e, "C+");
             });
             c.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "C");
+                editGradeScheme(e, "C");
             });
             dPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "D+");
+                editGradeScheme(e, "D+");
             });
             d.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "D");
+                editGradeScheme(e, "D");
             });
             f.addEventListener("click", function(e) {
-                editGradeScheme(e, selected, "F");
+                editGradeScheme(e, "F");
             });
         }
 
-        function populateGradeTable(selected) {
+        function populateGradeTable() {
+            let selected = getSelection();
             console.log("Populating Grade Table");
             // see which course is selected
             let gradeTableBody = document.getElementById("gradeTableBody");
@@ -731,8 +748,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             let grade = calculateGrade(totalScore, gradeScheme);
                             gradeCell.innerHTML = `<span>${grade}</span>`;
 
-                            postNewScoresToDB(studentId, courseId, newScores);
-    
+                            postNewScoresToDB(studentId, courseId, newScores, getSelection());
                         } else { // if result is more than the max
                             alert("Invalid! Score cannot exceed weight ");
                         }
@@ -767,6 +783,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             let gradeCell = parentCell.parentNode.cells[8];
                             let grade = calculateGrade(totalScore, gradeScheme);
                             gradeCell.innerHTML = `<span>${grade}</span>`;
+
+                            postNewScoresToDB(studentId, courseId, newScores, getSelection);
                         }
                     } else {
                         alert("Invalid input! Please enter a valid float value.");
@@ -781,19 +799,27 @@ document.addEventListener("DOMContentLoaded", function () {
             let total = 0;
             for (let i = 1; i < 7; i++) {
                 let cur = parent.cells[i];
+                console.log("cur");
+                console.log(cur);
                 let score = cur.querySelectorAll("span")[0].innerText;
+                console.log("score");
+                console.log(score);
                 total += parseFloat(score);
             }
             return total;
         }
 
         function calculateTotalWeight(parent) {
+            console.log("parent:");
+            console.log(parent);
             let total = 0;
             for (let i = 0; i < 6; i++) {
                 let cur = parent.cells[i];
                 let score = cur.querySelectorAll("span")[0].innerText;
                 total += parseFloat(score);
             }
+            console.log("total weight");
+            console.log(total);
             return total;
         }
 
@@ -831,6 +857,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Course Weights edited:', data);
+                    populateGradeTable();
                 })
                 .catch(error => {
                     console.error('Error editing course weights:', error);
@@ -852,127 +879,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Student Scores edited:', data);
+                    populateGradeTable();
                 })
                 .catch(error => {
                     console.error('Error editing student scores:', error);
                 });
         }
     }
-
-
-                    //     // function for editing student score in grade table
-                    //     function editScore(e, name) {
-                    //         let toEdit = e.target;
-                    //         let weight = courseWeights[name];
-                                        
-                    //         // create an input for the score and focus it
-                    //         let scoreInput = document.createElement("input");
-                    //         scoreInput.style.height = "1rem";
-                    //         scoreInput.style.width = "2rem";
-                    //         scoreInput.type = "text";
-                                        
-                    //         // replace the score with the input
-                    //         toEdit.parentNode.replaceChild(scoreInput, toEdit);
-                    //         scoreInput.focus();
-                                        
-                    //         // if key down on the input and it is enter
-                    //         scoreInput.addEventListener("keyup", function (e) {
-                    //             if (e.key === "Enter") {
-                    //             // pattern for positive floats
-                    //             let pattern = /^[0-9]+(\.[0-9]+)?$/;
-        
-                    //             // pattern for a/b
-                    //             let patternExpression = /^[0-9]*\.?[0-9]+\/[0-9]*\.?[0-9]+$/;
-                                        
-                    //             // check if the input is a positive float
-                    //             if (pattern.test(scoreInput.value)) {
-                    //                 // get the float of the result
-                    //                 let result = parseFloat(scoreInput.value);
-                    //                 if (result <= weight) {
-                    //                     let score = result.toFixed(2);
-                    //                     scores[name] = score; 
-                                        
-                    //                     // Update the corresponding score cell directly
-                    //                     let parentCell = scoreInput.parentNode;
-                    //                     let newScoreSpan = document.createElement("span");
-                    //                     newScoreSpan.innerText = score;
-                    //                     newScoreSpan.addEventListener("click", function (e) {
-                    //                         editScore(e, name);
-                    //                     });
-        
-                    //                     parentCell.innerHTML = "";
-                    //                     parentCell.appendChild(newScoreSpan);    
-
-                    //                     let newWeightSpan = document.createElement("span");
-                    //                     newWeightSpan.innerText = " / " + weight;
-                    //                     newWeightSpan.classList.add("small-bold");
-        
-                    //                     parentCell.appendChild(newScoreSpan);
-                    //                     parentCell.appendChild(newWeightSpan);
-        
-                    //                     // Add event listener to the new score span
-                    //                     newScoreSpan.addEventListener("click", function (e) {
-                    //                         editScore(e, name);
-                    //                     });
-                                        
-                    //                     // Recalculate and update the total score
-                    //                     let totalCell = parentCell.parentNode.cells[7];
-                    //                     let totalScore = calculateTotalScore(parentCell.parentNode);
-                    //                     totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
-        
-                    //                     // Update the grade cell
-                    //                     let gradeCell = parentCell.parentNode.cells[8];
-                    //                     let grade = calculateGrade(totalScore);
-                    //                     gradeCell.innerHTML = `<span>${grade}</span>`;
-    
-                    //                 } else { // if result is more than the max
-                    //                     alert("Invalid! Score cannot exceed weight ");
-                    //                 }
-                    //             } else if (patternExpression.test(scoreInput.value)) {
-                    //                 console.log(weight);
-                    //                 let result = parseFloat(eval(scoreInput.value) * weight);
-                    //                 console.log("result:" + result);
-                    //                 if (result <= weight) {
-                    //                     let score = result.toFixed(2);
-                    //                     scores[name] = score; 
-                                
-                    //                     // Update the corresponding score cell directly
-                    //                     let parentCell = scoreInput.parentNode;
-                    //                     let newScoreSpan = document.createElement("span");
-                    //                     newScoreSpan.innerText = score;
-                    //                     newScoreSpan.addEventListener("click", function (e) {
-                    //                         editScore(e, name);
-                    //                     });
-        
-                    //                     parentCell.innerHTML = "";
-                    //                     parentCell.appendChild(newScoreSpan);
-                    //                     let newWeightSpan = document.createElement("span");
-                    //                     newWeightSpan.innerText = " / " + weight;
-        
-                    //                     parentCell.appendChild(newScoreSpan);
-                    //                     parentCell.appendChild(newWeightSpan);
-        
-                    //                     // Add event listener to the new score span
-                    //                     newScoreSpan.addEventListener("click", function (e) {
-                    //                         editScore(e, name);
-                    //                     });
-                                        
-                    //                     // Recalculate and update the total score
-                    //                     let totalCell = parentCell.parentNode.cells[7];
-                    //                     let totalScore = calculateTotalScore(parentCell.parentNode);
-                    //                     totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
-        
-                    //                     // Update the grade cell
-                    //                     let gradeCell = parentCell.parentNode.cells[8];
-                    //                     let grade = calculateGrade(totalScore);
-                    //                     gradeCell.innerHTML = `<span>${grade}</span>`;
-                    //                 }
-                    //             } else {
-                    //                 alert("Invalid input! Please enter a valid float value.");
-                    //             }
-                    //         }
-                    //     });
-
     //         function editGradeScheme(e, name) {
     //             // get input to edit
     //             let toEdit = e.target;

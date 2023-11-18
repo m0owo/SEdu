@@ -450,12 +450,12 @@ select {
     margin-bottom: 0.1rem;
 }
 
-.scheme-table {
-    margin-left: auto;
-}
-
 .scheme-table .small-bold, .scheme-table .small {
     font-size: 0.8rem;
+}
+
+.scheme-table{
+    margin-left: auto;
 }
 
 .grade-table-student,
@@ -540,5 +540,8 @@ select {
     }
     .header {
         height: 5rem;
+    }
+    .scheme-table {
+        margin-left: 0;
     }
 }
