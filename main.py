@@ -307,8 +307,8 @@ async def post_new_comment(submission: SubmissionCreate):
 
     if assignment is None:
         raise HTTPException(status_code=404, detail="Assignment not found")
-    if (submission.content and submission.submit_date and submission.submit_time):
-        new_submission = Submission(submission.user_id, submission.course_id, submission.assignment_id, submission.content, submission.submit_date, submission.submit_time)
+    if (submission.submit_date and submission.submit_time):
+        new_submission = Submission(submission.user_id, submission.course_id, submission.assignment_id, submission.submit_date, submission.submit_time)
         if assignment.files is not None:
             for file in submission.files:
                 new_file_path = f"upload"
@@ -321,7 +321,6 @@ async def post_new_comment(submission: SubmissionCreate):
     submissions = root.assignments[submission.assignment_id].submissions
     submitted = True
     for i in range(len(submissions)):
-        print(submissions[i].content)
         if submissions[i].user_id == submission.user_id:
             submissions[i] = new_submission #replace old submission
             break
