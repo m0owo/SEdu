@@ -362,6 +362,7 @@ class File(persistent.Persistent):
         self.file_name = file_name
         self.file_path = file_path
         self.file_owner = file_owner
+        self.file_randomname = None
     
     def getFileName(self):
         return self.file_name

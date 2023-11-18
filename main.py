@@ -76,7 +76,6 @@ class SubmissionCreate(BaseModel):
     score: str = None
     sent: str = True
 
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -87,23 +86,20 @@ def logout(request: Request):
     return response
 
 @app.get("/", response_class=HTMLResponse)
-async def read_home():
-    with open("templates/loginpage.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
+async def read_login(request: Request):
+    return templates.TemplateResponse("loginpage.html", {"request": request})
 
-@app.post("/home/", response_class=HTMLResponse)
-async def read_login(requests: Request, student_id:str=Form(...), student_password:str=Form(...)):
-    user = root.users[int(student_id)]
-    if user.login_sys(student_id,student_password):
-        return templates.TemplateResponse("home.html", {"request": requests, "user": user})
-    raise HTTPException(status_code=404, detail="User not found")
+@app.post("/")
+async def login(request: Request, student_id: str = Form(...), student_password: str = Form(...)):
+    global current_user  # Use the global variable
+    user = root.users.get(int(student_id))
     
-@app.get("/home/", include_in_schema=False)
-def redirect_home():
-    with open("templates/home.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
+    if user and user.password == student_password:
+        current_user = user  # Set the global variable
+        return RedirectResponse(url = f'/{int(student_id)}', status_code=302)
+    else:
+        # Authentication failed
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.get("/{user_id}", response_class=HTMLResponse)
 async def read_user_home(request: Request, user_id: int):

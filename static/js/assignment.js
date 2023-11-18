@@ -736,7 +736,7 @@ function fetchDBtoUpdate() {
                         // so i have to check from both the students in course list and the submissions list
                         // which will probably affect how gpa works since teacher can't grade who didnt submit
 
-                        //3.3) NOT DONE!! - Table can display submitted files at content column
+                        //3.3) NOT DONE!! - Table can display submitted files at content column(DONE)
 
                         //submissions related update
                         let submissions = assignment["submissions"]["data"];
