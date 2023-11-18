@@ -522,6 +522,10 @@ function fetchDBtoUpdate() {
         submissionTable.style.display = "none";
         turnedIn.style.display = "none";
         notTurnedIn.style.display = "none";
+        fileInput.style.display = "none";
+        fileInputButton.style.display = "none";
+        sentFileButton.style.display = "none";
+        
     } else if (role == "teacher") {
         const submission_state = document.getElementById("submission-state");
         roleSpan.innerText = "Lecturer";
@@ -600,9 +604,9 @@ function fetchDBtoUpdate() {
             
                         let files = assignment["files"]["data"];
                         filearea = document.getElementById("dataBaseFrame")
-                        filearea.style.visibility = "visible";
                         filearea.innerText = ''
                         if (Array.isArray(files)) {
+                            filearea.style.visibility = "visible";
                             for (let file of files) {
                             
                                 console.log("----File from database----", file);

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 initForTeacher(user);
             }
             updateAssignment(user);
-            // updateClasses(user);
+            updateClasses(user);
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
