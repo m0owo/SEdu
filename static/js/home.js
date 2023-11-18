@@ -174,8 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 timetableElement.appendChild(div1)
             }
-
-
         }
     }
 
