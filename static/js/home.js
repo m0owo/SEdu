@@ -257,6 +257,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let enrolls = user.enrolls.data;
 
+        let totalCredits = 0;
+        let totalWeightedGrades = 0;
+
         if (enrolls && enrolls.length > 0) {
             for (let enroll of enrolls) {
                 //populate the grades table
@@ -273,8 +276,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 newGrade.innerText = enroll.grade;
 
                 // calculate the unofficial GPA
+                totalCredits += enroll.course.credit;
+                totalWeightedGrades += (enroll.course.credit * toNumber(enroll.grade));
             }
         }
+
+        let unofficialGPA = document.getElementById("unofficialGPA");
+        let unofficialGPAValue = totalWeightedGrades/totalCredits
+        unofficialGPA.innerText = unofficialGPAValue.toFixed(1);
+
+        let gpaGrade = document.getElementById("gpaGrade");
+        gpaGrade.innerText = toGrade(unofficialGPAValue);
+
+        
+
+        function toNumber(grade) {
+            switch(grade) {
+                case "A":
+                    return 4;
+                case "B+":
+                    return 3.5;
+                case "B":
+                    return 3;
+                case "C+":
+                    return 2.5;
+                case "C":
+                    return 2;
+                case "D+":
+                    return 1.5;
+                case "D":
+                    return 1;
+                case "F":
+                    return 0
+                default:
+                    return -1;
+            }
+        }
+
+        function toGrade(number) { 
+            if (number > 3.5) {
+                return "A";
+            } else if (number >= 3) {
+                return "B+";
+            } else if (number >= 2.5) {
+                return "B";
+            } else if (number >= 2) {
+                return "C+"
+            } else if (number >= 1.5) {
+                return "C";
+            } else if (number >= 1) {
+                return "D+";
+            } else if (number >= 0.5) {
+                return "D"
+            } else {
+                return "F"
+            }
+        } 
     }
 
     function getSelection() {
