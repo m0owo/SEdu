@@ -321,6 +321,10 @@ document.addEventListener("DOMContentLoaded", function () {
             let midtermWeight = document.getElementById("midtermWeight");
             let finalWeight = document.getElementById("finalWeight");
 
+            console.log(attendanceWeight);
+            console.log(assignmentWeight);
+            console.log(midtermWeight);
+
             console.log("course Weights");
             console.log(courseWeights);
 
@@ -333,33 +337,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
             attendanceWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "attendance");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
             assignmentWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected,  "assignment");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
             labWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "lab");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
             projectWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "project");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
             midtermWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "midterm");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
             finalWeight.addEventListener("click", function(e) {
                 editGradeWeight(e, courseSelected, "final");
-                populateGradeTable(courseSelected);
-                populateWeightTable(courseSelected);
+                populateGradeTable(selected);
+                populateWeightTable(selected);
             });
 
             function editGradeWeight(e, course, category) {
@@ -399,6 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             newWeightOutput.addEventListener("click", function(e) {
                                 editGradeWeight(e, course, category);
                             });
+                            newWeightOutput.id = category + "Weight";
                             e.target.parentNode.replaceChild(newWeightOutput, e.target);
                             newWeightOutput.id = category + "Weight";
 
@@ -630,9 +635,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 scoreSpan.classList.add("small");
                                 scoreSpan.innerText = score;
 
-                                // scoreSpan.addEventListener("click", function(e) {
-                                //     editScore(e, student, enroll, scores, category);
-                                // });
+                                scoreSpan.addEventListener("click", function(e) {
+                                    editScore(e, student, enroll, category);
+                                });
                                                             
                                 // make a span for displaying the weight
                                 let weightSpan = document.createElement("span");
@@ -647,6 +652,131 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         }
+            // function for editing student score in grade table
+            function editScore(e, student, enroll, category) {
+                console.log("Student score to edit");
+                console.log(student);
+                console.log(enroll);
+
+                let courseId = enroll.course.id;
+                let courseWeights;
+                let gradeScheme;
+                let newScores;
+                let studentId = student.id;
+
+                //find the course in student's enrolls
+                let studentEnrolls = student.enrolls.data;
+                if (studentEnrolls && studentEnrolls.length > 0) {
+                    for (studentEnroll of studentEnrolls){
+                        if (studentEnroll.course.id == courseId) {
+                            //find the current scores
+                            console.log("Course Found");
+                            newScores = studentEnroll.scores;
+                            console.log(newScores);
+                            courseWeights = studentEnroll.course.courseWeights;
+                            console.log(courseWeights);
+                            gradeScheme = studentEnroll.course.gradeScheme;
+                        }
+                    }
+                }
+                
+                let toEdit = e.target;
+                let weight = courseWeights[category];
+                                        
+                // create an input for the score and focus it
+                let scoreInput = document.createElement("input");
+                scoreInput.style.height = "1rem";
+                scoreInput.style.width = "2rem";
+                scoreInput.type = "text";
+                                        
+                // replace the score with the input
+                toEdit.parentNode.replaceChild(scoreInput, toEdit);
+                scoreInput.focus();
+                                        
+                // if key up on the input and it is enter
+                scoreInput.addEventListener("keyup", function (e) {
+                if (e.key === "Enter") {
+                    // pattern for positive floats
+                    let pattern = /^[0-9]+(\.[0-9]+)?$/;
+        
+                    // pattern for a/b
+                    let patternExpression = /^[0-9]*\.?[0-9]+\/[0-9]*\.?[0-9]+$/;
+                                        
+                    // check if the input is a positive float
+                    if (pattern.test(scoreInput.value)) {
+                        // get the float of the result
+                        let result = parseFloat(scoreInput.value);
+                        if (result <= weight) {
+                            let score = result.toFixed(2);
+                            newScores[category] = score; 
+                                        
+                            // Update the corresponding score cell directly
+                            let parentCell = scoreInput.parentNode;
+                            let newScoreSpan = document.createElement("span");
+                            newScoreSpan.classList.add("small");
+                            newScoreSpan.innerText = score;
+                            newScoreSpan.addEventListener("click", function (e) {
+                                editScore(e, student, enroll, category);
+                            });
+
+                            parentCell.replaceChild(newScoreSpan, e.target);
+                                        
+                            // Recalculate and update the total score
+                            let totalCell = parentCell.parentNode.cells[7];
+                            let totalScore = calculateTotalScore(parentCell.parentNode);
+                            totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
+        
+                            // Update the grade cell
+                            let gradeCell = parentCell.parentNode.cells[8];
+                            let grade = calculateGrade(totalScore, gradeScheme);
+                            gradeCell.innerHTML = `<span>${grade}</span>`;
+
+                            postNewScoresToDB(studentId, courseId, newScores);
+    
+                        } else { // if result is more than the max
+                            alert("Invalid! Score cannot exceed weight ");
+                        }
+                    } else if (patternExpression.test(scoreInput.value)) {
+                        let result = parseFloat(eval(scoreInput.value) * weight);
+                        console.log("result:" + result);
+                        if (result <= weight) {
+                            let score = result.toFixed(2);
+                            newScores[category] = score; 
+                                
+                            // Update the corresponding score cell directly
+                            let parentCell = scoreInput.parentNode;
+                            let newScoreSpan = document.createElement("span");
+                            newScoreSpan.classList.add("small");
+                            newScoreSpan.innerText = score;
+                            newScoreSpan.addEventListener("click", function (e) {
+                                editScore(e, student, enroll, category);
+                            });
+                            parentCell.appendChild(newScoreSpan);
+        
+                            // Add event listener to the new score span
+                            newScoreSpan.addEventListener("click", function (e) {
+                                editScore(e, student, enroll, category);
+                            });
+                                        
+                            // Recalculate and update the total score
+                            let totalCell = parentCell.parentNode.cells[7];
+                            let totalScore = calculateTotalScore(parentCell.parentNode);
+                            totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
+        
+                            // Update the grade cell
+                            let gradeCell = parentCell.parentNode.cells[8];
+                            let grade = calculateGrade(totalScore, gradeScheme);
+                            gradeCell.innerHTML = `<span>${grade}</span>`;
+                        }
+                    } else {
+                        alert("Invalid input! Please enter a valid float value.");
+                    }
+                    console.log("New Scores");
+                    console.log(newScores);
+                }
+            });
+        }
+
         function calculateTotalScore(parent) {
             let total = 0;
             for (let i = 1; i < 7; i++) {
@@ -704,6 +834,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .catch(error => {
                     console.error('Error editing course weights:', error);
+                });
+        }
+
+        function postNewScoresToDB(studentId, courseId, newScores) {
+            fetch(`/set-student-scores/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "student_id": studentId,
+                    "course_id": courseId,
+                    "new_scores": newScores,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Student Scores edited:', data);
+                })
+                .catch(error => {
+                    console.error('Error editing student scores:', error);
                 });
         }
     }

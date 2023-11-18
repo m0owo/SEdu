@@ -142,8 +142,9 @@ class User(persistent.Persistent):
         return self.role
     
     def getEnrollment(self, Course):
-        if Course in self.enrolls:
-            return Course
+        for enroll in self.enrolls:
+            if enroll.getCourse() == Course:
+                return enroll
         return None
     
     def __str__(self):

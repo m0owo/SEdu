@@ -17,6 +17,11 @@ class CourseWeights(BaseModel):
     course_id: int
     weights: dict
 
+class StudentScores(BaseModel):
+    student_id: int
+    course_id: int
+    new_scores: dict
+
 class DiscussionCreate(BaseModel):
     course_id: int
     author: str
@@ -326,6 +331,27 @@ async def set_course_weights(request: CourseWeights):
     
     course.setCourseWeights(weights)
     return {"course" : course, "weights" : weights}
+
+@app.post("/set-student-scores/")
+async def set_student_scores(request: StudentScores):
+    student_id = request.student_id
+    course_id = request.course_id
+    new_scores = request.new_scores
+
+    student = root.users[student_id]
+    if student is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    course = root.courses[course_id]
+    if student is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    enrollment = student.getEnrollment(course)
+    if enrollment is None:
+        raise HTTPException(status_code=404, detail="Enrollment not found")
+    
+    enrollment.setScores(new_scores)
+    return {"student" : student, "course" : course, "scores": enrollment.getScores()}
 
 @app.on_event("shutdown")
 def shutdown_event():
