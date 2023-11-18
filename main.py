@@ -13,6 +13,10 @@ import os
 UPLOAD_DIR = Path() / 'static/upload'
 
 
+class GradeScheme(BaseModel):
+    course_id: int
+    scheme: dict
+
 class CourseWeights(BaseModel):
     course_id: int
     weights: dict
@@ -343,7 +347,7 @@ async def set_student_scores(request: StudentScores):
         raise HTTPException(status_code=404, detail="User not found")
     
     course = root.courses[course_id]
-    if student is None:
+    if course is None:
         raise HTTPException(status_code=404, detail="Course not found")
 
     enrollment = student.getEnrollment(course)
@@ -352,6 +356,18 @@ async def set_student_scores(request: StudentScores):
     
     enrollment.setScores(new_scores)
     return {"student" : student, "course" : course, "scores": enrollment.getScores()}
+
+@app.post("/set-course-grade-scheme/")
+async def set_grade_scheme(request: GradeScheme):
+    course_id = request.course_id
+    grade_scheme = request.scheme
+
+    course = root.courses[course_id]
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    course.setGradeScheme(grade_scheme)
+    return {"course" : course, "gradeScheme": course.getGradeScheme()}
 
 @app.on_event("shutdown")
 def shutdown_event():

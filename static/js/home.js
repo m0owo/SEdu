@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("total weight");
             console.log(totalWeight);
             let status = document.getElementById("statusDisplay");
-            status.innerText = totalWeight + "%";
+            status.innerText = "Total: " + totalWeight + "%";
             if (parseFloat(totalWeight) == 100) {
                 status.style.color = "green";
             } else if (parseFloat(totalWeight) > 100) {
@@ -441,11 +441,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }       
         }   
-    
 
         function populateGradeSchemeTable() {
             let selected = getSelection();
             console.log("Populating Grade SCheme Table");
+            let course;
             let courseGradeScheme;
             // if there are enrolled courses
             if (courses && courses.length > 0) {
@@ -455,6 +455,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (course.course.id == selected.value) {
                         console.log("course found: ");
                         console.log(course);
+                        courseSelected = course.course;
                         courseGradeScheme = course.course.gradeScheme;
                     }
                 }
@@ -480,29 +481,126 @@ document.addEventListener("DOMContentLoaded", function () {
             f.innerText = courseGradeScheme["F"];
 
             a.addEventListener("click", function(e) {
-                editGradeScheme(e, "A");
+                editGradeScheme(e, courseSelected, "A");
             });
             bPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, "B+");
+                editGradeScheme(e, courseSelected, "B+");
             });
             b.addEventListener("click", function(e) {
-                editGradeScheme(e, "B");
+                editGradeScheme(e, courseSelected, "B");
             });
             cPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, "C+");
+                editGradeScheme(e, courseSelected, "C+");
             });
             c.addEventListener("click", function(e) {
-                editGradeScheme(e, "C");
+                editGradeScheme(e, courseSelected, "C");
             });
             dPlus.addEventListener("click", function(e) {
-                editGradeScheme(e, "D+");
+                editGradeScheme(e, courseSelected, "D+");
             });
             d.addEventListener("click", function(e) {
-                editGradeScheme(e, "D");
+                editGradeScheme(e, course, "D");
             });
             f.addEventListener("click", function(e) {
-                editGradeScheme(e, "F");
+                editGradeScheme(e, courseSelected, "F");
             });
+
+            function editGradeScheme(e, course, category) {
+                let courseId = course.id;
+                let courseGradeScheme = course.gradeScheme;
+                // get input to edit
+                let toEdit = e.target;
+
+                let gradeValueInput = document.createElement("input");
+                gradeValueInput.style.height = "1rem";
+                gradeValueInput.style.width = "2rem";
+                gradeValueInput.type = "text"
+
+                toEdit.parentNode.replaceChild(gradeValueInput, toEdit);
+
+                gradeValueInput.focus();
+
+                gradeValueInput.addEventListener("keyup", function(e) {
+                    if (e.key === "Enter") {
+                        let pattern = /^[0-9]+(\.[0-9]+)?$/;
+                        let gradeValue = parseFloat(gradeValueInput.value);
+                        if (pattern.test(gradeValue) && gradeValue <= 100 && gradeValue >= 0) {
+                            let gradeSchemeOutput = document.createElement("span");
+                            let below = -1;
+                            let above = 100;
+                            // [above, below)
+                            console.log(category);
+                            switch(category) {
+                                case "A":
+                                    above = 100;
+                                    below = courseGradeScheme["B+"];
+                                    console.log("hello" + below);
+                                    break;
+                                case "B+":
+                                    above = courseGradeScheme["A"];
+                                    below = courseGradeScheme["B"];
+                                    break;
+                                case "B":
+                                    above = courseGradeScheme["B+"];
+                                    below = courseGradeScheme["C+"];
+                                    break;
+                                case "C+":
+                                    above = courseGradeScheme["B"];
+                                    below = courseGradeScheme["C"];
+                                    break;
+                                case "C":
+                                    above = courseGradeScheme["C+"];
+                                    below = courseGradeScheme["D+"];
+                                    break;
+                                case "D+":
+                                    above = courseGradeScheme["C"];
+                                    below = courseGradeScheme["D"];
+                                    break;
+                                case "D":
+                                    above = courseGradeScheme["D+"];
+                                    below = courseGradeScheme["F"];
+                                    break;
+                                case "F":
+                                    above = courseGradeScheme["D"];
+                                    below = -1;
+                                    break;
+                                default:
+                                    below = -1;
+                                    above = 100;
+                                    break;
+                            }
+                            if (gradeValue <= above && gradeValue > below) {
+                                console.log(below);
+                                console.log(above);
+
+                                gradeSchemeOutput.innerText = gradeValue;
+
+                                gradeSchemeOutput.addEventListener("click", function(e) {
+                                    editGradeScheme(e, course, category);
+                                });
+
+                                e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
+
+                                console.log("grade scheme after");
+                                courseGradeScheme[category] = gradeValue;
+                                postGradeSchemeToDB(courseId, courseGradeScheme);
+                            } else {
+
+                                gradeSchemeOutput.innerText = courseGradeScheme[category];
+
+                                gradeSchemeOutput.addEventListener("click", function(e) {
+                                    editGradeScheme(e, course, category);
+                                });
+
+                                e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
+                                alert("Invalid Grade Value");
+                            }
+                        } else {
+                            alert("Invalid input! Please enter a valid grade scheme.")
+                        }
+                    }
+                });
+            }
         }
 
         function populateGradeTable() {
@@ -636,6 +734,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             function populateScoreCell(student, enroll, scores, category, parent, index) {
                                 //get the weight and score for the category
                                 let weight = courseWeights[category];
+                                if (scores[category] > weight) {
+                                    console.log("student id");
+                                    console.log(student.id)
+                                    console.log("course id");
+                                    console.log(enroll)
+                                    console.log(enroll.id);
+                                    // postNewScoresToDB(student.id, enroll.course.id, scores);
+                                    scores[category] = 0;
+                                }
                                 let score = scores[category];
                                 console.log("Weight:");
                                 console.log(weight);
@@ -650,6 +757,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 //make a span for the score that can be edited
                                 let scoreSpan = document.createElement("span");
                                 scoreSpan.classList.add("small");
+                                
                                 scoreSpan.innerText = score;
 
                                 scoreSpan.addEventListener("click", function(e) {
@@ -885,261 +993,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error('Error editing student scores:', error);
                 });
         }
+
+        function postGradeSchemeToDB(courseId, gradeScheme) {
+            console.log("courseid");
+            console.log(courseId);
+            fetch(`/set-course-grade-scheme/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "course_id": courseId,
+                    "scheme": gradeScheme,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Course grade scheme edited:', data);
+                    populateGradeSchemeTable();
+                    populateGradeTable();
+                })
+                .catch(error => {
+                    console.error('Error editing grade scheme:', error);
+                });
+        }
     }
-    //         function editGradeScheme(e, name) {
-    //             // get input to edit
-    //             let toEdit = e.target;
-
-    //             let gradeValueInput = document.createElement("input");
-    //             gradeValueInput.style.height = "1rem";
-    //             gradeValueInput.style.width = "2rem";
-    //             gradeValueInput.type = "text"
-
-    //             toEdit.parentNode.replaceChild(gradeValueInput, toEdit);
-
-    //             gradeValueInput.focus();
-
-    //             gradeValueInput.addEventListener("keyup", function(e) {
-    //                 if (e.key === "Enter") {
-    //                     let pattern = /^[0-9]+(\.[0-9]+)?$/;
-    //                     let gradeValue = parseFloat(gradeValueInput.value);
-    //                     if (pattern.test(gradeValue) && gradeValue <= 100 && gradeValue >= 0) {
-    //                         let gradeSchemeOutput = document.createElement("span");
-    //                         let below = -1;
-    //                         let above = 100;
-    //                         // [above, below)
-    //                         console.log(name);
-    //                         switch(name) {
-    //                             case "A":
-    //                                 above = 100;
-    //                                 below = courseGrades["B+"];
-    //                                 console.log("hello" + below);
-    //                                 break;
-    //                             case "B+":
-    //                                 above = courseGrades["A"];
-    //                                 below = courseGrades["B"];
-    //                                 break;
-    //                             case "B":
-    //                                 above = courseGrades["B+"];
-    //                                 below = courseGrades["C+"];
-    //                                 break;
-    //                             case "C+":
-    //                                 above = courseGrades["B"];
-    //                                 below = courseGrades["C"];
-    //                                 break;
-    //                             case "C":
-    //                                 above = courseGrades["C+"];
-    //                                 below = courseGrades["D+"];
-    //                                 break;
-    //                             case "D+":
-    //                                 above = courseGrades["C"];
-    //                                 below = courseGrades["D"];
-    //                                 break;
-    //                             case "D":
-    //                                 above = courseGrades["D+"];
-    //                                 below = courseGrades["F"];
-    //                                 break;
-    //                             case "F":
-    //                                 above = courseGrades["D"];
-    //                                 below = -1;
-    //                                 break;
-    //                             default:
-    //                                 below = -1;
-    //                                 above = 100;
-    //                                 break;
-    //                         }
-    //                         if (gradeValue <= above && gradeValue > below) {
-    //                             console.log(below);
-    //                             console.log(above);
-
-    //                             gradeSchemeOutput.innerText = gradeValue;
-
-    //                             gradeSchemeOutput.addEventListener("click", function(e) {
-    //                                 editGradeScheme(e, name);
-    //                             });
-
-    //                             e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
-
-    //                             courseGrades[name] = gradeValue;
-    //                         } else {
-
-    //                             gradeSchemeOutput.innerText = courseGrades[name];
-
-    //                             gradeSchemeOutput.addEventListener("click", function(e) {
-    //                                 editGradeScheme(e, name);
-    //                             });
-
-    //                             e.target.parentNode.replaceChild(gradeSchemeOutput, e.target);
-    //                             alert("Invalid Grade Value");
-    //                         }
-    //                     } else {
-    //                         alert("Invalid input! Please enter a valid grade scheme.")
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     }
-
-    //         function editGradeWeight(e, name) {
-    //             let toEdit = e.target;
-    //             let originalWeight = toEdit.innerText;
-    //             let newInput = document.createElement("input");
-    //             let positiveFloatPattern = /^[0-9]*\.?[0-9]+$/;
-            
-    //             newInput.type = "text";
-    //             newInput.style.width = "3rem";
-    //             newInput.style.height = "1rem";
-            
-    //             toEdit.parentNode.replaceChild(newInput, toEdit);
-    //             newInput.focus();
-            
-    //             newInput.addEventListener("keyup", function (e) {
-    //                 if (e.key == "Enter") {
-    //                     let newWeight = e.target.value;
-    //                     if (positiveFloatPattern.test(newWeight)) {
-
-    //                         let newWeightOutput = document.createElement("span");
-    //                         newWeightOutput.innerText = newWeight;
-
-    //                         courseWeights[name] = parseFloat(newWeight);
-    //                         console.log(courseWeights);
-
-    //                         newWeightOutput.addEventListener("click", function(e) {
-    //                             editGradeWeight(e, name, courseWeights);
-    //                         });
-    //                         e.target.parentNode.replaceChild(newWeightOutput, e.target);
-    //                         let totalWeight = calculateTotalWeight(newWeightOutput.parentNode.parentNode);
-                            
-    //                         console.log("total weight" + totalWeight);
-                            
-    //                         if (totalWeight <= 100) {
-    //                             populateGradeTable(courseSelection);
-    //                         } else {
-    //                             newWeightOutput.innerText = originalWeight;
-    //                             alert("Invalid Weight Scheme ! Total Weight Exceeds 100%");
-    //                         }
-    //                     } else {
-    //                         alert("Invalid Weight");
-    //                     }
-    //                 }
-    //             });
-    //         }
-            
-    //     }
-                      // function for editing student score in grade table
-    //                             function editScore(e, name) {
-    //                                 let toEdit = e.target;
-    //                                 let weight = courseWeights[name];
-                                
-    //                                 // create an input for the score and focus it
-    //                                 let scoreInput = document.createElement("input");
-    //                                 scoreInput.style.height = "1rem";
-    //                                 scoreInput.style.width = "2rem";
-    //                                 scoreInput.type = "text";
-                                
-    //                                 // replace the score with the input
-    //                                 toEdit.parentNode.replaceChild(scoreInput, toEdit);
-    //                                 scoreInput.focus();
-                                
-    //                                 // if key down on the input and it is enter
-    //                                 scoreInput.addEventListener("keyup", function (e) {
-    //                                     if (e.key === "Enter") {
-    //                                         // pattern for positive floats
-    //                                         let pattern = /^[0-9]+(\.[0-9]+)?$/;
-
-    //                                         // pattern for a/b
-    //                                         let patternExpression = /^[0-9]*\.?[0-9]+\/[0-9]*\.?[0-9]+$/;
-                                
-    //                                         // check if the input is a positive float
-    //                                         if (pattern.test(scoreInput.value)) {
-    //                                             // get the float of the result
-    //                                             let result = parseFloat(scoreInput.value);
-    //                                             if (result <= weight) {
-    //                                                 let score = result.toFixed(2);
-    //                                                 scores[name] = score; 
-                                
-    //                                                 // Update the corresponding score cell directly
-    //                                                 let parentCell = scoreInput.parentNode;
-    //                                                 let newScoreSpan = document.createElement("span");
-    //                                                 newScoreSpan.innerText = score;
-    //                                                 newScoreSpan.addEventListener("click", function (e) {
-    //                                                     editScore(e, name);
-    //                                                 });
-
-    //                                                 parentCell.innerHTML = "";
-    //                                                 parentCell.appendChild(newScoreSpan);
-                                                    
-    //                                                 let newWeightSpan = document.createElement("span");
-    //                                                 newWeightSpan.innerText = " / " + weight;
-    //                                                 newWeightSpan.classList.add("small-bold");
-
-    //                                                 parentCell.appendChild(newScoreSpan);
-    //                                                 parentCell.appendChild(newWeightSpan);
-
-    //                                                 // Add event listener to the new score span
-    //                                                 newScoreSpan.addEventListener("click", function (e) {
-    //                                                     editScore(e, name);
-    //                                                 });
-                                
-    //                                                 // Recalculate and update the total score
-    //                                                 let totalCell = parentCell.parentNode.cells[7];
-    //                                                 let totalScore = calculateTotalScore(parentCell.parentNode);
-    //                                                 totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
-
-    //                                                 // Update the grade cell
-    //                                                 let gradeCell = parentCell.parentNode.cells[8];
-    //                                                 let grade = calculateGrade(totalScore);
-    //                                                 gradeCell.innerHTML = `<span>${grade}</span>`;
-                                
-    //                                             } else { // if result is more than the max
-    //                                                 alert("Invalid! Score cannot exceed weight ");
-    //                                             }
-    //                                         } else if (patternExpression.test(scoreInput.value)) {
-    //                                             console.log(weight);
-    //                                             let result = parseFloat(eval(scoreInput.value) * weight);
-    //                                             console.log("result:" + result);
-    //                                             if (result <= weight) {
-    //                                                 let score = result.toFixed(2);
-    //                                                 scores[name] = score; 
-                                
-    //                                                 // Update the corresponding score cell directly
-    //                                                 let parentCell = scoreInput.parentNode;
-    //                                                 let newScoreSpan = document.createElement("span");
-    //                                                 newScoreSpan.innerText = score;
-    //                                                 newScoreSpan.addEventListener("click", function (e) {
-    //                                                     editScore(e, name);
-    //                                                 });
-
-    //                                                 parentCell.innerHTML = "";
-    //                                                 parentCell.appendChild(newScoreSpan);
-    //                                                 let newWeightSpan = document.createElement("span");
-    //                                                 newWeightSpan.innerText = " / " + weight;
-
-    //                                                 parentCell.appendChild(newScoreSpan);
-    //                                                 parentCell.appendChild(newWeightSpan);
-
-    //                                                 // Add event listener to the new score span
-    //                                                 newScoreSpan.addEventListener("click", function (e) {
-    //                                                     editScore(e, name);
-    //                                                 });
-                                
-    //                                                 // Recalculate and update the total score
-    //                                                 let totalCell = parentCell.parentNode.cells[7];
-    //                                                 let totalScore = calculateTotalScore(parentCell.parentNode);
-    //                                                 totalCell.innerHTML = `<span>${totalScore}</span> / 100`;
-
-    //                                                 // Update the grade cell
-    //                                                 let gradeCell = parentCell.parentNode.cells[8];
-    //                                                 let grade = calculateGrade(totalScore);
-    //                                                 gradeCell.innerHTML = `<span>${grade}</span>`;
-    //                                             }
-    //                                         } else {
-    //                                             alert("Invalid input! Please enter a valid float value.");
-    //                                         }
-    //                                     }
-    //                                 });
-
-
     function isToday(someDate) {
         const today = new Date();
         return (
