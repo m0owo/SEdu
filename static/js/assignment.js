@@ -447,7 +447,7 @@ function updateScore(rawScoreInput, newScoreValue) {
             newScoreSpan.textContent = parsedScore.toFixed(2);
         }
     } else {
-        newScoreSpan.textContent = newScoreValue;
+        newScoreSpan.text    = newScoreValue;
     }
     rawScoreInput.parentNode.replaceChild(newScoreSpan, rawScoreInput);
     newScoreSpan.addEventListener('click', function (e) {
