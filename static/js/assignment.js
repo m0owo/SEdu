@@ -722,7 +722,7 @@ function fetchDBtoUpdate() {
                         //1) NOT DONE!! - Teacher Additional Files Update and Post (DONE)
 
                         //2) Student submission Update and Post
-                            //2.1) NOT DONE!! - Submission content having actual files instead of {content: "test"}
+                            //2.1) NOT DONE!! - Submission content having actual files instead of {content: "test"} (DONE)
                             //2.2) DONE - Submission can post and update (with content of "test" right now)
                             //2.3) DONE - status for students (Graded, Turned In, Not Turned In)
 
@@ -745,6 +745,7 @@ function fetchDBtoUpdate() {
                         if (submissions) {
                             for (let submission of submissions) { //get submission here
                                 //change status for students ==========================================
+                                let studentfiles = submission["files"]["data"];
                                 const submission_state = document.getElementById("submission-state");
                                 if (submission["user_id"] == user_id) {
                                     if (submission["score"]) {
@@ -757,7 +758,6 @@ function fetchDBtoUpdate() {
                                     
                                     const studentDataBaseFrame = document.getElementById("studentDataBaseFrame")
                                     if (submission["user_id"] == user_id){
-                                        let studentfiles = submission["files"]["data"];
                                         if (Array.isArray(studentfiles)) {
                                             studentDataBaseFrame.innerHTML = "";
                                             studentDataBaseFrame.style.visibility = "visible";
@@ -811,12 +811,20 @@ function fetchDBtoUpdate() {
 
                             // !!!!!!! insert a cell for files !!!!!!!!
                                 let content = submissionRow.insertCell(1);
-                                content.innerText = submission["content"];
-                                let button = document.createElement("span");
-                                button.className = "edit-button";
-                                button.id = "view-submission-file";
-                                button.textContent = "View";
-                                content.appendChild(button);
+                                if (Array.isArray(studentfiles)) {
+                                    for (let file of studentfiles) {
+                                        console.log("----File from database----", studentfiles);
+                                        const filePath = `/static/${file.file_path}/${file.file_name}`;
+                                        content.innerText = file.file_name;
+                                        let button = document.createElement("a");
+                                        button.className = "edit-button";
+                                        button.id = "view-submission-file";
+                                        button.textContent = "Download";
+                                        button.href = filePath;
+                                        button.download = file.file_name;
+                                        content.appendChild(button);
+                                    }
+                                }
                                 
                                 // insert a cell for submission time
                                 let time = submissionRow.insertCell(2);
