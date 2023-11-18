@@ -1,7 +1,7 @@
 @import "course.css";
 
 .course-bar {
-    margin-top: 2.5rem;
+    margin-top: 1rem;
     padding: 2rem;
     justify-content: space-between;
 }

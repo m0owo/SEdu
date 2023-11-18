@@ -9,7 +9,7 @@
     <title>Course Page</title>
 </head>
 <body>
-    <div id="user-data" data="{{user.id}}" course="{{course.id}}" role="{{user.role}}"></div>
+    <div id="user-data" name = "{{user.name}}" data="{{user.id}}" course="{{course.id}}" role="{{user.role}}"></div>
     <header>
         <div class="nav-items-uniteractable">
             <img src="/../static/resources/se.png" class="logo">
@@ -67,8 +67,8 @@
             </div>
 
             
-            <div class="info-column" id="upcoming">
-                <div class="section" id="assignmentSection">
+            <div class="info-column" id="upcoming" style="align-items: center;">
+                <div class="section" id="assignmentSection" style="max-width: 90%; gap: 1.5rem; margin-top: 1rem;">
                     <div class="card">
                         <div class="card-content">
                             <div class="assignment-card">
@@ -91,8 +91,8 @@
             </div>
 
 
-            <div class="info-column" id="completed">
-                <div class="section">
+            <div class="info-column" id="completed" style="align-items: center;">
+                <div class="section" style="max-width: 90%; gap: 1.5rem; margin-top: 1rem;">
                     <div class="card">
                         <div class="card-content">
                             <div class="assignment-card">

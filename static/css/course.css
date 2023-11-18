@@ -8,6 +8,8 @@
 .assignment-card {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    margin:auto;
 }
 
 .assignment-card > :first-child {
