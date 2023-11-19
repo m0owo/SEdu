@@ -48,9 +48,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
             let list = document.createElement("li");
             list.className = "small";
+            list.style.whiteSpace = "normal";
     
             let a = document.createElement("a");
             a.classList.add("nav-items");
+            a.style.whitespace = "normal";
             a.href = `/${id}/course/${course_id}`;
             a.textContent = `${course_name}`;
     
