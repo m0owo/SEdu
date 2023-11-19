@@ -735,7 +735,7 @@ function fetchDBtoUpdate() {
                                 console.log("pushing new student to turned in");
                                 console.log(submission["user_id"]);
 
-                            // !!!!!!! insert a cell for files !!!!!!!!
+                                // !!!!!!! insert a cell for files !!!!!!!!
                                 let content = submissionRow.insertCell(1);
                                 if (Array.isArray(studentfiles)) {
                                     for (let file of studentfiles) {
@@ -750,6 +750,8 @@ function fetchDBtoUpdate() {
                                         button.download = file.file_name;
                                         content.appendChild(button);
                                     }
+                                } else {
+                                    content.innerText = "No Files Attached";
                                 }
                                 
                                 // insert a cell for submission time
@@ -805,7 +807,6 @@ function fetchDBtoUpdate() {
 
                                 function showNotTurnedIn(allStudents, submissionStudents) {
                                     studentsEnrolled = [];
-
                                     for (let student of allStudents) {
                                         let enrolls = student["enrolls"].data;
                                         for (let enroll of enrolls) {
@@ -823,8 +824,22 @@ function fetchDBtoUpdate() {
                                         if (!submissionStudents.includes(studentId)){
                                             if (!notTurnedInStudents.includes(studentId)) {
                                                 notTurnedInStudents.push(studentId);
-                                                let notTurnedInRow = notTurnedInBody.insertRow(-1);
-                                                notTurnedInRow.innerText = "650" + studentId;
+                                                let submissionRow = submissionBody.insertRow();
+                                                submissionRow.classList.add("submission");
+
+                                                let studentCell = submissionRow.insertCell(0);
+                                                studentCell.classList.add("submission-student-cell");
+                                                studentCell.innerText = "650" + studentId;
+
+                                                let contentCell = submissionRow.insertCell(1);
+                                                
+                                                let timeCell = submissionRow.insertCell(2);
+
+                                                let statusCell = submissionRow.insertCell(3);
+                                                statusCell.innerText = "Missing";
+                                                statusCell.style.color = "Red";
+
+                                                let score = submissionRow.insertCell(4);
                                             }
                                         }
                                     }
