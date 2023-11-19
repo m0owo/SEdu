@@ -33,15 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
             container.style.display = "flex";
             container.style.flexDirection = "row";
 
-            // circle = document.createElement("div");
-            // circle.style.width = "8px";
-            // circle.style.height = "8px";
-            // circle.style.borderRadius = "50%";
-            // circle.style.backgroundColor = "orange";
-            // circle.style.marginRight = "1rem";
-            // circle.style.marginTop = "0.5rem";
+            circle = document.createElement("div");
+            circle.style.width = "8px";
+            circle.style.height = "8px";
+            circle.style.borderRadius = "50%";
+            circle.style.backgroundColor = "orange";
+            circle.style.marginRight = "1rem";
+            circle.style.marginTop = "0.5rem";
 
-            // container.appendChild(circle);
+            container.appendChild(circle);
 
             let course_id = enrollment["course"]["id"];
             let course_name = enrollment["course"]["name"];
