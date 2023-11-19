@@ -721,7 +721,9 @@ function fetchDBtoUpdate() {
                                 }
 
                             //display all submissions for teacher =================================
+                                // let submissionTable = document.getElementById("submissionTable");
                                 let submissionBody = document.getElementById("submissionBody");
+                                // submissionTable.style.marginLeft = "100px";
 
                                 // create a row for the submission
                                 let submissionRow = submissionBody.insertRow();
