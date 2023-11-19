@@ -133,7 +133,6 @@ class User(persistent.Persistent):
         self.enrolls = enrolls
 
     def enrollCourse(self, course):
-        print(f"Enrolling in course {course.getName()}")
         enrollment = Enrollment(course)
         self.enrolls.append(enrollment)
         return enrollment
@@ -317,6 +316,10 @@ class Assignment(persistent.Persistent):
         for comment in self.class_comments:
             print(f"Commenter:  {comment['commenter']}, Comment: {comment['text']}")
 
+    def printSubmissions(self):
+        for submission in self.submissions:
+            print(submission.getUser())
+
 class Submission(persistent.Persistent):
     def __init__(self, user_id, course_id, assignment_id, submit_date, submit_time):
         self.user_id = user_id
@@ -331,6 +334,9 @@ class Submission(persistent.Persistent):
     def addFile(self, File):
         self.files.append(File)
         return File
+    
+    def getUser(self):
+        return self.user_id
 
 class Post(persistent.Persistent):
     def __init__(self, author, posted_date, posted_time, content):
@@ -531,6 +537,9 @@ root.assignments[101001].addSubmission(root.submissions[1003])
 root.submissions[1004] = Submission(1107, 101, root.assignments[101001].id, "2023-11-11", "12:00 PM")
 root.submissions[1004].addFile(File("python_06.pdf", "upload", root.users[1104].name))
 root.assignments[101001].addSubmission(root.submissions[1004])
+
+root.assignments[101001].printAssignmentDetail()
+root.assignments[101001].printSubmissions()
 
 #Adding comment in Assginment
 root.assignments[101001].addIndividualComment(root.users[1104].name, "11/01/2023", "1:00 AM", "Make sure you sent it in zip file")

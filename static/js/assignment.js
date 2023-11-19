@@ -6,6 +6,7 @@ assignmentName.addEventListener("click", function (e) {
         editAssignmentName(e)
     }
 });
+
 assignmentDueDate.addEventListener("click", function (e) {
     if (role == "teacher") {
         editAssignmentDueDate(e)
@@ -18,7 +19,6 @@ const course_id = userElement.getAttribute("course");
 const assignment_id = userElement.getAttribute("assignment");
 const role = userElement.getAttribute("role");
 const roleSpan = document.getElementById("userRole");
-
 
 function editAssignmentName(e) {
     let newNameInput = document.createElement("input");
@@ -215,7 +215,7 @@ fileInput.addEventListener('change', function () {
     }
 })
 
-// assignment ---File------- code
+// assignment -------File------- code
 const sentFileButton = document.getElementById("sentFileButton");
 sentFileButton.addEventListener('click', function () {
     // Assuming files is an array of File objects
@@ -284,9 +284,6 @@ function postFilesToDB(file) {
 
   }
 
-
-
-  
 // assignment ---Comments--- code
 let comments = [];
 const commentInput = document.getElementById("commentInput");
@@ -340,82 +337,6 @@ function sendComment() {
     }
 }
 
-// assignment ---Submission Table--- for Teachers 
-let submissions = [
-    {
-        "student": "65011367",
-        "status": "Graded",
-        "score": "10",
-    },
-    {
-        "student": "65011365",
-        "status": "Missing",
-        "score": "N/A",
-    },
-    {
-        "student": "65011528",
-        "status": "Submitted",
-        "score": "N/A",
-    }
-];
-let totalScore = 10.00;
-let submissionTable = document.getElementById("submissionsTable");
-let submissionBody = document.getElementById("submissionBody");
-
-submissions.forEach(submission => {
-    // create a row for the submission
-    let submissionRow = submissionBody.insertRow();
-    submissionRow.classList.add("submission");
-
-    // insert a cell for the student id
-    let student = submissionRow.insertCell(0);
-    student.classList.add("submission-student-cell");
-    student.innerText = submission.student;
-
-    let content = submissionRow.insertCell(1);
-
-    let time = submissionRow.insertCell(2);
-
-    // insert a cell for the status and format it accordingly
-    let status = submissionRow.insertCell(3);
-    status.classList.add("submission-status-cell");
-    switch (submission.status) {
-        case "Submitted":
-            status.classList.add("submission-status-submitted");
-            break;
-        case "Missing":
-            status.classList.add("submission-status-missing");
-            break;
-        case "Graded":
-            status.classList.add("submission-status-graded");
-            break;
-        default:
-            break;
-    }
-    status.innerText = submission.status;
-
-    // create a cell for the score
-    let score = submissionRow.insertCell(4);
-    score.classList.add("submission-score-cell");
-    let rawScore = document.createElement("span");
-    rawScore.classList.add("score");
-    // add the text for the score
-    if (submission.score) {
-        rawScore.textContent = submission.score;
-    } else {
-        rawScore.textContent = "N/A";
-    }
-    let totalScoreDisplay = document.createElement("span");
-    totalScoreDisplay.classList.add("small-bold");
-    totalScoreDisplay.innerText = "/" + totalScore.toFixed(2);
-    score.appendChild(rawScore);
-    score.appendChild(totalScoreDisplay);
-    // when the score is pressed, you can edit it
-    rawScore.addEventListener('click', function (e) {
-        editRawScore(e);
-    });
-});
-
 function editRawScore(e) {
     let rawScoreInput = document.createElement("input");
     rawScoreInput.classList.add("score-input");
@@ -457,6 +378,7 @@ function updateScore(rawScoreInput, newScoreValue) {
 
 //====================================
 //student submission
+
 let studentFiles = [];
 const studentFileInputButton = document.getElementById("studentFileInputButton");
 const studentFileInput = document.getElementById("studentFileInput");
@@ -504,9 +426,9 @@ studentFileInput.addEventListener('change', function () {
     }
 })
 
-
 //====================================
 //submit submission
+
 const submitButton = document.getElementById("submitButton");
 submitButton.addEventListener("click", addSubmission);
 function addSubmission() {
@@ -517,10 +439,12 @@ function addSubmission() {
     let date = current.toLocaleDateString('en-US', formatDate);
     let time = current.toLocaleTimeString('en-US', formatTime);
     assignmentDueDate.innerText = date + ", " + time;
+
     //fetch to get user name
     fetch(`/students/${user}`)
         .then(response => response.json())
         .then(user => {
+
             //fetch to post comments in assignment
             fetch(`/post-submission/`, {
                 method: 'POST',
@@ -583,9 +507,9 @@ function addSubmission() {
 document.addEventListener("DOMContentLoaded", fetchDBtoUpdate);
 function fetchDBtoUpdate() {
     var userData;
-
     //ui change depending on roles
     if (role == "student") {
+        const submissionTable = document.getElementById("submissionsTable");
         const submission_title = document.getElementById("submission-title");
         const submissionsBox = document.getElementById("submissionsBox");
         const turnedIn = document.getElementById("turned-in");
@@ -627,11 +551,14 @@ function fetchDBtoUpdate() {
         if (!userData || !userData.id) {
             return;
         }
-
+        console.log("userData");
+        console.log(userData);
         let user_id = userData.id;
         let enrolls = userData.enrolls;
         let enrollments = enrolls["data"];
         let first_course_id = enrollments[0]["course"]["id"];
+
+        let submittedStudents = [];
 
         for (let enrollment of enrollments) {
             let course_id = enrollment["course"]["id"];
@@ -715,14 +642,11 @@ function fetchDBtoUpdate() {
                                 console.log("Download Link:", downloadLink);
                             }
                         }
-                          
-                        
-
                         //update submissions
-                        //1) NOT DONE!! - Teacher Additional Files Update and Post (DONE)
+                        //1) DONE - Teacher Additional Files Update and Post
 
                         //2) Student submission Update and Post
-                            //2.1) NOT DONE!! - Submission content having actual files instead of {content: "test"} (DONE)
+                            //2.1) DONE - Submission content having actual files instead of {content: "test"}
                             //2.2) DONE - Submission can post and update (with content of "test" right now)
                             //2.3) DONE - status for students (Graded, Turned In, Not Turned In)
 
@@ -736,12 +660,14 @@ function fetchDBtoUpdate() {
                         // so i have to check from both the students in course list and the submissions list
                         // which will probably affect how gpa works since teacher can't grade who didnt submit
 
-                        //3.3) NOT DONE!! - Table can display submitted files at content column(DONE)
+                        //3.3) DONE - Table can display submitted files at content column
 
                         //submissions related update
                         let submissions = assignment["submissions"]["data"];
                         const submissionBody = document.getElementById("submissionBody");
                         submissionBody.innerHTML = "";
+                        let turnedInStudents = [];
+                        let notTurnedInStudents = [];
                         if (submissions) {
                             for (let submission of submissions) { //get submission here
                                 //change status for students ==========================================
@@ -794,10 +720,7 @@ function fetchDBtoUpdate() {
                                     break;
                                 }
 
-                                
-
                             //display all submissions for teacher =================================
-                                let submissionTable = document.getElementById("submissionsTable");
                                 let submissionBody = document.getElementById("submissionBody");
 
                                 // create a row for the submission
@@ -808,6 +731,9 @@ function fetchDBtoUpdate() {
                                 let student = submissionRow.insertCell(0);
                                 student.classList.add("submission-student-cell");
                                 student.innerText = "6501" + submission["user_id"].toString();
+                                turnedInStudents.push(submission["user_id"]);
+                                console.log("pushing new student to turned in");
+                                console.log(submission["user_id"]);
 
                             // !!!!!!! insert a cell for files !!!!!!!!
                                 let content = submissionRow.insertCell(1);
@@ -847,6 +773,10 @@ function fetchDBtoUpdate() {
                                 score.classList.add("submission-score-cell");
                                 let rawScore = document.createElement("span");
                                 rawScore.classList.add("score");
+                                let totalScore = document.createElement("span");
+                                totalScore.classList.add("score");
+                                totalScore.style.fontWeight = "bold";
+                                totalScore.innerText = "/" + assignment["total_score"];
                                 // add the text for the score
                                 if (submission["score"]) {
                                     rawScore.textContent = submission["score"];
@@ -854,10 +784,51 @@ function fetchDBtoUpdate() {
                                     rawScore.textContent = "N/A";
                                 }
                                 score.appendChild(rawScore);
+                                score.appendChild(totalScore);
                                 // when the score is pressed, you can edit it
                                 rawScore.addEventListener('click', function (e) {
                                     editRawScore(e);
                                 });
+
+                                // display students who don't have submission ===============
+
+                                // fetch all students
+                                fetch (`/students/`)
+                                .then(response => response.json())
+                                .then(fetchedStudents => {
+                                    console.log("fetched students")
+                                    console.log(fetchedStudents);
+                                    console.log("turned in students");
+                                    console.log(turnedInStudents);
+                                    showNotTurnedIn(fetchedStudents, turnedInStudents);
+                                })
+
+                                function showNotTurnedIn(allStudents, submissionStudents) {
+                                    studentsEnrolled = [];
+
+                                    for (let student of allStudents) {
+                                        let enrolls = student["enrolls"].data;
+                                        for (let enroll of enrolls) {
+                                            if (enroll.course.id == course_id) {
+                                                console.log(student.id);
+                                                studentsEnrolled.push(student.id);
+                                            }
+                                        }
+                                    }
+
+                                    let notTurnedInBody = document.getElementById("notTurnedInBody");
+                                    for (let studentId of studentsEnrolled) {
+                                        console.log("students submitted");
+                                        console.log(submissionStudents);
+                                        if (!submissionStudents.includes(studentId)){
+                                            if (!notTurnedInStudents.includes(studentId)) {
+                                                notTurnedInStudents.push(studentId);
+                                                let notTurnedInRow = notTurnedInBody.insertRow(-1);
+                                                notTurnedInRow.innerText = "650" + studentId;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

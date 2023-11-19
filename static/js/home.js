@@ -288,8 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let gpaGrade = document.getElementById("gpaGrade");
         gpaGrade.innerText = toGrade(unofficialGPAValue);
 
-        
-
         function toNumber(grade) {
             switch(grade) {
                 case "A":
@@ -312,7 +310,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     return -1;
             }
         }
-
         function toGrade(number) { 
             if (number > 3.5) {
                 return "A";
@@ -709,7 +706,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                             grade = enroll.grade;
                                             scores = enroll.scores;
                                             courseId = enroll.course.id;
-            
                                             
                                             // populate the cells with the student's scores
                                             populateScoreCell(student, enroll, scores, "attendance", newStudentRow, 1);

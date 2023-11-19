@@ -100,8 +100,8 @@ x`<!DOCTYPE html>
             </div>
             <div class="root">
                 <div class="card-div">
-                    <div class="card" id="submissionsBox">
-                        <div class="info-column">
+                    <div class="card" id="submissionsBox" style="overflow-x: scroll;">
+                        <div class="info-column" style="margin-left: 100px;">
                             <div class="nav-items-uniteractable" style="width: 100%; justify-content: space-between;">
                                 <span class="medium-bold" id="submission-title"> Submissions</span>
                                 <span class="medium-bold" id="submission-state" style="color:orange;"> Not Turned
@@ -126,7 +126,14 @@ x`<!DOCTYPE html>
                                 <div class="info-column file-frame-div" id="studentDataBaseFrame"></div>
 
                                 <span class="small-bold" id="not-turned-in">Not Turned In: </span>
-                                <span class="small" id="students-not-turned-in">65011365</span>
+                                <table class="submission-table">
+                                    <thead class="small-bold">
+                                        <td class="submission-student-head">Student ID</td>
+                                    </thead>
+                                    <tbody class="small" id="notTurnedInBody">
+                                    </tbody>
+                                </table>
+                                </span>
                             </div>
                             <span class="edit-button" id="submitButton">Submit</span>
                         </div>

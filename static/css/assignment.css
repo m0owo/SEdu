@@ -149,7 +149,17 @@ hr {
     width: max-content;
     width: 100%;
     padding: 1rem;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin-left: auto;
 } 
+
+.submission-table th, .submission-table tr, .submission-table td {
+    border: solid;
+    border-color: lightgray;
+    padding: 0.5rem;
+    margin: 0;
+}
 
 .submission-student-head {
     width: 10%;
@@ -257,5 +267,8 @@ hr {
     .row {
         flex-direction: row;
         align-items: start;
+    }
+    .submission-table th, .submission-table tr, .submission-table td {
+        border: none;
     }
 }
