@@ -337,7 +337,7 @@ function sendComment() {
     }
 }
 
-function editRawScore(e) {
+function editRawScore(e, totalScore) {
     let rawScoreInput = document.createElement("input");
     rawScoreInput.classList.add("score-input");
     rawScoreInput.type = "text";
@@ -353,26 +353,26 @@ function editRawScore(e) {
         if (e.key === "Enter") {
             let newScore = parseInt(rawScoreInput.value, 10);
             if (!isNaN(newScore) && newScore >= 0 && newScore <= totalScore) {
-                updateScore(rawScoreInput, newScore);
+                updateScore(rawScoreInput, newScore, totalScore);
+            } else {
+                alert("Invalid Score Input !");
             }
         }
     });
 }
 
-function updateScore(rawScoreInput, newScoreValue) {
+function updateScore(rawScoreInput, newScoreValue, totalScore) {
     let newScoreSpan = document.createElement("span");
     newScoreSpan.classList.add("score")
     let parsedScore = parseFloat(newScoreValue);
     if (!isNaN(parsedScore)) {
-        if (parsedScore >= 0 && parsedScore <= totalScore) {
-            newScoreSpan.textContent = parsedScore.toFixed(2);
-        }
+        newScoreSpan.textContent = parsedScore.toFixed(2);
     } else {
-        newScoreSpan.text    = newScoreValue;
+        newScoreSpan.text = newScoreValue;
     }
     rawScoreInput.parentNode.replaceChild(newScoreSpan, rawScoreInput);
     newScoreSpan.addEventListener('click', function (e) {
-        editRawScore(e);
+        editRawScore(e, totalScore);
     });
 }
 
@@ -789,7 +789,7 @@ function fetchDBtoUpdate() {
                                 score.appendChild(totalScore);
                                 // when the score is pressed, you can edit it
                                 rawScore.addEventListener('click', function (e) {
-                                    editRawScore(e);
+                                    editRawScore(e, assignment["total_score"]);
                                 });
 
                                 // display students who don't have submission ===============
