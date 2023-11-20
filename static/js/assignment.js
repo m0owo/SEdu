@@ -512,16 +512,16 @@ function fetchDBtoUpdate() {
         const submissionTable = document.getElementById("submissionsTable");
         const submission_title = document.getElementById("submission-title");
         const submissionsBox = document.getElementById("submissionsBox");
-        const turnedIn = document.getElementById("turned-in");
-        const notTurnedIn = document.getElementById("not-turned-in");
-        const studentNotTurnedIn = document.getElementById("students-not-turned-in");
+        // const turnedIn = document.getElementById("turned-in");
+        // const notTurnedIn = document.getElementById("not-turned-in");
+        // const studentNotTurnedIn = document.getElementById("students-not-turned-in");
         submission_title.textContent = "Submission Box";
         roleSpan.innerText = "Student";
         descriptionEdit.style.display = "none";
         submissionTable.style.display = "none";
-        turnedIn.style.display = "none";
-        notTurnedIn.style.display = "none";
-        studentNotTurnedIn.style.display = "none";
+        // turnedIn.style.display = "none";
+        // notTurnedIn.style.display = "none";
+        // studentNotTurnedIn.style.display = "none";
         fileInput.style.display = "none";
         fileInputButton.style.display = "none";
         sentFileButton.style.display = "none";
@@ -680,6 +680,7 @@ function fetchDBtoUpdate() {
                                     } else {
                                         submission_state.textContent = "Turned In";
                                         submission_state.style.color = "Green";
+                                        submitButton.style.display = "none";
                                     }
                                     
                                     const studentDataBaseFrame = document.getElementById("studentDataBaseFrame")
